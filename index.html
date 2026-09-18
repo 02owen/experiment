@@ -1,411 +1,957 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COBE - Interactive 3D Dot Matrix Globe</title>
-  <style>
-    :root {
-      --bg-color: #FAF8F5;
-      --fg-color: #1A1A1A;
-      --highlight-color: #1A1A1A;
-      --faded-color: #A09E9B;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obsidian Web Clone</title>
+    <style>
+        :root {
+            --bg-main: #1e1e1e;
+            --bg-sidebar: #171717;
+            --border: #2d2d2d;
+            --text-main: #dcddde;
+            --text-muted: #888888;
+            --accent: #7f6df2;
+            --accent-hover: #9686f5;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: 'Consolas', 'Courier New', Courier, monospace;
+            --danger: #e06c75;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body, html {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: var(--bg-color);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: var(--fg-color);
-    }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+        }
 
-    #canvas-container {
-      width: 100vw;
-      height: 100vh;
-      display: block;
-      cursor: grab;
-    }
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
 
-    #canvas-container:active {
-      cursor: grabbing;
-    }
+        /* Layout Structure */
+        .sidebar {
+            width: 250px;
+            background-color: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        .sidebar.collapsed {
+            width: 0;
+            overflow: hidden;
+        }
+        
+        #left-sidebar {
+            border-right: 1px solid var(--border);
+        }
+        
+        #right-sidebar {
+            border-left: 1px solid var(--border);
+            width: 300px;
+        }
+        #right-sidebar.collapsed {
+            width: 0;
+        }
 
-    header {
-      position: absolute;
-      top: 40px;
-      left: 40px;
-      z-index: 10;
-      pointer-events: none;
-    }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
 
-    header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      margin-bottom: 4px;
-    }
+        /* Sidebar Headers */
+        .sidebar-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
 
-    header p {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      opacity: 0.6;
-      text-transform: uppercase;
-    }
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-btn:hover {
+            color: var(--text-main);
+            background: var(--border);
+        }
 
-    #selected-country-banner {
-      position: absolute;
-      bottom: 40px;
-      left: 40px;
-      z-index: 10;
-      pointer-events: none;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
+        /* File Tree */
+        .file-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .file-item {
+            padding: 6px 10px;
+            margin-bottom: 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-muted);
+        }
+        .file-item:hover {
+            background-color: var(--border);
+            color: var(--text-main);
+        }
+        .file-item.active {
+            background-color: rgba(127, 109, 242, 0.15);
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .file-item-delete {
+            opacity: 0;
+            color: var(--danger);
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+        .file-item:hover .file-item-delete {
+            opacity: 1;
+        }
 
-    #selected-country-banner.visible {
-      opacity: 1;
-    }
+        /* Main Editor Area */
+        .editor-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            gap: 15px;
+        }
+        .sidebar-toggle {
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .sidebar-toggle:hover {
+            color: var(--text-main);
+        }
+        
+        .title-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            font-weight: 600;
+            outline: none;
+            font-family: inherit;
+        }
 
-    .label {
-      position: absolute;
-      top: 0;
-      left: 0;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--fg-color);
-      pointer-events: none;
-      white-space: nowrap;
-      transform: translate(-50%, -100%);
-      transition: opacity 0.3s ease;
-      opacity: 0;
-    }
+        .view-toggles {
+            display: flex;
+            background: var(--bg-sidebar);
+            border-radius: 6px;
+            padding: 3px;
+            border: 1px solid var(--border);
+        }
+        .view-toggles button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .view-toggles button.active {
+            background: var(--border);
+            color: var(--text-main);
+        }
 
-    .label::before {
-      content: '';
-      display: block;
-      width: 4px;
-      height: 4px;
-      background-color: var(--fg-color);
-      border-radius: 50%;
-      margin: 0 auto 4px auto;
-    }
+        .editor-body {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+        }
 
-    .label.visible {
-      opacity: 1;
-    }
-  </style>
+        #markdown-editor, #markdown-preview {
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.2s;
+        }
 
-  <!-- External Libraries: Three.js, OrbitControls, D3-Geo -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+        #markdown-editor {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+        }
+
+        #markdown-preview {
+            opacity: 0;
+            pointer-events: none;
+            line-height: 1.6;
+        }
+        #markdown-preview.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #markdown-editor.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Markdown Styles in Preview */
+        #markdown-preview h1, #markdown-preview h2, #markdown-preview h3 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+        }
+        #markdown-preview p {
+            margin-bottom: 1em;
+        }
+        #markdown-preview a.wiki-link {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #markdown-preview a.wiki-link:hover {
+            text-decoration: underline;
+        }
+        #markdown-preview pre {
+            background: var(--bg-sidebar);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-bottom: 1em;
+        }
+        #markdown-preview code {
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            color: var(--accent-hover);
+        }
+        #markdown-preview ul, #markdown-preview ol {
+            padding-left: 25px;
+            margin-bottom: 1em;
+        }
+        #markdown-preview input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--bg-sidebar);
+        }
+        .status-item {
+            margin-left: 15px;
+        }
+
+        /* Right Sidebar elements */
+        .graph-container {
+            height: 250px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            background: var(--bg-main);
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .backlinks-panel {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .backlinks-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .backlink-item {
+            padding: 8px;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .backlink-item:hover {
+            border-color: var(--accent);
+            color: var(--text-main);
+        }
+
+        /* Command Palette */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 15vh;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .command-palette {
+            width: 600px;
+            max-width: 90%;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .cmd-input {
+            width: 100%;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 16px;
+            outline: none;
+            font-family: inherit;
+        }
+        .cmd-results {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .cmd-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+        }
+        .cmd-item:hover, .cmd-item.selected {
+            background: var(--border);
+            color: var(--text-main);
+        }
+        .cmd-item-title {
+            font-weight: 500;
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1>COBE</h1>
-    <p>Interactive webgl globe</p>
-  </header>
+    <!-- Left Sidebar -->
+    <aside id="left-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <span>Vault</span>
+            <button class="icon-btn" id="btn-new-note" title="New Note">
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            </button>
+        </div>
+        <div class="file-tree" id="file-tree">
+            <!-- Files injected here -->
+        </div>
+    </aside>
 
-  <div id="selected-country-banner">Selected: <span id="country-name">None</span></div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="editor-header">
+            <div class="sidebar-toggle" id="toggle-left" title="Toggle Left Sidebar">
+                <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm16 16V5H5v14h14zM7 7h2v10H7V7z"/></svg>
+            </div>
+            <input type="text" class="title-input" id="note-title" placeholder="Untitled">
+            <div class="view-toggles">
+                <button id="btn-edit" class="active">Edit</button>
+                <button id="btn-preview">Preview</button>
+            </div>
+            <div class="sidebar-toggle" id="toggle-right" title="Toggle Right Sidebar">
+                <svg viewBox="0 0 24 24"><path d="M21 3H3v18h18V3zM5 19V5h14v14H5zm10-12h2v10h-2V7z"/></svg>
+            </div>
+        </div>
+        
+        <div class="editor-body">
+            <textarea id="markdown-editor" placeholder="Start typing..."></textarea>
+            <div id="markdown-preview"></div>
+        </div>
 
-  <div id="canvas-container"></div>
-  <div id="labels-container"></div>
+        <div class="status-bar">
+            <div class="status-item" id="word-count">0 words</div>
+            <div class="status-item" id="char-count">0 chars</div>
+        </div>
+    </main>
 
-  <script>
-    const COLOR_BG = 0xFAF8F5;
-    const COLOR_FG = 0x1A1A1A;
-    const COLOR_FADED = 0xB8B5B0;
-    const GLOBE_RADIUS = 200;
+    <!-- Right Sidebar -->
+    <aside id="right-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <span>Graph View</span>
+        </div>
+        <div class="graph-container">
+            <canvas id="graph-canvas"></canvas>
+        </div>
+        <div class="backlinks-panel">
+            <div class="backlinks-title">Backlinks</div>
+            <div id="backlinks-container">
+                <!-- Backlinks injected here -->
+            </div>
+        </div>
+    </aside>
 
-    let scene, camera, renderer, controls;
-    let globeGroup, pointsMesh;
-    let locationLabels = [];
-    let isAnimatingToLocation = false;
+    <!-- Command Palette Modal -->
+    <div class="modal-overlay" id="cmd-palette-modal">
+        <div class="command-palette">
+            <input type="text" class="cmd-input" id="cmd-input" placeholder="Search notes... (↑/↓ to navigate, Enter to select)">
+            <div class="cmd-results" id="cmd-results">
+                <!-- Results injected here -->
+            </div>
+        </div>
+    </div>
 
-    let geoData = [];
-    let pointData = []; 
-    let selectedCountryId = null;
+    <script>
+        // --- State Management ---
+        const defaultContent = `# Welcome to Obsidian Web\n\nThis is a minimalist, local-first note taking app.\n\n## Features\n- **Markdown Support:** Bold, italics, headers, lists.\n- **Wiki-links:** Type double brackets to link to another note, like [[Ideas]]. Clicking it in preview creates the note if it doesn't exist!\n- **Graph View:** See connections between notes in the right sidebar.\n- **Command Palette:** Press \`Ctrl+K\` or \`Cmd+K\` to quick jump.\n\n## Tasks\n[x] Try the editor\n[ ] Create a new note\n[ ] Check the graph view\n\n\`\`\`javascript\nconsole.log('Enjoy your writing!');\n\`\`\`\n`;
+        
+        let notes = JSON.parse(localStorage.getItem('obsidian_notes')) || [
+            { id: '1', title: 'Welcome', content: defaultContent },
+            { id: '2', title: 'Ideas', content: 'Brainstorming note.\n\nLinking back to [[Welcome]].' }
+        ];
+        let activeNoteId = localStorage.getItem('obsidian_active') || '1';
+        let isPreview = false;
 
-    let raycaster = new THREE.Raycaster();
-    let mouse = new THREE.Vector2();
-    let pointerDownPos = { x: 0, y: 0 };
+        // --- DOM Elements ---
+        const fileTreeEl = document.getElementById('file-tree');
+        const noteTitleEl = document.getElementById('note-title');
+        const editorEl = document.getElementById('markdown-editor');
+        const previewEl = document.getElementById('markdown-preview');
+        const wordCountEl = document.getElementById('word-count');
+        const charCountEl = document.getElementById('char-count');
+        const backlinksContainerEl = document.getElementById('backlinks-container');
+        const btnNewNote = document.getElementById('btn-new-note');
+        const btnEdit = document.getElementById('btn-edit');
+        const btnPreview = document.getElementById('btn-preview');
+        const modalOverlay = document.getElementById('cmd-palette-modal');
+        const cmdInput = document.getElementById('cmd-input');
+        const cmdResults = document.getElementById('cmd-results');
+        
+        // --- Utility ---
+        const generateId = () => Math.random().toString(36).substr(2, 9);
+        
+        function saveState() {
+            localStorage.setItem('obsidian_notes', JSON.stringify(notes));
+            localStorage.setItem('obsidian_active', activeNoteId);
+            updateGraphData();
+            renderBacklinks();
+        }
 
-    let locations = [
-      { id: 'sf', name: 'SAN FRANCISCO', lat: 37.7749, lng: -122.4194 },
-      { id: 'ny', name: 'NEW YORK', lat: 40.7128, lng: -74.0060 }
-    ];
+        function getActiveNote() {
+            return notes.find(n => n.id === activeNoteId);
+        }
 
-    let connections = [{ from: 'sf', to: 'ny' }];
+        function getNoteByTitle(title) {
+            return notes.find(n => n.title.toLowerCase() === title.toLowerCase());
+        }
 
-    function latLngToVector3(lat, lng, radius) {
-      const phi = (90 - lat) * (Math.PI / 180);
-      const theta = (lng + 180) * (Math.PI / 180);
+        // --- Core Functions ---
+        function renderFileTree() {
+            fileTreeEl.innerHTML = '';
+            // Sort alphabetically by title
+            const sortedNotes = [...notes].sort((a,b) => a.title.localeCompare(b.title));
+            
+            sortedNotes.forEach(note => {
+                const div = document.createElement('div');
+                div.className = `file-item ${note.id === activeNoteId ? 'active' : ''}`;
+                
+                const titleSpan = document.createElement('span');
+                titleSpan.textContent = note.title;
+                div.appendChild(titleSpan);
 
-      const x = -(radius * Math.sin(phi) * Math.cos(theta));
-      const z = radius * Math.sin(phi) * Math.sin(theta);
-      const y = radius * Math.cos(phi);
+                const delBtn = document.createElement('button');
+                delBtn.className = 'file-item-delete';
+                delBtn.innerHTML = '✕';
+                delBtn.title = "Delete Note";
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteNote(note.id);
+                };
+                div.appendChild(delBtn);
 
-      return new THREE.Vector3(x, y, z);
-    }
-
-    async function init() {
-      const container = document.getElementById('canvas-container');
-
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(COLOR_BG);
-
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-      camera.position.set(0, 150, 600);
-
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      container.appendChild(renderer.domElement);
-
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.enablePan = false;
-      controls.minDistance = 300;
-      controls.maxDistance = 900;
-
-      globeGroup = new THREE.Group();
-      scene.add(globeGroup);
-
-      // Load accurate GeoJSON dataset
-      const res = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
-      const data = await res.json();
-      geoData = data.features;
-
-      createAccurateDotMatrixGlobe();
-      renderMarkersAndConnections();
-
-      // Click / Selection Event Listeners
-      renderer.domElement.addEventListener('pointerdown', (e) => {
-        pointerDownPos = { x: e.clientX, y: e.clientY };
-      });
-
-      renderer.domElement.addEventListener('pointerup', (e) => {
-        // Prevent trigger on camera drag
-        const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
-        if (dist < 5) onGlobeClick(e);
-      });
-
-      window.addEventListener('resize', onWindowResize);
-      animate();
-    }
-
-    function createAccurateDotMatrixGlobe() {
-      const positions = [];
-      const colors = [];
-      const baseColor = new THREE.Color(COLOR_FG);
-
-      pointData = [];
-
-      // Grid sampling across latitude and longitude
-      const step = 1.6;
-      for (let lat = -85; lat <= 85; lat += step) {
-        for (let lng = -180; lng <= 180; lng += step) {
-          const feature = geoData.find(f => d3.geoContains(f, [lng, lat]));
-
-          if (feature) {
-            const p = latLngToVector3(lat, lng, GLOBE_RADIUS);
-            positions.push(p.x, p.y, p.z);
-            colors.push(baseColor.r, baseColor.g, baseColor.b);
-
-            pointData.push({
-              pos: p,
-              countryId: feature.id || feature.properties.ISO_A3 || feature.properties.ADMIN,
-              countryName: feature.properties.ADMIN || feature.properties.name,
-              lat: lat,
-              lng: lng
+                div.onclick = () => openNote(note.id);
+                fileTreeEl.appendChild(div);
             });
-          }
         }
-      }
 
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
-      // Circular Point Texture
-      const canvas = document.createElement('canvas');
-      canvas.width = 16;
-      canvas.height = 16;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.arc(8, 8, 6, 0, Math.PI * 2);
-      ctx.fill();
-
-      const texture = new THREE.CanvasTexture(canvas);
-
-      const material = new THREE.PointsMaterial({
-        size: 3.2,
-        vertexColors: true,
-        map: texture,
-        transparent: true,
-        alphaTest: 0.5
-      });
-
-      pointsMesh = new THREE.Points(geometry, material);
-      globeGroup.add(pointsMesh);
-    }
-
-    function onGlobeClick(event) {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-      raycaster.params.Points.threshold = 4;
-
-      const intersects = raycaster.intersectObject(pointsMesh);
-
-      if (intersects.length > 0) {
-        const index = intersects[0].index;
-        const clickedPoint = pointData[index];
-
-        if (clickedPoint && clickedPoint.countryId) {
-          selectCountry(clickedPoint.countryId, clickedPoint.countryName);
+        function openNote(id) {
+            activeNoteId = id;
+            const note = getActiveNote();
+            if(!note) return;
+            
+            noteTitleEl.value = note.title;
+            editorEl.value = note.content;
+            
+            renderFileTree();
+            updateCounts();
+            if(isPreview) {
+                renderPreview();
+            }
+            saveState();
         }
-      }
-    }
 
-    function selectCountry(countryId, countryName) {
-      selectedCountryId = countryId;
-
-      const colors = pointsMesh.geometry.attributes.color;
-      const colorActive = new THREE.Color(COLOR_FG);
-      const colorInactive = new THREE.Color(COLOR_FADED);
-
-      pointData.forEach((pt, idx) => {
-        if (pt.countryId === countryId) {
-          colors.setXYZ(idx, colorActive.r, colorActive.g, colorActive.b);
-        } else {
-          colors.setXYZ(idx, colorInactive.r, colorInactive.g, colorInactive.b);
+        function openNoteByTitle(title) {
+            let note = getNoteByTitle(title);
+            if(!note) {
+                // Create it if it doesn't exist
+                note = { id: generateId(), title: title, content: '' };
+                notes.push(note);
+            }
+            openNote(note.id);
+            setEditMode();
         }
-      });
 
-      colors.needsUpdate = true;
+        function createNewNote() {
+            const newId = generateId();
+            let title = 'Untitled';
+            let counter = 1;
+            while(getNoteByTitle(title)) {
+                title = `Untitled ${counter}`;
+                counter++;
+            }
 
-      // Update UI Banner
-      const banner = document.getElementById('selected-country-banner');
-      const nameSpan = document.getElementById('country-name');
-      nameSpan.innerText = countryName;
-      banner.classList.add('visible');
-    }
-
-    function renderMarkersAndConnections() {
-      const labelsContainer = document.getElementById('labels-container');
-      labelsContainer.innerHTML = '';
-      locationLabels = [];
-
-      locations.forEach(loc => {
-        const pos = latLngToVector3(loc.lat, loc.lng, GLOBE_RADIUS);
-
-        const markerGeo = new THREE.SphereGeometry(3, 16, 16);
-        const markerMat = new THREE.MeshBasicMaterial({ color: COLOR_FG });
-        const markerMesh = new THREE.Mesh(markerGeo, markerMat);
-        markerMesh.position.copy(pos);
-        globeGroup.add(markerMesh);
-
-        const labelDiv = document.createElement('div');
-        labelDiv.className = 'label';
-        labelDiv.innerText = loc.name;
-        labelsContainer.appendChild(labelDiv);
-
-        locationLabels.push({ element: labelDiv, pos: pos });
-      });
-
-      connections.forEach(conn => {
-        const startLoc = locations.find(l => l.id === conn.from);
-        const endLoc = locations.find(l => l.id === conn.to);
-
-        if (startLoc && endLoc) {
-          const vStart = latLngToVector3(startLoc.lat, startLoc.lng, GLOBE_RADIUS);
-          const vEnd = latLngToVector3(endLoc.lat, endLoc.lng, GLOBE_RADIUS);
-
-          const distance = vStart.distanceTo(vEnd);
-          const mid = vStart.clone().add(vEnd).multiplyScalar(0.5);
-          mid.normalize().multiplyScalar(GLOBE_RADIUS + distance * 0.25);
-
-          const curve = new THREE.QuadraticBezierCurve3(vStart, mid, vEnd);
-          const points = curve.getPoints(50);
-          const curveGeometry = new THREE.BufferGeometry().setFromPoints(points);
-
-          const curveMaterial = new THREE.LineBasicMaterial({
-            color: COLOR_FG,
-            linewidth: 1.5,
-            transparent: true,
-            opacity: 0.85
-          });
-
-          const arcLine = new THREE.Line(curveGeometry, curveMaterial);
-          globeGroup.add(arcLine);
+            notes.push({ id: newId, title: title, content: '' });
+            openNote(newId);
+            setEditMode();
+            noteTitleEl.focus();
+            noteTitleEl.select();
         }
-      });
-    }
 
-    function updateLabels() {
-      const tempV = new THREE.Vector3();
-
-      locationLabels.forEach(label => {
-        tempV.copy(label.pos);
-        tempV.applyMatrix4(globeGroup.matrixWorld);
-
-        const cameraToPoint = tempV.clone().sub(camera.position).normalize();
-        const surfaceNormal = tempV.clone().normalize();
-        const dot = cameraToPoint.dot(surfaceNormal);
-
-        if (dot < -0.2) {
-          tempV.project(camera);
-          const x = (tempV.x * .5 + .5) * window.innerWidth;
-          const y = (tempV.y * -.5 + .5) * window.innerHeight;
-
-          label.element.style.transform = `translate(-50%, -100%) translate(${x}px,${y}px)`;
-          label.element.classList.add('visible');
-        } else {
-          label.element.classList.remove('visible');
+        function deleteNote(id) {
+            if(notes.length <= 1) {
+                alert("Cannot delete the last note.");
+                return;
+            }
+            notes = notes.filter(n => n.id !== id);
+            if(activeNoteId === id) {
+                activeNoteId = notes[0].id;
+            }
+            openNote(activeNoteId);
         }
-      });
-    }
 
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+        function updateCounts() {
+            const text = editorEl.value;
+            charCountEl.textContent = `${text.length} chars`;
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+            wordCountEl.textContent = `${words.length} words`;
+        }
 
-    function animate() {
-      requestAnimationFrame(animate);
+        function renderPreview() {
+            const raw = editorEl.value;
+            let html = raw
+                // Sanitize basic tags
+                .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                // Wiki links [[Title]]
+                .replace(/\[\[(.*?)\]\]/g, (match, p1) => {
+                    return `<a class="wiki-link" onclick="openNoteByTitle('${p1}')">${p1}</a>`;
+                })
+                // Code blocks
+                .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+                // Inline code
+                .replace(/`(.*?)`/gim, '<code>$1</code>')
+                // Headers
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                // Bold
+                .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+                // Italic
+                .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+                // Tasks
+                .replace(/^\[ \]\s+(.*$)/gim, '<input type="checkbox" disabled> $1<br>')
+                .replace(/^\[x\]\s+(.*$)/gim, '<input type="checkbox" checked disabled> $1<br>')
+                // Lists
+                .replace(/^\* (.*$)/gim, '<ul><li>$1</li></ul>')
+                .replace(/<\/ul>\n<ul>/gim, '')
+                // Paragraphs/Newlines
+                .replace(/\n\n/g, '<p></p>')
+                .replace(/\n/g, '<br/>');
 
-      if (!controls.state == -1 && !isAnimatingToLocation && !selectedCountryId) {
-        globeGroup.rotation.y += 0.001;
-      }
+            previewEl.innerHTML = html;
+        }
 
-      controls.update();
-      updateLabels();
-      renderer.render(scene, camera);
-    }
+        function setEditMode() {
+            isPreview = false;
+            btnEdit.classList.add('active');
+            btnPreview.classList.remove('active');
+            editorEl.classList.remove('hidden');
+            previewEl.classList.remove('active');
+            editorEl.focus();
+        }
 
-    window.onload = init;
-  </script>
+        function setPreviewMode() {
+            isPreview = true;
+            btnPreview.classList.add('active');
+            btnEdit.classList.remove('active');
+            editorEl.classList.add('hidden');
+            previewEl.classList.add('active');
+            renderPreview();
+        }
+
+        function renderBacklinks() {
+            backlinksContainerEl.innerHTML = '';
+            const activeNote = getActiveNote();
+            if(!activeNote) return;
+
+            const targetTitle = activeNote.title.toLowerCase();
+            const backlinks = notes.filter(n => {
+                if(n.id === activeNote.id) return false;
+                const matches = [...n.content.matchAll(/\[\[(.*?)\]\]/g)];
+                return matches.some(m => m[1].toLowerCase() === targetTitle);
+            });
+
+            if(backlinks.length === 0) {
+                backlinksContainerEl.innerHTML = '<div style="color: var(--text-muted); font-size: 12px;">No backlinks found.</div>';
+                return;
+            }
+
+            backlinks.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'backlink-item';
+                div.textContent = n.title;
+                div.onclick = () => openNote(n.id);
+                backlinksContainerEl.appendChild(div);
+            });
+        }
+
+        // --- Event Listeners ---
+        btnNewNote.addEventListener('click', createNewNote);
+        
+        noteTitleEl.addEventListener('input', (e) => {
+            const note = getActiveNote();
+            if(note) {
+                note.title = e.target.value || 'Untitled';
+                renderFileTree();
+                saveState();
+            }
+        });
+
+        editorEl.addEventListener('input', (e) => {
+            const note = getActiveNote();
+            if(note) {
+                note.content = e.target.value;
+                updateCounts();
+                saveState(); // In a real app, debounce this
+            }
+        });
+
+        btnEdit.addEventListener('click', setEditMode);
+        btnPreview.addEventListener('click', setPreviewMode);
+
+        // Sidebar Toggles
+        document.getElementById('toggle-left').addEventListener('click', () => {
+            document.getElementById('left-sidebar').classList.toggle('collapsed');
+        });
+        document.getElementById('toggle-right').addEventListener('click', () => {
+            document.getElementById('right-sidebar').classList.toggle('collapsed');
+        });
+
+        // --- Command Palette Logic ---
+        let cmdSelectedIndex = 0;
+        let cmdFilteredNotes = [];
+
+        function openCmdPalette() {
+            modalOverlay.classList.add('active');
+            cmdInput.value = '';
+            cmdInput.focus();
+            filterCmdResults('');
+        }
+
+        function closeCmdPalette() {
+            modalOverlay.classList.remove('active');
+            editorEl.focus();
+        }
+
+        function filterCmdResults(query) {
+            const q = query.toLowerCase();
+            cmdFilteredNotes = notes.filter(n => n.title.toLowerCase().includes(q));
+            cmdSelectedIndex = 0;
+            renderCmdResults();
+        }
+
+        function renderCmdResults() {
+            cmdResults.innerHTML = '';
+            cmdFilteredNotes.forEach((n, index) => {
+                const div = document.createElement('div');
+                div.className = `cmd-item ${index === cmdSelectedIndex ? 'selected' : ''}`;
+                div.innerHTML = `<span class="cmd-item-title">${n.title}</span>`;
+                div.onmouseover = () => {
+                    cmdSelectedIndex = index;
+                    renderCmdResults();
+                };
+                div.onclick = () => {
+                    openNote(n.id);
+                    closeCmdPalette();
+                };
+                cmdResults.appendChild(div);
+            });
+        }
+
+        cmdInput.addEventListener('input', (e) => filterCmdResults(e.target.value));
+        cmdInput.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowDown') {
+                e.preventDefault();
+                cmdSelectedIndex = (cmdSelectedIndex + 1) % cmdFilteredNotes.length;
+                renderCmdResults();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                cmdSelectedIndex = (cmdSelectedIndex - 1 + cmdFilteredNotes.length) % cmdFilteredNotes.length;
+                renderCmdResults();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if(cmdFilteredNotes[cmdSelectedIndex]) {
+                    openNote(cmdFilteredNotes[cmdSelectedIndex].id);
+                    closeCmdPalette();
+                }
+            } else if (e.key === 'Escape') {
+                closeCmdPalette();
+            }
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if(e.target === modalOverlay) closeCmdPalette();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                openCmdPalette();
+            }
+        });
+
+        // --- Graph View (Force Directed Canvas) ---
+        const canvas = document.getElementById('graph-canvas');
+        const ctx = canvas.getContext('2d');
+        let graphNodes = [];
+        let graphEdges = [];
+        let animationFrameId;
+
+        function updateGraphData() {
+            // Extract Nodes
+            graphNodes = notes.map(n => {
+                let existing = graphNodes.find(gn => gn.id === n.id);
+                return {
+                    id: n.id,
+                    title: n.title,
+                    x: existing ? existing.x : Math.random() * 250,
+                    y: existing ? existing.y : Math.random() * 250,
+                    vx: 0,
+                    vy: 0
+                };
+            });
+
+            // Extract Edges
+            graphEdges = [];
+            notes.forEach(sourceNote => {
+                const matches = [...sourceNote.content.matchAll(/\[\[(.*?)\]\]/g)];
+                matches.forEach(m => {
+                    const targetTitle = m[1].toLowerCase();
+                    const targetNote = notes.find(n => n.title.toLowerCase() === targetTitle);
+                    if(targetNote && sourceNote.id !== targetNote.id) {
+                        graphEdges.push({ source: sourceNote.id, target: targetNote.id });
+                    }
+                });
+            });
+        }
+
+        function drawGraph() {
+            const width = canvas.offsetWidth;
+            const height = canvas.offsetHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            if(graphNodes.length === 0) {
+                animationFrameId = requestAnimationFrame(drawGraph);
+                return;
+            }
+
+            // Simple physics simulation
+            const k = Math.sqrt((width * height) / (graphNodes.length || 1)) * 0.5;
+
+            // Repulsion
+            for (let i = 0; i < graphNodes.length; i++) {
+                for (let j = i + 1; j < graphNodes.length; j++) {
+                    const n1 = graphNodes[i];
+                    const n2 = graphNodes[j];
+                    let dx = n1.x - n2.x;
+                    let dy = n1.y - n2.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                    let force = (k * k) / dist;
+                    let fx = (dx / dist) * force;
+                    let fy = (dy / dist) * force;
+                    n1.vx += fx; n1.vy += fy;
+                    n2.vx -= fx; n2.vy -= fy;
+                }
+            }
+
+            // Attraction (Springs)
+            graphEdges.forEach(edge => {
+                const source = graphNodes.find(n => n.id === edge.source);
+                const target = graphNodes.find(n => n.id === edge.target);
+                if(source && target) {
+                    let dx = source.x - target.x;
+                    let dy = source.y - target.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                    let force = (dist * dist) / (k * 3);
+                    let fx = (dx / dist) * force;
+                    let fy = (dy / dist) * force;
+                    source.vx -= fx; source.vy -= fy;
+                    target.vx += fx; target.vy += fy;
+                }
+            });
+
+            // Gravity & Update
+            graphNodes.forEach(n => {
+                // Gravity to center
+                let dx = (width / 2) - n.x;
+                let dy = (height / 2) - n.y;
+                n.vx += dx * 0.05;
+                n.vy += dy * 0.05;
+
+                // Friction & Apply
+                n.vx *= 0.6;
+                n.vy *= 0.6;
+                n.x += n.vx * 0.1;
+                n.y += n.vy * 0.1;
+
+                // Bounds
+                n.x = Math.max(10, Math.min(width - 10, n.x));
+                n.y = Math.max(10, Math.min(height - 10, n.y));
+            });
+
+            // Draw Edges
+            ctx.strokeStyle = '#2d2d2d';
+            ctx.lineWidth = 1;
+            graphEdges.forEach(edge => {
+                const source = graphNodes.find(n => n.id === edge.source);
+                const target = graphNodes.find(n => n.id === edge.target);
+                if(source && target) {
+                    ctx.beginPath();
+                    ctx.moveTo(source.x, source.y);
+                    ctx.lineTo(target.x, target.y);
+                    ctx.stroke();
+                }
+            });
+
+            // Draw Nodes
+            graphNodes.forEach(n => {
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, n.id === activeNoteId ? 6 : 4, 0, 2 * Math.PI);
+                ctx.fillStyle = n.id === activeNoteId ? '#7f6df2' : '#888888';
+                ctx.fill();
+
+                // Labels
+                ctx.font = '10px Inter, sans-serif';
+                ctx.fillStyle = '#dcddde';
+                ctx.fillText(n.title, n.x + 8, n.y + 3);
+            });
+
+            animationFrameId = requestAnimationFrame(drawGraph);
+        }
+
+        // Graph Interaction (Click node to open)
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            for (let n of graphNodes) {
+                const dx = mouseX - n.x;
+                const dy = mouseY - n.y;
+                if (Math.sqrt(dx*dx + dy*dy) < 10) {
+                    openNote(n.id);
+                    break;
+                }
+            }
+        });
+
+        // --- Initialization ---
+        function init() {
+            if(!getActiveNote() && notes.length > 0) {
+                activeNoteId = notes[0].id;
+            }
+            openNote(activeNoteId);
+            setEditMode();
+            updateGraphData();
+            drawGraph();
+        }
+
+        init();
+
+    </script>
 </body>
 </html>
