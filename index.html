@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>COBE - Interactive 3D Dot Matrix Globe</title>
   <style>
-    /* Minimalist Two-Color Setup */
     :root {
       --bg-color: #FAF8F5;
       --fg-color: #1A1A1A;
+      --highlight-color: #1A1A1A;
+      --faded-color: #A09E9B;
     }
 
     * {
@@ -38,7 +39,6 @@
       cursor: grabbing;
     }
 
-    /* Minimal Header */
     header {
       position: absolute;
       top: 40px;
@@ -62,7 +62,24 @@
       text-transform: uppercase;
     }
 
-    /* 2D HTML Labels Overlaid on 3D Globe */
+    #selected-country-banner {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      z-index: 10;
+      pointer-events: none;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #selected-country-banner.visible {
+      opacity: 1;
+    }
+
     .label {
       position: absolute;
       top: 0;
@@ -94,44 +111,49 @@
     }
   </style>
 
-  <!-- External Libraries: Three.js & OrbitControls -->
+  <!-- External Libraries: Three.js, OrbitControls, D3-Geo -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
 
   <header>
     <h1>COBE</h1>
-    <p>5-minute interactive webgl globe</p>
+    <p>Interactive webgl globe</p>
   </header>
+
+  <div id="selected-country-banner">Selected: <span id="country-name">None</span></div>
 
   <div id="canvas-container"></div>
   <div id="labels-container"></div>
 
   <script>
-    // --- Global Configuration ---
     const COLOR_BG = 0xFAF8F5;
     const COLOR_FG = 0x1A1A1A;
+    const COLOR_FADED = 0xB8B5B0;
     const GLOBE_RADIUS = 200;
-    const DOT_COUNT = 9000;
 
-    // Core 3D Scene Variables
     let scene, camera, renderer, controls;
-    let globeGroup;
+    let globeGroup, pointsMesh;
     let locationLabels = [];
     let isAnimatingToLocation = false;
 
-    // Interactive Data Structures
+    let geoData = [];
+    let pointData = []; 
+    let selectedCountryId = null;
+
+    let raycaster = new THREE.Raycaster();
+    let mouse = new THREE.Vector2();
+    let pointerDownPos = { x: 0, y: 0 };
+
     let locations = [
       { id: 'sf', name: 'SAN FRANCISCO', lat: 37.7749, lng: -122.4194 },
       { id: 'ny', name: 'NEW YORK', lat: 40.7128, lng: -74.0060 }
     ];
 
-    let connections = [
-      { from: 'sf', to: 'ny' }
-    ];
+    let connections = [{ from: 'sf', to: 'ny' }];
 
-    // --- Latitude/Longitude Helper Functions ---
     function latLngToVector3(lat, lng, radius) {
       const phi = (90 - lat) * (Math.PI / 180);
       const theta = (lng + 180) * (Math.PI / 180);
@@ -143,43 +165,20 @@
       return new THREE.Vector3(x, y, z);
     }
 
-    // Rough landmass filter using geographic coordinates
-    function isLandmass(lat, lng) {
-      // North America
-      if (lat > 15 && lat < 70 && lng > -170 && lng < -50) return true;
-      // South America
-      if (lat > -55 && lat < 12 && lng > -85 && lng < -35) return true;
-      // Europe
-      if (lat > 35 && lat < 70 && lng > -10 && lng < 40) return true;
-      // Africa
-      if (lat > -35 && lat < 37 && lng > -20 && lng < 52) return true;
-      // Asia
-      if (lat > 5 && lat < 70 && lng > 40 && lng < 145) return true;
-      // Australia
-      if (lat > -45 && lat < -10 && lng > 110 && lng < 155) return true;
-      
-      return false;
-    }
-
-    // --- Initialization ---
-    function init() {
+    async function init() {
       const container = document.getElementById('canvas-container');
 
-      // 1. Scene Setup
       scene = new THREE.Scene();
       scene.background = new THREE.Color(COLOR_BG);
 
-      // 2. Camera Setup
       camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
       camera.position.set(0, 150, 600);
 
-      // 3. Renderer Setup
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       container.appendChild(renderer.domElement);
 
-      // 4. Orbit Controls (Zoom & Rotation)
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
@@ -187,51 +186,71 @@
       controls.minDistance = 300;
       controls.maxDistance = 900;
 
-      // Group to hold all globe elements
       globeGroup = new THREE.Group();
       scene.add(globeGroup);
 
-      // Build Visuals
-      createDotMatrixGlobe();
+      // Load accurate GeoJSON dataset
+      const res = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
+      const data = await res.json();
+      geoData = data.features;
+
+      createAccurateDotMatrixGlobe();
       renderMarkersAndConnections();
 
-      // Events
-      window.addEventListener('resize', onWindowResize);
+      // Click / Selection Event Listeners
+      renderer.domElement.addEventListener('pointerdown', (e) => {
+        pointerDownPos = { x: e.clientX, y: e.clientY };
+      });
 
-      // Start Loop
+      renderer.domElement.addEventListener('pointerup', (e) => {
+        // Prevent trigger on camera drag
+        const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+        if (dist < 5) onGlobeClick(e);
+      });
+
+      window.addEventListener('resize', onWindowResize);
       animate();
     }
 
-    // --- 3D Dot Matrix Globe Generation ---
-    function createDotMatrixGlobe() {
+    function createAccurateDotMatrixGlobe() {
       const positions = [];
-      const goldenRatio = (1 + Math.sqrt(5)) / 2;
+      const colors = [];
+      const baseColor = new THREE.Color(COLOR_FG);
 
-      for (let i = 0; i < DOT_COUNT; i++) {
-        // Fibonacci Sphere Algorithm for uniform distribution
-        const theta = 2 * Math.PI * i / goldenRatio;
-        const phi = Math.acos(1 - 2 * (i + 0.5) / DOT_COUNT);
+      pointData = [];
 
-        const lat = 90 - (phi * 180 / Math.PI);
-        const lng = (theta * 180 / Math.PI) % 360 - 180;
+      // Grid sampling across latitude and longitude
+      const step = 1.6;
+      for (let lat = -85; lat <= 85; lat += step) {
+        for (let lng = -180; lng <= 180; lng += step) {
+          const feature = geoData.find(f => d3.geoContains(f, [lng, lat]));
 
-        // Density filtering: higher density on landmasses
-        const land = isLandmass(lat, lng);
-        if (!land && Math.random() > 0.08) continue;
+          if (feature) {
+            const p = latLngToVector3(lat, lng, GLOBE_RADIUS);
+            positions.push(p.x, p.y, p.z);
+            colors.push(baseColor.r, baseColor.g, baseColor.b);
 
-        const p = latLngToVector3(lat, lng, GLOBE_RADIUS);
-        positions.push(p.x, p.y, p.z);
+            pointData.push({
+              pos: p,
+              countryId: feature.id || feature.properties.ISO_A3 || feature.properties.ADMIN,
+              countryName: feature.properties.ADMIN || feature.properties.name,
+              lat: lat,
+              lng: lng
+            });
+          }
+        }
       }
 
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
       // Circular Point Texture
       const canvas = document.createElement('canvas');
       canvas.width = 16;
       canvas.height = 16;
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#1A1A1A';
+      ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
       ctx.arc(8, 8, 6, 0, Math.PI * 2);
       ctx.fill();
@@ -239,47 +258,82 @@
       const texture = new THREE.CanvasTexture(canvas);
 
       const material = new THREE.PointsMaterial({
-        color: COLOR_FG,
-        size: 3.5,
+        size: 3.2,
+        vertexColors: true,
         map: texture,
         transparent: true,
         alphaTest: 0.5
       });
 
-      const points = new THREE.Points(geometry, material);
-      globeGroup.add(points);
+      pointsMesh = new THREE.Points(geometry, material);
+      globeGroup.add(pointsMesh);
     }
 
-    // --- Render Markers & Connection Arcs ---
+    function onGlobeClick(event) {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      raycaster.params.Points.threshold = 4;
+
+      const intersects = raycaster.intersectObject(pointsMesh);
+
+      if (intersects.length > 0) {
+        const index = intersects[0].index;
+        const clickedPoint = pointData[index];
+
+        if (clickedPoint && clickedPoint.countryId) {
+          selectCountry(clickedPoint.countryId, clickedPoint.countryName);
+        }
+      }
+    }
+
+    function selectCountry(countryId, countryName) {
+      selectedCountryId = countryId;
+
+      const colors = pointsMesh.geometry.attributes.color;
+      const colorActive = new THREE.Color(COLOR_FG);
+      const colorInactive = new THREE.Color(COLOR_FADED);
+
+      pointData.forEach((pt, idx) => {
+        if (pt.countryId === countryId) {
+          colors.setXYZ(idx, colorActive.r, colorActive.g, colorActive.b);
+        } else {
+          colors.setXYZ(idx, colorInactive.r, colorInactive.g, colorInactive.b);
+        }
+      });
+
+      colors.needsUpdate = true;
+
+      // Update UI Banner
+      const banner = document.getElementById('selected-country-banner');
+      const nameSpan = document.getElementById('country-name');
+      nameSpan.innerText = countryName;
+      banner.classList.add('visible');
+    }
+
     function renderMarkersAndConnections() {
       const labelsContainer = document.getElementById('labels-container');
       labelsContainer.innerHTML = '';
       locationLabels = [];
 
-      // Render Locations
       locations.forEach(loc => {
         const pos = latLngToVector3(loc.lat, loc.lng, GLOBE_RADIUS);
 
-        // Marker Point Mesh
         const markerGeo = new THREE.SphereGeometry(3, 16, 16);
         const markerMat = new THREE.MeshBasicMaterial({ color: COLOR_FG });
         const markerMesh = new THREE.Mesh(markerGeo, markerMat);
         markerMesh.position.copy(pos);
         globeGroup.add(markerMesh);
 
-        // HTML Label Element
         const labelDiv = document.createElement('div');
         labelDiv.className = 'label';
         labelDiv.innerText = loc.name;
         labelsContainer.appendChild(labelDiv);
 
-        locationLabels.push({
-          element: labelDiv,
-          pos: pos
-        });
+        locationLabels.push({ element: labelDiv, pos: pos });
       });
 
-      // Render Connections (3D Arcs)
       connections.forEach(conn => {
         const startLoc = locations.find(l => l.id === conn.from);
         const endLoc = locations.find(l => l.id === conn.to);
@@ -288,7 +342,6 @@
           const vStart = latLngToVector3(startLoc.lat, startLoc.lng, GLOBE_RADIUS);
           const vEnd = latLngToVector3(endLoc.lat, endLoc.lng, GLOBE_RADIUS);
 
-          // Calculate Arc Midpoint pulled outward
           const distance = vStart.distanceTo(vEnd);
           const mid = vStart.clone().add(vEnd).multiplyScalar(0.5);
           mid.normalize().multiplyScalar(GLOBE_RADIUS + distance * 0.25);
@@ -310,7 +363,6 @@
       });
     }
 
-    // --- Label Position Tracking ---
     function updateLabels() {
       const tempV = new THREE.Vector3();
 
@@ -318,14 +370,13 @@
         tempV.copy(label.pos);
         tempV.applyMatrix4(globeGroup.matrixWorld);
 
-        // Raycasting check to hide labels on the back side of the globe
         const cameraToPoint = tempV.clone().sub(camera.position).normalize();
         const surfaceNormal = tempV.clone().normalize();
         const dot = cameraToPoint.dot(surfaceNormal);
 
         if (dot < -0.2) {
           tempV.project(camera);
-          const x = (tempV.x *  .5 + .5) * window.innerWidth;
+          const x = (tempV.x * .5 + .5) * window.innerWidth;
           const y = (tempV.y * -.5 + .5) * window.innerHeight;
 
           label.element.style.transform = `translate(-50%, -100%) translate(${x}px,${y}px)`;
@@ -336,18 +387,16 @@
       });
     }
 
-    // --- Window Resize Handler ---
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    // --- Animation Loop ---
     function animate() {
       requestAnimationFrame(animate);
 
-      if (!controls.state == -1 && !isAnimatingToLocation) {
+      if (!controls.state == -1 && !isAnimatingToLocation && !selectedCountryId) {
         globeGroup.rotation.y += 0.001;
       }
 
@@ -355,52 +404,6 @@
       updateLabels();
       renderer.render(scene, camera);
     }
-
-    // --- Dynamic Console API ---
-    window.addLocation = function(locObj) {
-      locations.push(locObj);
-      renderMarkersAndConnections();
-    };
-
-    window.addConnection = function(fromId, toId) {
-      connections.push({ from: fromId, to: toId });
-      renderMarkersAndConnections();
-    };
-
-    window.zoomToLocation = function(lat, lng, nameLabel = 'TARGET') {
-      isAnimatingToLocation = true;
-
-      const tempId = 'temp_' + Date.now();
-      locations.push({ id: tempId, name: nameLabel, lat: lat, lng: lng });
-      renderMarkersAndConnections();
-
-      const targetVec = latLngToVector3(lat, lng, GLOBE_RADIUS);
-      const targetPos = targetVec.clone().normalize().multiplyScalar(450);
-
-      const startPos = camera.position.clone();
-      const duration = 2000;
-      const startTime = performance.now();
-
-      function step(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        const ease = progress < 0.5 
-          ? 4 * progress * progress * progress 
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-        camera.position.lerpVectors(startPos, targetPos, ease);
-        camera.lookAt(0, 0, 0);
-
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        } else {
-          isAnimatingToLocation = false;
-        }
-      }
-
-      requestAnimationFrame(step);
-    };
 
     window.onload = init;
   </script>
