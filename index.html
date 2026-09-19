@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Velvet FM — Late Night Jazz & Curated Radio</title>
+  <title>Velvet FM — Live Global Radio Browser</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -50,135 +50,31 @@
   <script type="text/babel">
     const { useState, useEffect, useRef, useCallback } = React;
 
-    // --- Built-in Preset Library (10+ High Quality Stations) ---
-    const INITIAL_STATIONS = [
-      {
-        id: 'jazz-lounge',
-        category: 'Jazz Lounge',
-        title: 'Midnight Velvet Radio',
-        subtitle: 'Smooth Jazz & Vocal Standards',
-        artist: 'Miles Davis',
-        currentTrack: 'Blue in Green',
-        cover: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3',
-        badge: '24/7 LIVE',
-        accentColor: '#f59e0b',
-        isCustom: false
-      },
-      {
-        id: 'mj-king',
-        category: 'Michael Jackson',
-        title: 'MJ: The King Stream',
-        subtitle: 'Hits, Demos & Live Concerts',
-        artist: 'Michael Jackson',
-        currentTrack: 'Human Nature (Studio Mix)',
-        cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=smooth-jazz-10887.mp3',
-        badge: 'CURATED',
-        accentColor: '#e11d48',
-        isCustom: false
-      },
-      {
-        id: 'queen-rock',
-        category: 'Queen',
-        title: 'Bohemian Radio',
-        subtitle: 'Anthems, Deep Cuts & Solo Works',
-        artist: 'Queen',
-        currentTrack: "Don't Stop Me Now",
-        cover: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=rock-classic-11003.mp3',
-        badge: '24/7 LIVE',
-        accentColor: '#fbbf24',
-        isCustom: false
-      },
-      {
-        id: 'pink-floyd',
-        category: 'Pink Floyd',
-        title: 'Dark Side Echoes',
-        subtitle: 'Progressive & Psychedelic Rock',
-        artist: 'Pink Floyd',
-        currentTrack: 'Shine On You Crazy Diamond',
-        cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c062024e0b.mp3?filename=ambient-rock-12400.mp3',
-        badge: 'HQ AUDIO',
-        accentColor: '#8b5cf6',
-        isCustom: false
-      },
-      {
-        id: 'lofi-beats',
-        category: 'Other Genres',
-        genreTag: 'Lo-Fi Beats',
-        title: 'Midnight Chill Beats',
-        subtitle: 'Lofi Hip Hop & Ambient Beats',
-        artist: 'Lofi Girl & Friends',
-        currentTrack: 'Coffee on a Rainy Sunday',
-        cover: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3',
-        badge: 'CHILL',
-        accentColor: '#10b981',
-        isCustom: false
-      },
-      {
-        id: 'blues-station',
-        category: 'Other Genres',
-        genreTag: 'Blues & Soul',
-        title: 'Deep Delta Blues',
-        subtitle: 'Acoustic Blues & Soulful Vocals',
-        artist: 'BB King Style',
-        currentTrack: 'Midnight Train Blues',
-        cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://cdn.pixabay.com/download/audio/2021/09/06/audio_8b06c071bb.mp3?filename=blues-rock-11005.mp3',
-        badge: 'SOUL',
-        accentColor: '#3b82f6',
-        isCustom: false
-      },
-      {
-        id: 'rock-80s',
-        category: 'Other Genres',
-        genreTag: 'Classic 80s Rock',
-        title: 'Retro Rock Anthem',
-        subtitle: '80s Guitar Solos & Power Anthems',
-        artist: '80s Rock Legends',
-        currentTrack: 'Neon Highway',
-        cover: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c3c3a73467.mp3?filename=rock-guitar-11004.mp3',
-        badge: 'RETRO',
-        accentColor: '#ef4444',
-        isCustom: false
-      },
-      {
-        id: 'chillout-lounge',
-        category: 'Other Genres',
-        genreTag: 'Chillout',
-        title: 'Ambient Deep Chill',
-        subtitle: 'Relaxing Soundscapes & Melodies',
-        artist: 'Solaris Wave',
-        currentTrack: 'Cosmic Drift',
-        cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_993a401b2f.mp3?filename=ambient-space-12000.mp3',
-        badge: 'AMBIENT',
-        accentColor: '#06b6d4',
-        isCustom: false
-      }
+    const PRESET_TAGS = [
+      { label: 'Jazz', query: 'jazz' },
+      { label: 'Michael Jackson', query: 'michael jackson' },
+      { label: 'Queen', query: 'queen' },
+      { label: 'Pink Floyd', query: 'pink floyd' },
+      { label: 'Rock', query: 'rock' },
+      { label: 'Lofi', query: 'lofi' },
+      { label: 'Blues', query: 'blues' },
+      { label: 'Favorites', query: 'favorites' }
     ];
 
-    const OTHER_GENRES = ['Lo-Fi Beats', 'Blues & Soul', 'Classic 80s Rock', 'Chillout', 'My Songs'];
+    const DEFAULT_COVER = 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&q=80&w=800';
 
     // --- SVG Icons ---
     const Icons = {
       Radio: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.315-2.84-.877-4.085" /></svg>,
       Play: ({ className = "w-6 h-6" }) => <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>,
       Pause: ({ className = "w-6 h-6" }) => <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>,
-      Clock: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
-      Maximize: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-2V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>,
-      Minimize: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 14h6m0 0v6m0-6L3 21m17-7h-6m0 0v6m0-6l7 7M10 4v6m0 0H4m6 0L3 3m14 7d-6 0m0 0V4m0 6l7-7" /></svg>,
+      Search: () => <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
       Heart: ({ filled }) => <svg className="w-5 h-5" fill={filled ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
-      Plus: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>,
-      Trash: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
-      Close: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      Refresh: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>,
+      Globe: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11.08M12 21a9 9 0 100-18 9 9 0 000 18z" /></svg>
     };
 
-    // --- Audio Visualizer ---
+    // --- Audio Visualizer Component ---
     function AudioVisualizer({ isPlaying, accentColor }) {
       const canvasRef = useRef(null);
 
@@ -214,7 +110,7 @@
 
             animationFrameId = requestAnimationFrame(render);
           } catch (e) {
-            console.warn("Canvas animation frame bypassed", e);
+            console.warn("Canvas animation frame error", e);
           }
         };
 
@@ -236,289 +132,115 @@
       );
     }
 
-    // --- Zen Mode Modal ---
-    function ZenMode({ station, isPlaying, togglePlay, onClose, isLiked, toggleLike }) {
-      return (
-        <div className="fixed inset-0 z-50 bg-[#0d0d0d] bg-opacity-95 backdrop-blur-2xl flex flex-col items-center justify-between p-8 text-center text-zinc-100">
-          <div className="w-full max-w-4xl flex justify-between items-center">
-            <span className="text-xs uppercase tracking-widest text-amber-500/80 font-mono">Zen Mode</span>
-            <button 
-              onClick={onClose} 
-              className="p-3 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white transition"
-            >
-              <Icons.Minimize />
-            </button>
-          </div>
-
-          <div className="flex flex-col items-center my-auto space-y-6">
-            <div className="relative">
-              <div 
-                className={`absolute -inset-2 rounded-full blur-2xl opacity-30 transition duration-1000 ${
-                  isPlaying ? 'animate-pulse' : ''
-                }`}
-                style={{ backgroundColor: station.accentColor }}
-              />
-              <img 
-                src={station.cover} 
-                alt={station.title} 
-                className="relative w-64 h-64 md:w-72 md:h-72 object-cover rounded-full shadow-2xl border border-zinc-800/80"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <h2 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight">{station.currentTrack}</h2>
-              <p className="text-zinc-400 text-sm font-sans">{station.artist} — <span className="text-zinc-500">{station.title}</span></p>
-            </div>
-
-            <AudioVisualizer isPlaying={isPlaying} accentColor={station.accentColor} />
-          </div>
-
-          <div className="flex items-center space-x-6 mb-4">
-            <button 
-              onClick={toggleLike}
-              className={`p-3.5 rounded-full transition ${isLiked ? 'text-amber-500 bg-amber-500/10' : 'text-zinc-500 hover:text-white'}`}
-            >
-              <Icons.Heart filled={isLiked} />
-            </button>
-
-            <button 
-              onClick={togglePlay}
-              className="p-5 rounded-full bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 transition transform active:scale-95"
-            >
-              {isPlaying ? <Icons.Pause /> : <Icons.Play className="w-6 h-6 ml-0.5" />}
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    // --- Add Custom Song / Station Modal ---
-    function AddCustomModal({ isOpen, onClose, onAddStation }) {
-      const [title, setTitle] = useState('');
-      const [artist, setArtist] = useState('');
-      const [category, setCategory] = useState('Jazz Lounge');
-      const [streamUrl, setStreamUrl] = useState('');
-      const [coverUrl, setCoverUrl] = useState('');
-      const [testing, setTesting] = useState(false);
-      const [error, setError] = useState('');
-
-      if (!isOpen) return null;
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!title.trim() || !streamUrl.trim()) {
-          setError('Please fill in the title and stream URL.');
-          return;
-        }
-
-        setError('');
-        setTesting(true);
-
-        // HTML5 Audio Test Buffer
-        const testAudio = new Audio();
-        testAudio.src = streamUrl;
-
-        const cleanup = () => {
-          testAudio.removeEventListener('canplay', handleSuccess);
-          testAudio.removeEventListener('error', handleError);
-        };
-
-        const handleSuccess = () => {
-          cleanup();
-          setTesting(false);
-          const newStation = {
-            id: 'custom-' + Date.now(),
-            category: category,
-            genreTag: category === 'Other Genres' ? 'My Songs' : category,
-            title: title,
-            subtitle: 'User Custom Station',
-            artist: artist || 'Custom Artist',
-            currentTrack: title,
-            cover: coverUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800',
-            streamUrl: streamUrl,
-            badge: 'CUSTOM',
-            accentColor: '#f59e0b',
-            isCustom: true
-          };
-          onAddStation(newStation);
-          onClose();
-        };
-
-        const handleError = () => {
-          cleanup();
-          setTesting(false);
-          setError('Unable to load audio stream from URL. Please check the link.');
-        };
-
-        testAudio.addEventListener('canplay', handleSuccess);
-        testAudio.addEventListener('error', handleError);
-        testAudio.load();
-
-        // Fallback timeout in case stream hangs
-        setTimeout(() => {
-          if (testing) {
-            cleanup();
-            setTesting(false);
-            // Allow adding anyway if network test times out
-            handleSuccess();
-          }
-        }, 4000);
-      };
-
-      return (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#18181b] border border-zinc-800 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
-            <button 
-              onClick={onClose}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-white transition"
-            >
-              <Icons.Close />
-            </button>
-
-            <h3 className="font-serif text-xl font-bold text-white mb-1">Add Song / Station</h3>
-            <p className="text-xs text-zinc-400 mb-5">Enter an MP3 or live stream URL to add to your library.</p>
-
-            {error && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4 text-sm">
-              <div>
-                <label className="block text-xs font-mono text-zinc-400 mb-1">Title / Track Name *</label>
-                <input 
-                  type="text" 
-                  value={title} 
-                  onChange={e => setTitle(e.target.value)}
-                  placeholder="e.g. Autumn Leaves" 
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-zinc-400 mb-1">Artist Name</label>
-                <input 
-                  type="text" 
-                  value={artist} 
-                  onChange={e => setArtist(e.target.value)}
-                  placeholder="e.g. Chet Baker" 
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-zinc-400 mb-1">Category / Genre</label>
-                <select 
-                  value={category} 
-                  onChange={e => setCategory(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
-                >
-                  <option value="Jazz Lounge">Jazz Lounge</option>
-                  <option value="Michael Jackson">Michael Jackson</option>
-                  <option value="Queen">Queen</option>
-                  <option value="Pink Floyd">Pink Floyd</option>
-                  <option value="Other Genres">Other / My Songs</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-zinc-400 mb-1">Audio Stream URL (.mp3 / .m3u8) *</label>
-                <input 
-                  type="url" 
-                  value={streamUrl} 
-                  onChange={e => setStreamUrl(e.target.value)}
-                  placeholder="https://example.com/audio.mp3" 
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-zinc-400 mb-1">Cover Image URL (Optional)</label>
-                <input 
-                  type="url" 
-                  value={coverUrl} 
-                  onChange={e => setCoverUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..." 
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div className="pt-2 flex justify-end space-x-3">
-                <button 
-                  type="button" 
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs transition"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={testing}
-                  className="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-semibold text-xs transition flex items-center space-x-2"
-                >
-                  {testing ? 'Testing URL...' : 'Add & Play'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      );
-    }
-
     // --- Main App ---
     function App() {
-      const [stations, setStations] = useState(() => {
-        const saved = localStorage.getItem('velvet_custom_stations');
-        return saved ? [...INITIAL_STATIONS, ...JSON.parse(saved)] : INITIAL_STATIONS;
+      const [stations, setStations] = useState([]);
+      const [currentStation, setCurrentStation] = useState(null);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [isLoading, setIsLoading] = useState(true);
+      const [isStreamLoading, setIsStreamLoading] = useState(false);
+      const [streamError, setStreamError] = useState(null);
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedTag, setSelectedTag] = useState('jazz');
+      
+      // LocalStorage Favorites Persistent State
+      const [favorites, setFavorites] = useState(() => {
+        const saved = localStorage.getItem('velvet_radio_favorites');
+        return saved ? JSON.parse(saved) : [];
       });
 
-      const [currentStation, setCurrentStation] = useState(stations[0]);
-      const [isPlaying, setIsPlaying] = useState(false);
-      const [volume, setVolume] = useState(0.8);
-      const [isMuted, setIsMuted] = useState(false);
-      const [isLiked, setIsLiked] = useState(false);
-      const [audioQuality, setAudioQuality] = useState('HD');
-      const [activeCategory, setActiveCategory] = useState('All');
-      const [isZenMode, setIsZenMode] = useState(false);
-      const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-      const [sleepTimer, setSleepTimer] = useState(null);
-
-      // Dedicated Audio Engine Reference
       const audioRef = useRef(null);
 
-      // Clean Audio Sync Effect with Safe Async Handling
+      // Fetch Stations from Radio-Browser API
+      const fetchStations = async (query, isTag = true) => {
+        setIsLoading(true);
+        setStreamError(null);
+        try {
+          let url = '';
+          if (query === 'favorites') {
+            setStations(favorites);
+            setIsLoading(false);
+            if (!currentStation && favorites.length > 0) {
+              setCurrentStation(favorites[0]);
+            }
+            return;
+          }
+
+          if (isTag) {
+            url = `https://de1.api.radio-browser.info/json/stations/bytag/${encodeURIComponent(query)}?limit=40&order=votes&reverse=true`;
+          } else {
+            url = `https://de1.api.radio-browser.info/json/stations/search?name=${encodeURIComponent(query)}&limit=40&order=votes&reverse=true`;
+          }
+
+          const response = await fetch(url);
+          const data = await response.json();
+
+          const formatted = data.map(st => ({
+            id: st.stationuuid,
+            name: st.name ? st.name.trim() : 'Live Station',
+            tags: st.tags ? st.tags.split(',').slice(0, 3).join(', ') : 'Music',
+            country: st.countrycode || st.country || 'Global',
+            bitrate: st.bitrate ? `${st.bitrate} kbps` : 'HD Stream',
+            favicon: st.favicon && st.favicon.startsWith('http') ? st.favicon : DEFAULT_COVER,
+            streamUrl: st.url_resolved || st.url,
+            votes: st.votes || 0
+          })).filter(st => st.streamUrl);
+
+          setStations(formatted);
+          if (formatted.length > 0 && !currentStation) {
+            setCurrentStation(formatted[0]);
+          }
+        } catch (err) {
+          console.error('Failed to fetch radio stations', err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      useEffect(() => {
+        fetchStations(selectedTag, true);
+      }, [selectedTag]);
+
+      // Save Favorites to LocalStorage
+      useEffect(() => {
+        localStorage.setItem('velvet_radio_favorites', JSON.stringify(favorites));
+      }, [favorites]);
+
+      // Audio Playback Handling
       useEffect(() => {
         const audio = audioRef.current;
-        if (!audio) return;
+        if (!audio || !currentStation) return;
+
+        setIsStreamLoading(isPlaying);
+        setStreamError(null);
 
         if (isPlaying) {
           const playPromise = audio.play();
           if (playPromise !== undefined) {
-            playPromise.catch((error) => {
-              console.warn("Playback error gracefully handled:", error);
+            playPromise.then(() => {
+              setIsStreamLoading(false);
+            }).catch((error) => {
+              console.warn("Playback error:", error);
               setIsPlaying(false);
+              setIsStreamLoading(false);
+              setStreamError('Failed to load stream. URL might be offline.');
             });
           }
         } else {
           audio.pause();
+          setIsStreamLoading(false);
         }
       }, [isPlaying, currentStation]);
 
-      useEffect(() => {
-        if (audioRef.current) {
-          audioRef.current.volume = isMuted ? 0 : volume;
-        }
-      }, [volume, isMuted]);
-
       const togglePlay = useCallback(() => {
+        if (!currentStation && stations.length > 0) {
+          setCurrentStation(stations[0]);
+        }
         setIsPlaying(prev => !prev);
-      }, []);
+      }, [currentStation, stations]);
 
       const selectStation = (station) => {
-        if (currentStation.id === station.id) {
+        if (currentStation && currentStation.id === station.id) {
           togglePlay();
         } else {
           setCurrentStation(station);
@@ -526,268 +248,238 @@
         }
       };
 
-      const handleAddStation = (newStation) => {
-        const customStations = stations.filter(s => s.isCustom);
-        const updatedCustom = [...customStations, newStation];
-        localStorage.setItem('velvet_custom_stations', JSON.stringify(updatedCustom));
-        
-        setStations([...INITIAL_STATIONS, ...updatedCustom]);
-        setCurrentStation(newStation);
-        setIsPlaying(true);
-      };
-
-      const handleDeleteStation = (e, stationId) => {
-        e.stopPropagation();
-        const updated = stations.filter(s => s.id !== stationId);
-        const customOnly = updated.filter(s => s.isCustom);
-        localStorage.setItem('velvet_custom_stations', JSON.stringify(customOnly));
-        
-        setStations(updated);
-        if (currentStation.id === stationId) {
-          setCurrentStation(updated[0] || INITIAL_STATIONS[0]);
-          setIsPlaying(false);
+      const toggleFavorite = (station) => {
+        const exists = favorites.some(f => f.id === station.id);
+        if (exists) {
+          setFavorites(favorites.filter(f => f.id !== station.id));
+        } else {
+          setFavorites([...favorites, station]);
         }
       };
 
-      const handleSleepTimer = (minutes) => {
-        setSleepTimer(minutes);
-        if (minutes) {
-          setTimeout(() => {
-            setIsPlaying(false);
-            setSleepTimer(null);
-          }, minutes * 60 * 1000);
+      const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+          setSelectedTag('');
+          fetchStations(searchQuery, false);
         }
       };
 
-      const filteredStations = stations.filter(s => {
-        if (activeCategory === 'All') return true;
-        if (activeCategory === 'My Songs') return s.isCustom;
-        if (OTHER_GENRES.includes(activeCategory)) return s.genreTag === activeCategory;
-        return s.category === activeCategory;
-      });
+      const isCurrentFavorite = currentStation && favorites.some(f => f.id === currentStation.id);
 
       return (
         <div className="min-h-screen bg-[#121212] text-zinc-100 font-sans antialiased flex flex-col justify-between relative">
           
-          {/* Native Standard Audio Element */}
-          <audio 
-            ref={audioRef} 
-            src={currentStation.streamUrl} 
-            preload="none"
-            playsInline
-            webkit-playsinline="true"
-            x5-playsinline="true"
-          />
+          {/* HTML5 Native Audio Player */}
+          {currentStation && (
+            <audio 
+              ref={audioRef} 
+              src={currentStation.streamUrl} 
+              preload="none"
+              playsInline
+              webkit-playsinline="true"
+              x5-playsinline="true"
+              onError={() => {
+                setIsPlaying(false);
+                setIsStreamLoading(false);
+                setStreamError('Stream is temporarily offline.');
+              }}
+            />
+          )}
 
           {/* Header */}
-          <header className="px-6 py-4 border-b border-zinc-800/40 bg-[#0d0d0d]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between">
+          <header className="px-6 py-4 border-b border-zinc-800/40 bg-[#0d0d0d]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center space-x-3">
               <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20">
                 <Icons.Radio />
               </div>
               <div>
                 <h1 className="font-serif text-lg tracking-tight font-bold text-white">VELVET FM</h1>
-                <p className="text-[10px] text-zinc-500 font-mono tracking-widest uppercase">Late Night Lounge</p>
+                <p className="text-[10px] text-zinc-500 font-mono tracking-widest uppercase">Live Global Radio</p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
-              {/* Add Custom Song Button */}
-              <button 
-                onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs hover:bg-amber-500/20 transition"
-              >
-                <Icons.Plus />
-                <span className="font-medium">Add Station</span>
-              </button>
-
-              {/* Sleep Timer */}
-              <div className="relative group">
-                <button className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 hover:text-white transition">
-                  <Icons.Clock />
-                  <span>{sleepTimer ? `${sleepTimer}m` : 'Sleep'}</span>
-                </button>
-                <div className="absolute right-0 mt-2 w-32 bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none group-hover:pointer-events-auto p-1 z-40">
-                  {[15, 30, 60].map((mins) => (
-                    <button
-                      key={mins}
-                      onClick={() => handleSleepTimer(mins)}
-                      className="w-full text-left px-3 py-1.5 text-xs text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition"
-                    >
-                      {mins} Minutes
-                    </button>
-                  ))}
-                </div>
+            {/* Search Input Bar */}
+            <form onSubmit={handleSearchSubmit} className="relative w-full max-w-xs">
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search station, artist, or genre..." 
+                className="w-full bg-zinc-900/90 border border-zinc-800 rounded-full pl-9 pr-4 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500/50 transition"
+              />
+              <div className="absolute left-3 top-2.5">
+                <Icons.Search />
               </div>
-
-              {/* Zen Mode Button */}
-              <button 
-                onClick={() => setIsZenMode(true)}
-                className="p-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-amber-500 transition"
-                title="Zen Mode"
-              >
-                <Icons.Maximize />
-              </button>
-            </div>
+            </form>
           </header>
 
           {/* Main Workspace */}
           <main className="max-w-7xl mx-auto w-full px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
             
             {/* Center Player Hero */}
-            <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#0d0d0d]/50 rounded-3xl p-8 border border-zinc-800/30 backdrop-blur-sm relative overflow-hidden">
+            <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#0d0d0d]/50 rounded-3xl p-8 border border-zinc-800/30 backdrop-blur-sm relative overflow-hidden min-h-[420px]">
               
-              {/* Soft Ambient Glow */}
-              <div 
-                className="absolute inset-0 opacity-10 blur-3xl pointer-events-none -z-10 transition-colors duration-700"
-                style={{ backgroundColor: currentStation.accentColor }}
-              />
+              {currentStation ? (
+                <>
+                  <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono mb-6">
+                    <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-amber-500 animate-ping' : 'bg-zinc-600'}`} />
+                    <span>{isStreamLoading ? 'CONNECTING...' : isPlaying ? '24/7 LIVE STREAM' : 'PAUSED'}</span>
+                  </span>
 
-              <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono mb-6">
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-                <span>{currentStation.badge}</span>
-              </span>
+                  <div className="relative mb-6">
+                    <img 
+                      src={currentStation.favicon} 
+                      onError={(e) => { e.target.src = DEFAULT_COVER; }}
+                      alt={currentStation.name} 
+                      className="w-56 h-56 md:w-64 md:h-64 object-cover rounded-2xl shadow-2xl border border-zinc-800/80 bg-zinc-900"
+                    />
+                  </div>
 
-              <div className="relative mb-6">
-                <img 
-                  src={currentStation.cover} 
-                  alt={currentStation.title} 
-                  className="w-60 h-60 md:w-72 md:h-72 object-cover rounded-2xl shadow-2xl border border-zinc-800/80"
-                />
-              </div>
+                  <div className="text-center space-y-1 mb-2 max-w-md">
+                    <h2 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight text-white truncate">
+                      {currentStation.name}
+                    </h2>
+                    <p className="text-zinc-400 font-sans text-xs flex items-center justify-center gap-2">
+                      <span className="text-amber-500/90 font-mono">{currentStation.bitrate}</span>
+                      <span>•</span>
+                      <span className="uppercase text-zinc-500">{currentStation.country}</span>
+                    </p>
+                  </div>
 
-              <div className="text-center space-y-1 mb-2">
-                <h2 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight text-white">
-                  {currentStation.currentTrack}
-                </h2>
-                <p className="text-zinc-400 font-sans text-sm">
-                  {currentStation.artist} — <span className="text-zinc-500">{currentStation.title}</span>
-                </p>
-              </div>
+                  {/* Error Notification */}
+                  {streamError && (
+                    <div className="mt-2 text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-1 rounded-lg">
+                      {streamError}
+                    </div>
+                  )}
 
-              <AudioVisualizer isPlaying={isPlaying} accentColor={currentStation.accentColor} />
+                  <AudioVisualizer isPlaying={isPlaying && !isStreamLoading} accentColor="#f59e0b" />
 
-              {/* Player Controls */}
-              <div className="flex items-center space-x-6 mt-4">
-                <button 
-                  onClick={() => setIsLiked(!isLiked)}
-                  className={`p-3 rounded-full border border-zinc-800/60 transition ${
-                    isLiked ? 'text-amber-500 bg-amber-500/10 border-amber-500/30' : 'text-zinc-400 hover:text-white bg-zinc-900/50'
-                  }`}
-                >
-                  <Icons.Heart filled={isLiked} />
-                </button>
+                  {/* Controls */}
+                  <div className="flex items-center space-x-6 mt-4">
+                    <button 
+                      onClick={() => toggleFavorite(currentStation)}
+                      className={`p-3 rounded-full border border-zinc-800/60 transition ${
+                        isCurrentFavorite ? 'text-amber-500 bg-amber-500/10 border-amber-500/30' : 'text-zinc-400 hover:text-white bg-zinc-900/50'
+                      }`}
+                    >
+                      <Icons.Heart filled={isCurrentFavorite} />
+                    </button>
 
-                <button 
-                  onClick={togglePlay}
-                  className="p-5 rounded-full bg-amber-500 hover:bg-amber-400 text-black shadow-xl shadow-amber-500/20 transition transform active:scale-95"
-                >
-                  {isPlaying ? <Icons.Pause className="w-7 h-7" /> : <Icons.Play className="w-7 h-7 ml-0.5" />}
-                </button>
-
-                <button 
-                  onClick={() => setAudioQuality(audioQuality === 'HD' ? 'SD' : 'HD')}
-                  className="px-3 py-1.5 text-xs font-mono rounded-lg border border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white transition"
-                >
-                  {audioQuality}
-                </button>
-              </div>
+                    <button 
+                      onClick={togglePlay}
+                      disabled={isStreamLoading}
+                      className="p-5 rounded-full bg-amber-500 hover:bg-amber-400 text-black shadow-xl shadow-amber-500/20 transition transform active:scale-95 disabled:opacity-50"
+                    >
+                      {isPlaying ? <Icons.Pause className="w-7 h-7" /> : <Icons.Play className="w-7 h-7 ml-0.5" />}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="text-zinc-500 text-sm">Select a station to start listening</div>
+              )}
             </div>
 
-            {/* Channels & Station Grid */}
+            {/* Live Stations Sidebar List */}
             <div className="lg:col-span-5 flex flex-col space-y-6">
+              
+              {/* Category & Preset Tags */}
               <div className="space-y-3">
-                <h3 className="text-xs uppercase tracking-wider text-zinc-500 font-mono">Curated Channels</h3>
+                <h3 className="text-xs uppercase tracking-wider text-zinc-500 font-mono">Filter by Tag</h3>
                 <div className="flex flex-wrap gap-2">
-                  {['All', 'Jazz Lounge', 'Michael Jackson', 'Queen', 'Pink Floyd', ...OTHER_GENRES].map((cat) => (
+                  {PRESET_TAGS.map((tag) => (
                     <button
-                      key={cat}
-                      onClick={() => setActiveCategory(cat)}
+                      key={tag.query}
+                      onClick={() => {
+                        setSelectedTag(tag.query);
+                        fetchStations(tag.query, true);
+                      }}
                       className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
-                        activeCategory === cat
+                        selectedTag === tag.query
                           ? 'bg-amber-500 text-black font-semibold'
                           : 'bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800'
                       }`}
                     >
-                      {cat}
+                      {tag.label}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Station List */}
+              {/* Live Stations Feed */}
               <div className="space-y-3 overflow-y-auto max-h-[460px] pr-1">
-                {filteredStations.map((station) => {
-                  const isActive = currentStation.id === station.id;
-                  return (
-                    <div
-                      key={station.id}
-                      onClick={() => selectStation(station)}
-                      className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between group ${
-                        isActive
-                          ? 'bg-amber-500/10 border-amber-500/40 text-white'
-                          : 'bg-zinc-900/40 hover:bg-zinc-900/80 border-zinc-800/60 text-zinc-300'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3.5 overflow-hidden">
-                        <img 
-                          src={station.cover} 
-                          alt={station.title} 
-                          className="w-12 h-12 rounded-xl object-cover border border-zinc-800/80 flex-shrink-0"
-                        />
-                        <div className="truncate">
-                          <h4 className="font-semibold text-sm truncate">{station.title}</h4>
-                          <p className="text-xs text-zinc-400 truncate">{station.artist}</p>
+                {isLoading ? (
+                  <div className="text-center py-12 text-zinc-500 text-xs font-mono animate-pulse">
+                    Loading live streams...
+                  </div>
+                ) : stations.length === 0 ? (
+                  <div className="text-center py-12 text-zinc-500 text-xs">
+                    No live streams found. Try another tag or search term.
+                  </div>
+                ) : (
+                  stations.map((station) => {
+                    const isActive = currentStation && currentStation.id === station.id;
+                    const isFav = favorites.some(f => f.id === station.id);
+
+                    return (
+                      <div
+                        key={station.id}
+                        onClick={() => selectStation(station)}
+                        className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between group ${
+                          isActive
+                            ? 'bg-amber-500/10 border-amber-500/40 text-white'
+                            : 'bg-zinc-900/40 hover:bg-zinc-900/80 border-zinc-800/60 text-zinc-300'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3.5 overflow-hidden">
+                          <img 
+                            src={station.favicon} 
+                            onError={(e) => { e.target.src = DEFAULT_COVER; }}
+                            alt={station.name} 
+                            className="w-11 h-11 rounded-xl object-cover border border-zinc-800/80 bg-zinc-900 flex-shrink-0"
+                          />
+                          <div className="truncate">
+                            <h4 className="font-semibold text-sm truncate">{station.name}</h4>
+                            <div className="flex items-center gap-2 text-xs text-zinc-500 truncate">
+                              <span className="text-amber-500/80">{station.bitrate}</span>
+                              <span>•</span>
+                              <span className="truncate">{station.tags}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite(station);
+                            }}
+                            className={`p-1.5 transition ${isFav ? 'text-amber-500' : 'text-zinc-600 hover:text-zinc-300'}`}
+                          >
+                            <Icons.Heart filled={isFav} />
+                          </button>
+
+                          <button className={`p-2.5 rounded-full transition ${
+                            isActive && isPlaying 
+                              ? 'bg-amber-500 text-black' 
+                              : 'bg-zinc-800 text-zinc-400 group-hover:text-white'
+                          }`}>
+                            {isActive && isPlaying ? <Icons.Pause className="w-4 h-4" /> : <Icons.Play className="w-4 h-4" />}
+                          </button>
                         </div>
                       </div>
-
-                      <div className="flex items-center space-x-2">
-                        {station.isCustom && (
-                          <button
-                            onClick={(e) => handleDeleteStation(e, station.id)}
-                            className="p-1.5 text-zinc-500 hover:text-red-400 transition"
-                            title="Delete custom station"
-                          >
-                            <Icons.Trash />
-                          </button>
-                        )}
-                        <button className={`p-2.5 rounded-full transition ${
-                          isActive && isPlaying 
-                            ? 'bg-amber-500 text-black' 
-                            : 'bg-zinc-800 text-zinc-400 group-hover:text-white'
-                        }`}>
-                          {isActive && isPlaying ? <Icons.Pause className="w-4 h-4" /> : <Icons.Play className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
           </main>
 
           {/* Footer */}
           <footer className="px-6 py-4 border-t border-zinc-900 text-center text-xs text-zinc-600">
-            Velvet FM — Late Night Jazz & Curated Audio Streaming Experience
+            Powered by Radio-Browser Open API — Velvet FM
           </footer>
-
-          {/* Modals */}
-          {isZenMode && (
-            <ZenMode 
-              station={currentStation} 
-              isPlaying={isPlaying} 
-              togglePlay={togglePlay} 
-              onClose={() => setIsZenMode(false)}
-              isLiked={isLiked}
-              toggleLike={() => setIsLiked(!isLiked)}
-            />
-          )}
-
-          <AddCustomModal 
-            isOpen={isAddModalOpen} 
-            onClose={() => setIsAddModalOpen(false)} 
-            onAddStation={handleAddStation}
-          />
 
         </div>
       );
