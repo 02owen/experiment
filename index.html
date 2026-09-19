@@ -50,8 +50,8 @@
   <script type="text/babel">
     const { useState, useEffect, useRef, useCallback } = React;
 
-    // --- Reliable Free MP3 / Stream URLs ---
-    const STATIONS = [
+    // --- Built-in Preset Library (10+ High Quality Stations) ---
+    const INITIAL_STATIONS = [
       {
         id: 'jazz-lounge',
         category: 'Jazz Lounge',
@@ -63,6 +63,7 @@
         streamUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3',
         badge: '24/7 LIVE',
         accentColor: '#f59e0b',
+        isCustom: false
       },
       {
         id: 'mj-king',
@@ -75,6 +76,7 @@
         streamUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=smooth-jazz-10887.mp3',
         badge: 'CURATED',
         accentColor: '#e11d48',
+        isCustom: false
       },
       {
         id: 'queen-rock',
@@ -87,6 +89,7 @@
         streamUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=rock-classic-11003.mp3',
         badge: '24/7 LIVE',
         accentColor: '#fbbf24',
+        isCustom: false
       },
       {
         id: 'pink-floyd',
@@ -99,6 +102,7 @@
         streamUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c062024e0b.mp3?filename=ambient-rock-12400.mp3',
         badge: 'HQ AUDIO',
         accentColor: '#8b5cf6',
+        isCustom: false
       },
       {
         id: 'lofi-beats',
@@ -112,12 +116,55 @@
         streamUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3',
         badge: 'CHILL',
         accentColor: '#10b981',
+        isCustom: false
       },
+      {
+        id: 'blues-station',
+        category: 'Other Genres',
+        genreTag: 'Blues & Soul',
+        title: 'Deep Delta Blues',
+        subtitle: 'Acoustic Blues & Soulful Vocals',
+        artist: 'BB King Style',
+        currentTrack: 'Midnight Train Blues',
+        cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800',
+        streamUrl: 'https://cdn.pixabay.com/download/audio/2021/09/06/audio_8b06c071bb.mp3?filename=blues-rock-11005.mp3',
+        badge: 'SOUL',
+        accentColor: '#3b82f6',
+        isCustom: false
+      },
+      {
+        id: 'rock-80s',
+        category: 'Other Genres',
+        genreTag: 'Classic 80s Rock',
+        title: 'Retro Rock Anthem',
+        subtitle: '80s Guitar Solos & Power Anthems',
+        artist: '80s Rock Legends',
+        currentTrack: 'Neon Highway',
+        cover: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?auto=format&fit=crop&q=80&w=800',
+        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c3c3a73467.mp3?filename=rock-guitar-11004.mp3',
+        badge: 'RETRO',
+        accentColor: '#ef4444',
+        isCustom: false
+      },
+      {
+        id: 'chillout-lounge',
+        category: 'Other Genres',
+        genreTag: 'Chillout',
+        title: 'Ambient Deep Chill',
+        subtitle: 'Relaxing Soundscapes & Melodies',
+        artist: 'Solaris Wave',
+        currentTrack: 'Cosmic Drift',
+        cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800',
+        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_993a401b2f.mp3?filename=ambient-space-12000.mp3',
+        badge: 'AMBIENT',
+        accentColor: '#06b6d4',
+        isCustom: false
+      }
     ];
 
-    const OTHER_GENRES = ['Lo-Fi Beats', 'Blues & Soul', 'Classic 80s Rock', 'Chillout'];
+    const OTHER_GENRES = ['Lo-Fi Beats', 'Blues & Soul', 'Classic 80s Rock', 'Chillout', 'My Songs'];
 
-    // --- Isolated SVG Icons ---
+    // --- SVG Icons ---
     const Icons = {
       Radio: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.315-2.84-.877-4.085" /></svg>,
       Play: ({ className = "w-6 h-6" }) => <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>,
@@ -126,11 +173,12 @@
       Maximize: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-2V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>,
       Minimize: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 14h6m0 0v6m0-6L3 21m17-7h-6m0 0v6m0-6l7 7M10 4v6m0 0H4m6 0L3 3m14 7d-6 0m0 0V4m0 6l7-7" /></svg>,
       Heart: ({ filled }) => <svg className="w-5 h-5" fill={filled ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
-      Volume: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z" /></svg>,
-      Mute: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+      Plus: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>,
+      Trash: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
+      Close: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
     };
 
-    // --- Isolated Safe Visualizer ---
+    // --- Audio Visualizer ---
     function AudioVisualizer({ isPlaying, accentColor }) {
       const canvasRef = useRef(null);
 
@@ -244,9 +292,190 @@
       );
     }
 
+    // --- Add Custom Song / Station Modal ---
+    function AddCustomModal({ isOpen, onClose, onAddStation }) {
+      const [title, setTitle] = useState('');
+      const [artist, setArtist] = useState('');
+      const [category, setCategory] = useState('Jazz Lounge');
+      const [streamUrl, setStreamUrl] = useState('');
+      const [coverUrl, setCoverUrl] = useState('');
+      const [testing, setTesting] = useState(false);
+      const [error, setError] = useState('');
+
+      if (!isOpen) return null;
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!title.trim() || !streamUrl.trim()) {
+          setError('Please fill in the title and stream URL.');
+          return;
+        }
+
+        setError('');
+        setTesting(true);
+
+        // HTML5 Audio Test Buffer
+        const testAudio = new Audio();
+        testAudio.src = streamUrl;
+
+        const cleanup = () => {
+          testAudio.removeEventListener('canplay', handleSuccess);
+          testAudio.removeEventListener('error', handleError);
+        };
+
+        const handleSuccess = () => {
+          cleanup();
+          setTesting(false);
+          const newStation = {
+            id: 'custom-' + Date.now(),
+            category: category,
+            genreTag: category === 'Other Genres' ? 'My Songs' : category,
+            title: title,
+            subtitle: 'User Custom Station',
+            artist: artist || 'Custom Artist',
+            currentTrack: title,
+            cover: coverUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800',
+            streamUrl: streamUrl,
+            badge: 'CUSTOM',
+            accentColor: '#f59e0b',
+            isCustom: true
+          };
+          onAddStation(newStation);
+          onClose();
+        };
+
+        const handleError = () => {
+          cleanup();
+          setTesting(false);
+          setError('Unable to load audio stream from URL. Please check the link.');
+        };
+
+        testAudio.addEventListener('canplay', handleSuccess);
+        testAudio.addEventListener('error', handleError);
+        testAudio.load();
+
+        // Fallback timeout in case stream hangs
+        setTimeout(() => {
+          if (testing) {
+            cleanup();
+            setTesting(false);
+            // Allow adding anyway if network test times out
+            handleSuccess();
+          }
+        }, 4000);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#18181b] border border-zinc-800 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
+            <button 
+              onClick={onClose}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white transition"
+            >
+              <Icons.Close />
+            </button>
+
+            <h3 className="font-serif text-xl font-bold text-white mb-1">Add Song / Station</h3>
+            <p className="text-xs text-zinc-400 mb-5">Enter an MP3 or live stream URL to add to your library.</p>
+
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+              <div>
+                <label className="block text-xs font-mono text-zinc-400 mb-1">Title / Track Name *</label>
+                <input 
+                  type="text" 
+                  value={title} 
+                  onChange={e => setTitle(e.target.value)}
+                  placeholder="e.g. Autumn Leaves" 
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-zinc-400 mb-1">Artist Name</label>
+                <input 
+                  type="text" 
+                  value={artist} 
+                  onChange={e => setArtist(e.target.value)}
+                  placeholder="e.g. Chet Baker" 
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-zinc-400 mb-1">Category / Genre</label>
+                <select 
+                  value={category} 
+                  onChange={e => setCategory(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                >
+                  <option value="Jazz Lounge">Jazz Lounge</option>
+                  <option value="Michael Jackson">Michael Jackson</option>
+                  <option value="Queen">Queen</option>
+                  <option value="Pink Floyd">Pink Floyd</option>
+                  <option value="Other Genres">Other / My Songs</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-zinc-400 mb-1">Audio Stream URL (.mp3 / .m3u8) *</label>
+                <input 
+                  type="url" 
+                  value={streamUrl} 
+                  onChange={e => setStreamUrl(e.target.value)}
+                  placeholder="https://example.com/audio.mp3" 
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-zinc-400 mb-1">Cover Image URL (Optional)</label>
+                <input 
+                  type="url" 
+                  value={coverUrl} 
+                  onChange={e => setCoverUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/..." 
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end space-x-3">
+                <button 
+                  type="button" 
+                  onClick={onClose}
+                  className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs transition"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={testing}
+                  className="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-semibold text-xs transition flex items-center space-x-2"
+                >
+                  {testing ? 'Testing URL...' : 'Add & Play'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
     // --- Main App ---
     function App() {
-      const [currentStation, setCurrentStation] = useState(STATIONS[0]);
+      const [stations, setStations] = useState(() => {
+        const saved = localStorage.getItem('velvet_custom_stations');
+        return saved ? [...INITIAL_STATIONS, ...JSON.parse(saved)] : INITIAL_STATIONS;
+      });
+
+      const [currentStation, setCurrentStation] = useState(stations[0]);
       const [isPlaying, setIsPlaying] = useState(false);
       const [volume, setVolume] = useState(0.8);
       const [isMuted, setIsMuted] = useState(false);
@@ -254,6 +483,7 @@
       const [audioQuality, setAudioQuality] = useState('HD');
       const [activeCategory, setActiveCategory] = useState('All');
       const [isZenMode, setIsZenMode] = useState(false);
+      const [isAddModalOpen, setIsAddModalOpen] = useState(false);
       const [sleepTimer, setSleepTimer] = useState(null);
 
       // Dedicated Audio Engine Reference
@@ -296,6 +526,29 @@
         }
       };
 
+      const handleAddStation = (newStation) => {
+        const customStations = stations.filter(s => s.isCustom);
+        const updatedCustom = [...customStations, newStation];
+        localStorage.setItem('velvet_custom_stations', JSON.stringify(updatedCustom));
+        
+        setStations([...INITIAL_STATIONS, ...updatedCustom]);
+        setCurrentStation(newStation);
+        setIsPlaying(true);
+      };
+
+      const handleDeleteStation = (e, stationId) => {
+        e.stopPropagation();
+        const updated = stations.filter(s => s.id !== stationId);
+        const customOnly = updated.filter(s => s.isCustom);
+        localStorage.setItem('velvet_custom_stations', JSON.stringify(customOnly));
+        
+        setStations(updated);
+        if (currentStation.id === stationId) {
+          setCurrentStation(updated[0] || INITIAL_STATIONS[0]);
+          setIsPlaying(false);
+        }
+      };
+
       const handleSleepTimer = (minutes) => {
         setSleepTimer(minutes);
         if (minutes) {
@@ -306,8 +559,9 @@
         }
       };
 
-      const filteredStations = STATIONS.filter(s => {
+      const filteredStations = stations.filter(s => {
         if (activeCategory === 'All') return true;
+        if (activeCategory === 'My Songs') return s.isCustom;
         if (OTHER_GENRES.includes(activeCategory)) return s.genreTag === activeCategory;
         return s.category === activeCategory;
       });
@@ -338,6 +592,15 @@
             </div>
 
             <div className="flex items-center space-x-3">
+              {/* Add Custom Song Button */}
+              <button 
+                onClick={() => setIsAddModalOpen(true)}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs hover:bg-amber-500/20 transition"
+              >
+                <Icons.Plus />
+                <span className="font-medium">Add Station</span>
+              </button>
+
               {/* Sleep Timer */}
               <div className="relative group">
                 <button className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 hover:text-white transition">
@@ -374,7 +637,7 @@
             {/* Center Player Hero */}
             <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#0d0d0d]/50 rounded-3xl p-8 border border-zinc-800/30 backdrop-blur-sm relative overflow-hidden">
               
-              {/* Soft Radial Ambient Glow */}
+              {/* Soft Ambient Glow */}
               <div 
                 className="absolute inset-0 opacity-10 blur-3xl pointer-events-none -z-10 transition-colors duration-700"
                 style={{ backgroundColor: currentStation.accentColor }}
@@ -440,10 +703,10 @@
                     <button
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
-                      className={`px-3 py-1.5 rounded-xl text-xs transition duration-200 ${
-                        activeCategory === cat 
-                          ? 'bg-amber-500 text-black font-semibold shadow-md shadow-amber-500/10' 
-                          : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 border border-zinc-800/60'
+                      className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                        activeCategory === cat
+                          ? 'bg-amber-500 text-black font-semibold'
+                          : 'bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800'
                       }`}
                     >
                       {cat}
@@ -452,41 +715,50 @@
                 </div>
               </div>
 
-              {/* Station Card List */}
-              <div className="space-y-3 flex-1 overflow-y-auto max-h-[460px] pr-1">
+              {/* Station List */}
+              <div className="space-y-3 overflow-y-auto max-h-[460px] pr-1">
                 {filteredStations.map((station) => {
                   const isActive = currentStation.id === station.id;
                   return (
                     <div
                       key={station.id}
                       onClick={() => selectStation(station)}
-                      className={`p-3.5 rounded-2xl cursor-pointer border transition flex items-center justify-between group ${
-                        isActive 
-                          ? 'bg-zinc-900 border-amber-500/40 shadow-lg' 
-                          : 'bg-zinc-900/30 border-zinc-800/40 hover:bg-zinc-900/60'
+                      className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between group ${
+                        isActive
+                          ? 'bg-amber-500/10 border-amber-500/40 text-white'
+                          : 'bg-zinc-900/40 hover:bg-zinc-900/80 border-zinc-800/60 text-zinc-300'
                       }`}
                     >
-                      <div className="flex items-center space-x-3.5">
-                        <img src={station.cover} alt={station.title} className="w-12 h-12 rounded-xl object-cover" />
-                        <div>
-                          <h4 className="font-serif text-sm font-medium text-zinc-200 group-hover:text-amber-400 transition">
-                            {station.title}
-                          </h4>
-                          <p className="text-xs text-zinc-500">{station.subtitle}</p>
+                      <div className="flex items-center space-x-3.5 overflow-hidden">
+                        <img 
+                          src={station.cover} 
+                          alt={station.title} 
+                          className="w-12 h-12 rounded-xl object-cover border border-zinc-800/80 flex-shrink-0"
+                        />
+                        <div className="truncate">
+                          <h4 className="font-semibold text-sm truncate">{station.title}</h4>
+                          <p className="text-xs text-zinc-400 truncate">{station.artist}</p>
                         </div>
                       </div>
 
-                      {isActive && isPlaying ? (
-                        <div className="flex space-x-1 items-end h-4">
-                          <span className="w-1 h-full bg-amber-500 animate-bounce rounded-full" />
-                          <span className="w-1 h-2/3 bg-amber-500 animate-bounce rounded-full" />
-                          <span className="w-1 h-4/5 bg-amber-500 animate-bounce rounded-full" />
-                        </div>
-                      ) : (
-                        <div className="text-zinc-600 group-hover:text-zinc-300 transition">
-                          <Icons.Play className="w-4 h-4" />
-                        </div>
-                      )}
+                      <div className="flex items-center space-x-2">
+                        {station.isCustom && (
+                          <button
+                            onClick={(e) => handleDeleteStation(e, station.id)}
+                            className="p-1.5 text-zinc-500 hover:text-red-400 transition"
+                            title="Delete custom station"
+                          >
+                            <Icons.Trash />
+                          </button>
+                        )}
+                        <button className={`p-2.5 rounded-full transition ${
+                          isActive && isPlaying 
+                            ? 'bg-amber-500 text-black' 
+                            : 'bg-zinc-800 text-zinc-400 group-hover:text-white'
+                        }`}>
+                          {isActive && isPlaying ? <Icons.Pause className="w-4 h-4" /> : <Icons.Play className="w-4 h-4" />}
+                        </button>
+                      </div>
                     </div>
                   );
                 })}
@@ -494,65 +766,33 @@
             </div>
           </main>
 
-          {/* Sticky Dock Player Bar */}
-          <footer className="border-t border-zinc-800/60 bg-[#0d0d0d]/90 backdrop-blur-xl px-6 py-4 sticky bottom-0 z-30">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-              <div className="flex items-center space-x-3 w-1/3">
-                <img src={currentStation.cover} alt="Thumb" className="w-10 h-10 rounded-lg object-cover" />
-                <div className="hidden sm:block truncate">
-                  <p className="text-xs font-semibold text-zinc-200 truncate">{currentStation.currentTrack}</p>
-                  <p className="text-[10px] text-zinc-500 truncate">{currentStation.artist}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <button 
-                  onClick={togglePlay}
-                  className="p-3 rounded-full bg-amber-500 text-black hover:bg-amber-400 transition"
-                >
-                  {isPlaying ? <Icons.Pause className="w-5 h-5" /> : <Icons.Play className="w-5 h-5 ml-0.5" />}
-                </button>
-              </div>
-
-              <div className="flex items-center justify-end space-x-2 w-1/3">
-                <button 
-                  onClick={() => setIsMuted(!isMuted)} 
-                  className="text-zinc-400 hover:text-white transition"
-                >
-                  {isMuted || volume === 0 ? <Icons.Mute /> : <Icons.Volume />}
-                </button>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="1" 
-                  step="0.01" 
-                  value={isMuted ? 0 : volume} 
-                  onChange={(e) => {
-                    setVolume(parseFloat(e.target.value));
-                    setIsMuted(false);
-                  }}
-                  className="w-20 accent-amber-500 bg-zinc-800 rounded-lg h-1 cursor-pointer"
-                />
-              </div>
-            </div>
+          {/* Footer */}
+          <footer className="px-6 py-4 border-t border-zinc-900 text-center text-xs text-zinc-600">
+            Velvet FM — Late Night Jazz & Curated Audio Streaming Experience
           </footer>
 
-          {/* Explicit Zen Mode Overlay */}
+          {/* Modals */}
           {isZenMode && (
             <ZenMode 
               station={currentStation} 
               isPlaying={isPlaying} 
               togglePlay={togglePlay} 
-              onClose={() => setIsZenMode(false)} 
+              onClose={() => setIsZenMode(false)}
               isLiked={isLiked}
               toggleLike={() => setIsLiked(!isLiked)}
             />
           )}
+
+          <AddCustomModal 
+            isOpen={isAddModalOpen} 
+            onClose={() => setIsAddModalOpen(false)} 
+            onAddStation={handleAddStation}
+          />
+
         </div>
       );
     }
 
-    // Render React App
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
