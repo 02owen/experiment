@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Velvet FM — Late Night Jazz & Curated Radio</title>
 
   <!-- Tailwind CSS -->
@@ -20,14 +20,12 @@
   <!-- Babel Standalone -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
     body {
-      background-color: #0d0d0d;
+      background-color: #0d0d0d !important;
       color: #f4f4f5;
       font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
     }
     .font-serif {
       font-family: 'Playfair Display', serif;
@@ -45,14 +43,14 @@
     }
   </style>
 </head>
-<body class="bg-[#0d0d0d] text-zinc-100 antialiased selection:bg-amber-500/30">
+<body class="bg-[#0d0d0d] text-zinc-100 antialiased selection:bg-amber-500/30 min-h-screen">
 
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    const { useState, useEffect, useRef, useCallback } = React;
 
-    // Station Data
+    // --- Reliable Free MP3 / Stream URLs ---
     const STATIONS = [
       {
         id: 'jazz-lounge',
@@ -62,7 +60,7 @@
         artist: 'Miles Davis',
         currentTrack: 'Blue in Green',
         cover: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
+        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3',
         badge: '24/7 LIVE',
         accentColor: '#f59e0b',
       },
@@ -74,7 +72,7 @@
         artist: 'Michael Jackson',
         currentTrack: 'Human Nature (Studio Mix)',
         cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
+        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=smooth-jazz-10887.mp3',
         badge: 'CURATED',
         accentColor: '#e11d48',
       },
@@ -86,7 +84,7 @@
         artist: 'Queen',
         currentTrack: "Don't Stop Me Now",
         cover: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
+        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=rock-classic-11003.mp3',
         badge: '24/7 LIVE',
         accentColor: '#fbbf24',
       },
@@ -98,7 +96,7 @@
         artist: 'Pink Floyd',
         currentTrack: 'Shine On You Crazy Diamond',
         cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
+        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c062024e0b.mp3?filename=ambient-rock-12400.mp3',
         badge: 'HQ AUDIO',
         accentColor: '#8b5cf6',
       },
@@ -111,7 +109,7 @@
         artist: 'Lofi Girl & Friends',
         currentTrack: 'Coffee on a Rainy Sunday',
         cover: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=800',
-        streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
+        streamUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3',
         badge: 'CHILL',
         accentColor: '#10b981',
       },
@@ -119,7 +117,20 @@
 
     const OTHER_GENRES = ['Lo-Fi Beats', 'Blues & Soul', 'Classic 80s Rock', 'Chillout'];
 
-    // Safe Canvas Visualizer Component
+    // --- Isolated SVG Icons ---
+    const Icons = {
+      Radio: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.315-2.84-.877-4.085" /></svg>,
+      Play: ({ className = "w-6 h-6" }) => <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>,
+      Pause: ({ className = "w-6 h-6" }) => <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>,
+      Clock: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      Maximize: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-2V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>,
+      Minimize: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 14h6m0 0v6m0-6L3 21m17-7h-6m0 0v6m0-6l7 7M10 4v6m0 0H4m6 0L3 3m14 7d-6 0m0 0V4m0 6l7-7" /></svg>,
+      Heart: ({ filled }) => <svg className="w-5 h-5" fill={filled ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
+      Volume: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z" /></svg>,
+      Mute: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+    };
+
+    // --- Isolated Safe Visualizer ---
     function AudioVisualizer({ isPlaying, accentColor }) {
       const canvasRef = useRef(null);
 
@@ -127,38 +138,36 @@
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        if (!ctx) return; // Guard Context initialization
+        if (!ctx) return;
 
         let animationFrameId;
-        let bars = Array.from({ length: 32 }, () => Math.random() * 20 + 5);
+        let bars = Array.from({ length: 28 }, () => Math.random() * 15 + 5);
 
         const render = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const barWidth = (canvas.width / bars.length) - 3;
+          try {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width / bars.length) - 3;
 
-          bars.forEach((bar, i) => {
-            const targetHeight = isPlaying 
-              ? Math.min(60, Math.max(5, bar + (Math.random() * 12 - 6))) 
-              : 4;
-            bars[i] = targetHeight;
+            bars.forEach((bar, i) => {
+              const targetHeight = isPlaying 
+                ? Math.min(50, Math.max(4, bar + (Math.random() * 8 - 4))) 
+                : 3;
+              bars[i] = targetHeight;
 
-            const x = i * (barWidth + 3);
-            const y = canvas.height - targetHeight;
+              const x = i * (barWidth + 3);
+              const y = canvas.height - targetHeight;
 
-            ctx.fillStyle = accentColor || '#f59e0b';
-            ctx.shadowBlur = isPlaying ? 8 : 0;
-            ctx.shadowColor = accentColor || '#f59e0b';
-            
-            ctx.beginPath();
-            if (typeof ctx.roundRect === 'function') {
-              ctx.roundRect(x, y, barWidth, targetHeight, [4, 4, 0, 0]);
-            } else {
-              ctx.rect(x, y, barWidth, targetHeight);
-            }
-            ctx.fill();
-          });
+              ctx.fillStyle = accentColor || '#f59e0b';
+              ctx.shadowBlur = isPlaying ? 6 : 0;
+              ctx.shadowColor = accentColor || '#f59e0b';
+              
+              ctx.fillRect(x, y, barWidth, targetHeight);
+            });
 
-          animationFrameId = requestAnimationFrame(render);
+            animationFrameId = requestAnimationFrame(render);
+          } catch (e) {
+            console.warn("Canvas animation frame bypassed", e);
+          }
         };
 
         render();
@@ -168,33 +177,35 @@
       }, [isPlaying, accentColor]);
 
       return (
-        <canvas 
-          ref={canvasRef} 
-          width={320} 
-          height={64} 
-          className="w-full max-w-xs h-16 opacity-80 pointer-events-none relative z-10" 
-        />
+        <div className="relative overflow-hidden w-full max-w-xs h-14 flex items-center justify-center my-2 pointer-events-none -z-0">
+          <canvas 
+            ref={canvasRef} 
+            width={280} 
+            height={56} 
+            className="w-full h-full opacity-80" 
+          />
+        </div>
       );
     }
 
-    // Explicit Zen Mode Overlay
+    // --- Zen Mode Modal ---
     function ZenMode({ station, isPlaying, togglePlay, onClose, isLiked, toggleLike }) {
       return (
-        <div className="fixed inset-0 z-50 bg-[#0d0d0d]/95 backdrop-blur-2xl flex flex-col items-center justify-between p-8 text-center text-zinc-100">
-          <div className="w-full max-w-4xl flex justify-between items-center z-20">
+        <div className="fixed inset-0 z-50 bg-[#0d0d0d] bg-opacity-95 backdrop-blur-2xl flex flex-col items-center justify-between p-8 text-center text-zinc-100">
+          <div className="w-full max-w-4xl flex justify-between items-center">
             <span className="text-xs uppercase tracking-widest text-amber-500/80 font-mono">Zen Mode</span>
             <button 
               onClick={onClose} 
-              className="p-3 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white transition"
+              className="p-3 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white transition"
             >
-              <i data-lucide="minimize-2"></i>
+              <Icons.Minimize />
             </button>
           </div>
 
-          <div className="flex flex-col items-center my-auto space-y-8 z-20">
-            <div className="relative group">
+          <div className="flex flex-col items-center my-auto space-y-6">
+            <div className="relative">
               <div 
-                className={`absolute -inset-2 rounded-full blur-2xl opacity-40 transition duration-1000 ${
+                className={`absolute -inset-2 rounded-full blur-2xl opacity-30 transition duration-1000 ${
                   isPlaying ? 'animate-pulse' : ''
                 }`}
                 style={{ backgroundColor: station.accentColor }}
@@ -202,38 +213,38 @@
               <img 
                 src={station.cover} 
                 alt={station.title} 
-                className="relative w-64 h-64 md:w-80 md:h-80 object-cover rounded-full shadow-2xl border border-zinc-800/50"
+                className="relative w-64 h-64 md:w-72 md:h-72 object-cover rounded-full shadow-2xl border border-zinc-800/80"
               />
             </div>
 
-            <div className="space-y-2">
-              <h2 className="font-serif text-3xl md:text-4xl tracking-tight">{station.currentTrack}</h2>
-              <p className="text-zinc-400 text-lg font-sans">{station.artist} — <span className="text-zinc-500">{station.title}</span></p>
+            <div className="space-y-1">
+              <h2 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight">{station.currentTrack}</h2>
+              <p className="text-zinc-400 text-sm font-sans">{station.artist} — <span className="text-zinc-500">{station.title}</span></p>
             </div>
 
             <AudioVisualizer isPlaying={isPlaying} accentColor={station.accentColor} />
           </div>
 
-          <div className="flex items-center space-x-6 mb-8 z-20">
+          <div className="flex items-center space-x-6 mb-4">
             <button 
               onClick={toggleLike}
-              className={`p-4 rounded-full transition ${isLiked ? 'text-amber-500 bg-amber-500/10' : 'text-zinc-500 hover:text-white'}`}
+              className={`p-3.5 rounded-full transition ${isLiked ? 'text-amber-500 bg-amber-500/10' : 'text-zinc-500 hover:text-white'}`}
             >
-              <i data-lucide="heart" fill={isLiked ? "currentColor" : "none"}></i>
+              <Icons.Heart filled={isLiked} />
             </button>
 
             <button 
               onClick={togglePlay}
-              className="p-6 rounded-full bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 transition transform hover:scale-105 active:scale-95"
+              className="p-5 rounded-full bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 transition transform active:scale-95"
             >
-              <i data-lucide={isPlaying ? "pause" : "play"} className={!isPlaying ? "ml-1" : ""}></i>
+              {isPlaying ? <Icons.Pause /> : <Icons.Play className="w-6 h-6 ml-0.5" />}
             </button>
           </div>
         </div>
       );
     }
 
-    // Main App Component
+    // --- Main App ---
     function App() {
       const [currentStation, setCurrentStation] = useState(STATIONS[0]);
       const [isPlaying, setIsPlaying] = useState(false);
@@ -245,26 +256,24 @@
       const [isZenMode, setIsZenMode] = useState(false);
       const [sleepTimer, setSleepTimer] = useState(null);
 
+      // Dedicated Audio Engine Reference
       const audioRef = useRef(null);
 
-      // Re-render Lucide Icons dynamically
+      // Clean Audio Sync Effect with Safe Async Handling
       useEffect(() => {
-        if (window.lucide) {
-          window.lucide.createIcons();
-        }
-      });
+        const audio = audioRef.current;
+        if (!audio) return;
 
-      // Synchronize Audio playback smoothly without full-screen state triggers
-      useEffect(() => {
-        if (audioRef.current) {
-          if (isPlaying) {
-            audioRef.current.play().catch((err) => {
-              console.warn("Audio play prevented:", err);
+        if (isPlaying) {
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((error) => {
+              console.warn("Playback error gracefully handled:", error);
               setIsPlaying(false);
             });
-          } else {
-            audioRef.current.pause();
           }
+        } else {
+          audio.pause();
         }
       }, [isPlaying, currentStation]);
 
@@ -274,11 +283,17 @@
         }
       }, [volume, isMuted]);
 
-      const togglePlay = () => setIsPlaying(prev => !prev);
+      const togglePlay = useCallback(() => {
+        setIsPlaying(prev => !prev);
+      }, []);
 
       const selectStation = (station) => {
-        setCurrentStation(station);
-        setIsPlaying(true);
+        if (currentStation.id === station.id) {
+          togglePlay();
+        } else {
+          setCurrentStation(station);
+          setIsPlaying(true);
+        }
       };
 
       const handleSleepTimer = (minutes) => {
@@ -298,8 +313,9 @@
       });
 
       return (
-        <div className="min-h-screen bg-[#121212] text-zinc-100 font-sans antialiased flex flex-col justify-between relative overflow-x-hidden">
-          {/* Native Media Element with strict Inline Execution Attributes */}
+        <div className="min-h-screen bg-[#121212] text-zinc-100 font-sans antialiased flex flex-col justify-between relative">
+          
+          {/* Native Standard Audio Element */}
           <audio 
             ref={audioRef} 
             src={currentStation.streamUrl} 
@@ -310,21 +326,22 @@
           />
 
           {/* Header */}
-          <header className="px-6 py-5 border-b border-zinc-800/40 bg-[#0d0d0d]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between">
+          <header className="px-6 py-4 border-b border-zinc-800/40 bg-[#0d0d0d]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                <i data-lucide="radio"></i>
+                <Icons.Radio />
               </div>
               <div>
-                <h1 className="font-serif text-lg tracking-tight font-bold">VELVET FM</h1>
+                <h1 className="font-serif text-lg tracking-tight font-bold text-white">VELVET FM</h1>
                 <p className="text-[10px] text-zinc-500 font-mono tracking-widest uppercase">Late Night Lounge</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
+              {/* Sleep Timer */}
               <div className="relative group">
                 <button className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 hover:text-white transition">
-                  <i data-lucide="clock" className="w-3.5 h-3.5"></i>
+                  <Icons.Clock />
                   <span>{sleepTimer ? `${sleepTimer}m` : 'Sleep'}</span>
                 </button>
                 <div className="absolute right-0 mt-2 w-32 bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none group-hover:pointer-events-auto p-1 z-40">
@@ -340,43 +357,43 @@
                 </div>
               </div>
 
-              {/* Explicit Zen Mode Button */}
+              {/* Zen Mode Button */}
               <button 
                 onClick={() => setIsZenMode(true)}
                 className="p-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-amber-500 transition"
                 title="Zen Mode"
               >
-                <i data-lucide="maximize-2" className="w-4 h-4"></i>
+                <Icons.Maximize />
               </button>
             </div>
           </header>
 
-          {/* Main Layout */}
+          {/* Main Workspace */}
           <main className="max-w-7xl mx-auto w-full px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
             
-            {/* Center Hero Player */}
-            <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#0d0d0d]/40 rounded-3xl p-8 border border-zinc-800/30 backdrop-blur-sm relative overflow-hidden">
+            {/* Center Player Hero */}
+            <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#0d0d0d]/50 rounded-3xl p-8 border border-zinc-800/30 backdrop-blur-sm relative overflow-hidden">
               
-              {/* Background Glow contained behind UI with z-0 */}
+              {/* Soft Radial Ambient Glow */}
               <div 
-                className="absolute inset-0 opacity-15 blur-3xl pointer-events-none transition-all duration-1000 -z-0"
+                className="absolute inset-0 opacity-10 blur-3xl pointer-events-none -z-10 transition-colors duration-700"
                 style={{ backgroundColor: currentStation.accentColor }}
               />
 
-              <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono mb-6 z-10">
+              <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono mb-6">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
                 <span>{currentStation.badge}</span>
               </span>
 
-              <div className="relative mb-6 z-10">
+              <div className="relative mb-6">
                 <img 
                   src={currentStation.cover} 
                   alt={currentStation.title} 
-                  className="w-64 h-64 md:w-80 md:h-80 object-cover rounded-2xl shadow-2xl border border-zinc-800/80"
+                  className="w-60 h-60 md:w-72 md:h-72 object-cover rounded-2xl shadow-2xl border border-zinc-800/80"
                 />
               </div>
 
-              <div className="text-center space-y-1 mb-4 z-10">
+              <div className="text-center space-y-1 mb-2">
                 <h2 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight text-white">
                   {currentStation.currentTrack}
                 </h2>
@@ -387,22 +404,22 @@
 
               <AudioVisualizer isPlaying={isPlaying} accentColor={currentStation.accentColor} />
 
-              {/* Controls */}
-              <div className="flex items-center space-x-6 mt-6 z-10">
+              {/* Player Controls */}
+              <div className="flex items-center space-x-6 mt-4">
                 <button 
                   onClick={() => setIsLiked(!isLiked)}
                   className={`p-3 rounded-full border border-zinc-800/60 transition ${
                     isLiked ? 'text-amber-500 bg-amber-500/10 border-amber-500/30' : 'text-zinc-400 hover:text-white bg-zinc-900/50'
                   }`}
                 >
-                  <i data-lucide="heart" fill={isLiked ? 'currentColor' : 'none'} className="w-5 h-5"></i>
+                  <Icons.Heart filled={isLiked} />
                 </button>
 
                 <button 
                   onClick={togglePlay}
                   className="p-5 rounded-full bg-amber-500 hover:bg-amber-400 text-black shadow-xl shadow-amber-500/20 transition transform active:scale-95"
                 >
-                  <i data-lucide={isPlaying ? "pause" : "play"} className={!isPlaying ? "ml-1" : ""}></i>
+                  {isPlaying ? <Icons.Pause className="w-7 h-7" /> : <Icons.Play className="w-7 h-7 ml-0.5" />}
                 </button>
 
                 <button 
@@ -414,7 +431,7 @@
               </div>
             </div>
 
-            {/* Right Column: Channel Selector */}
+            {/* Channels & Station Grid */}
             <div className="lg:col-span-5 flex flex-col space-y-6">
               <div className="space-y-3">
                 <h3 className="text-xs uppercase tracking-wider text-zinc-500 font-mono">Curated Channels</h3>
@@ -435,7 +452,7 @@
                 </div>
               </div>
 
-              {/* Station List */}
+              {/* Station Card List */}
               <div className="space-y-3 flex-1 overflow-y-auto max-h-[460px] pr-1">
                 {filteredStations.map((station) => {
                   const isActive = currentStation.id === station.id;
@@ -466,7 +483,9 @@
                           <span className="w-1 h-4/5 bg-amber-500 animate-bounce rounded-full" />
                         </div>
                       ) : (
-                        <i data-lucide="play" className="w-4 h-4 text-zinc-600 group-hover:text-zinc-300 transition"></i>
+                        <div className="text-zinc-600 group-hover:text-zinc-300 transition">
+                          <Icons.Play className="w-4 h-4" />
+                        </div>
                       )}
                     </div>
                   );
@@ -475,7 +494,7 @@
             </div>
           </main>
 
-          {/* Bottom Dock */}
+          {/* Sticky Dock Player Bar */}
           <footer className="border-t border-zinc-800/60 bg-[#0d0d0d]/90 backdrop-blur-xl px-6 py-4 sticky bottom-0 z-30">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
               <div className="flex items-center space-x-3 w-1/3">
@@ -491,7 +510,7 @@
                   onClick={togglePlay}
                   className="p-3 rounded-full bg-amber-500 text-black hover:bg-amber-400 transition"
                 >
-                  <i data-lucide={isPlaying ? "pause" : "play"} className={!isPlaying ? "ml-0.5" : ""}></i>
+                  {isPlaying ? <Icons.Pause className="w-5 h-5" /> : <Icons.Play className="w-5 h-5 ml-0.5" />}
                 </button>
               </div>
 
@@ -500,7 +519,7 @@
                   onClick={() => setIsMuted(!isMuted)} 
                   className="text-zinc-400 hover:text-white transition"
                 >
-                  <i data-lucide={isMuted || volume === 0 ? "volume-x" : "volume-2"} className="w-4 h-4"></i>
+                  {isMuted || volume === 0 ? <Icons.Mute /> : <Icons.Volume />}
                 </button>
                 <input 
                   type="range" 
@@ -518,7 +537,7 @@
             </div>
           </footer>
 
-          {/* Zen Mode triggered explicitly */}
+          {/* Explicit Zen Mode Overlay */}
           {isZenMode && (
             <ZenMode 
               station={currentStation} 
@@ -533,7 +552,7 @@
       );
     }
 
-    // Render App
+    // Render React App
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
