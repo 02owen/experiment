@@ -37,10 +37,10 @@
     <!-- Header -->
     <header class="w-full max-w-4xl text-center mb-6">
         <div class="inline-block px-3 py-1 mb-3 text-xs font-semibold tracking-wider text-indigo-400 uppercase bg-indigo-950/60 border border-indigo-800/50 rounded-full">
-            Evolutionary Algorithm Simulation
+            Evolutionary Algorithm Simulation • Imperfect Fit Dynamics
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Dawkins' Weasel Program</h1>
-        <p class="text-slate-400 text-sm md:text-base mt-1">Demonstrating cumulative selection vs. random chance.</p>
+        <p class="text-slate-400 text-sm md:text-base mt-1">Simulating cumulative selection with probabilistic trait mutations.</p>
     </header>
 
     <!-- Main Container -->
@@ -143,7 +143,11 @@
     <script>
         let TARGET = "EVOLUTION!";
         const CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ !?.-_@#$";
-        const MUTATION_RATE = 0.05; // 5% chance per character per offspring
+        
+        // Imperfect Fit Mutation Rates:
+        const MUTATION_RATE_MATCH = 0.01;   // 1% chance to mutate already-matching characters (imperfect fit)
+        const MUTATION_RATE_UNMATCH = 0.15; // 15% chance to mutate incorrect characters
+        
         const OFFSPRING_COUNT = 50; // Number of mutated copies generated per generation
 
         let currentString = "";
@@ -232,7 +236,6 @@
         }
 
         function logHistory(gen, str, score) {
-            // Remove placeholder if it's the first log entry
             if (historyLog.querySelector('italic')) {
                 historyLog.innerHTML = '';
             }
@@ -277,7 +280,7 @@
             isRunning = true;
             startBtn.textContent = "Pause";
             startBtn.className = "flex-1 md:flex-none bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-amber-600/30 cursor-pointer";
-            statusMessage.textContent = "Evolving generations through cumulative selection...";
+            statusMessage.textContent = "Evolving generations with imperfect fit mutation...";
             statusMessage.className = "text-sm font-medium text-indigo-400 h-6 animate-pulse";
             runEvolutionStep();
         }
@@ -307,14 +310,17 @@
 
             generation++;
 
-            // Weasel core mechanism: Generate offspring and pick the best match
+            // Core evolutionary loop with differential (imperfect fit) mutation rates
             let bestChild = currentString;
             let bestScore = getScore(currentString);
 
             for (let i = 0; i < OFFSPRING_COUNT; i++) {
                 let mutated = '';
                 for (let j = 0; j < currentString.length; j++) {
-                    if (Math.random() < MUTATION_RATE) {
+                    const isMatch = (currentString[j] === TARGET[j]);
+                    const currentRate = isMatch ? MUTATION_RATE_MATCH : MUTATION_RATE_UNMATCH;
+
+                    if (Math.random() < currentRate) {
                         mutated += getRandomChar();
                     } else {
                         mutated += currentString[j];
