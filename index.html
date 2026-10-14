@@ -3,349 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dawkins' Weasel Program - Evolutionary Algorithm Simulation</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Bad to the Bone - 3D Street Walk</title>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            font-family: sans-serif;
         }
-        .font-mono-custom {
-            font-family: 'Fira Code', monospace;
-        }
-        /* Custom scrollbar for history log */
-        #historyLog::-webkit-scrollbar {
-            width: 6px;
-        }
-        #historyLog::-webkit-scrollbar-track {
-            background: #020617;
+        #info {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
             border-radius: 8px;
-        }
-        #historyLog::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 8px;
-        }
-        #historyLog::-webkit-scrollbar-thumb:hover {
-            background: #334155;
+            font-size: 14px;
+            letter-spacing: 1px;
+            pointer-events: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+<body>
+    <div id="info">🕶️ Clean Nerd Swagger — "Bad to the Bone" Vibe 🕶️</div>
 
-    <!-- Header -->
-    <header class="w-full max-w-4xl text-center mb-6">
-        <div class="inline-block px-3 py-1 mb-3 text-xs font-semibold tracking-wider text-indigo-400 uppercase bg-indigo-950/60 border border-indigo-800/50 rounded-full">
-            Evolutionary Algorithm Simulation • Imperfect Fit Dynamics
-        </div>
-        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Dawkins' Weasel Program</h1>
-        <p class="text-slate-400 text-sm md:text-base mt-1">Simulating cumulative selection with probabilistic trait mutations.</p>
-    </header>
+    <!-- Include Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <!-- Main Container -->
-    <main class="w-full max-w-4xl grid grid-cols-1 gap-6">
-
-        <!-- Target Phrase Input Card -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-lg flex flex-col sm:flex-row items-center gap-4">
-            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider whitespace-nowrap">Target Phrase:</span>
-            <div class="flex gap-2 w-full">
-                <input id="targetInput" type="text" value="EVOLUTION!" maxlength="25" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 font-mono-custom text-slate-100 uppercase tracking-widest focus:outline-none focus:border-indigo-500 text-sm">
-                <button onclick="updateTarget()" class="bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 font-medium px-4 py-2 rounded-xl transition-all text-sm whitespace-nowrap cursor-pointer">Set Target</button>
-            </div>
-        </div>
-
-        <!-- Dashboard Cards Top Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Target Card -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-                <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Active Target</span>
-                <div class="mt-2 text-2xl md:text-3xl font-mono-custom font-bold text-indigo-400 tracking-widest break-all" id="targetDisplay">EVOLUTION!</div>
-                <span class="text-xs text-slate-500 mt-2" id="targetLengthInfo">10 Characters</span>
-            </div>
-
-            <!-- Stats Card -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-lg grid grid-cols-2 gap-4">
-                <div>
-                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Generation</span>
-                    <div class="mt-2 text-2xl md:text-3xl font-mono-custom font-bold text-slate-100" id="genCount">0</div>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Match Score</span>
-                    <div class="mt-2 text-2xl md:text-3xl font-mono-custom font-bold text-emerald-400" id="matchScore">0/10</div>
-                </div>
-                <div class="col-span-2">
-                    <div class="flex justify-between text-xs text-slate-400 mb-1">
-                        <span>Progress</span>
-                        <span id="percentText">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
-                        <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Active Evolving String Card -->
-        <div class="bg-slate-900/90 border border-indigo-500/30 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
-            <div class="absolute -right-12 -top-12 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            
-            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Current Active String</span>
-            
-            <!-- String Character Container -->
-            <div id="stringDisplay" class="flex flex-wrap justify-center gap-1.5 md:gap-3 text-2xl md:text-4xl font-mono-custom font-bold tracking-widest my-4 max-w-full overflow-x-auto py-2">
-                <!-- Dynamically populated -->
-            </div>
-
-            <div id="statusMessage" class="text-sm font-medium text-slate-400 h-6">
-                Ready to start simulation.
-            </div>
-        </div>
-
-        <!-- History Log Panel Card -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col">
-            <div class="flex justify-between items-center mb-3">
-                <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Evolutionary Lineage History Log</span>
-                <button onclick="clearHistory()" class="text-xs text-slate-500 hover:text-slate-300 underline cursor-pointer">Clear Log</button>
-            </div>
-            <div id="historyLog" class="bg-slate-950 border border-slate-800/80 rounded-xl p-3 h-40 overflow-y-auto space-y-1">
-                <div class="text-slate-600 text-xs italic text-center py-10">History log will appear here as generations evolve...</div>
-            </div>
-        </div>
-
-        <!-- Controls Card -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
-            <!-- Buttons -->
-            <div class="flex items-center gap-3 w-full md:w-auto">
-                <button id="startBtn" onclick="toggleSimulation()" class="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/30 cursor-pointer">
-                    Start Simulation
-                </button>
-                <button id="resetBtn" onclick="resetSimulation()" class="flex-1 md:flex-none bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 font-medium px-6 py-2.5 rounded-xl transition-all border border-slate-700 cursor-pointer">
-                    Reset
-                </button>
-            </div>
-
-            <!-- Speed Slider -->
-            <div class="flex items-center gap-3 w-full md:w-64">
-                <span class="text-xs font-medium text-slate-400 whitespace-nowrap">Speed:</span>
-                <input id="speedSlider" type="range" min="1" max="100" value="50" class="w-full accent-indigo-500 cursor-pointer">
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="mt-8 text-center text-xs text-slate-600">
-        Interactive Educational Model • Inspired by Richard Dawkins' <i>The Blind Watchmaker</i>
-    </footer>
-
-    <!-- Simulation Script -->
     <script>
-        let TARGET = "EVOLUTION!";
-        const CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ !?.-_@#$";
+        // Scene, Camera, Renderer setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x221f1e); // Gritty atmospheric sky
+        scene.fog = new THREE.FogExp2(0x221f1e, 0.035);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 1.8, 5); // Cinematic low-angle tracking shot
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffedd0, 0.6); // Warm street glow
+        scene.add(ambientLight);
+
+        const sunLight = new THREE.DirectionalLight(0xfffaed, 1.2);
+        sunLight.position.set(5, 8, 3);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 1024;
+        sunLight.shadow.mapSize.height = 1024;
+        scene.add(sunLight);
+
+        // --- ENVIRONMENT: THE DIRTY HOOD & MARKET STALLS ---
         
-        // Imperfect Fit Mutation Rates:
-        const MUTATION_RATE_MATCH = 0.01;   // 1% chance to mutate already-matching characters (imperfect fit)
-        const MUTATION_RATE_UNMATCH = 0.15; // 15% chance to mutate incorrect characters
-        
-        const OFFSPRING_COUNT = 50; // Number of mutated copies generated per generation
+        // Dusty/Muddy Ground
+        const groundGeo = new THREE.PlaneGeometry(30, 200);
+        const groundMat = new THREE.MeshStandardMaterial({ 
+            color: 0x3d342f, 
+            roughness: 0.9,
+            metalness: 0.1 
+        });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
 
-        let currentString = "";
-        let generation = 0;
-        let isRunning = false;
-        let timeoutId = null;
+        // Environment chunks pool to create endless walking effect
+        const environmentGroup = new THREE.Group();
+        scene.add(environmentGroup);
 
-        // DOM Elements
-        const targetInput = document.getElementById('targetInput');
-        const targetDisplay = document.getElementById('targetDisplay');
-        const targetLengthInfo = document.getElementById('targetLengthInfo');
-        const stringDisplay = document.getElementById('stringDisplay');
-        const genCountElem = document.getElementById('genCount');
-        const matchScoreElem = document.getElementById('matchScore');
-        const progressBar = document.getElementById('progressBar');
-        const percentText = document.getElementById('percentText');
-        const startBtn = document.getElementById('startBtn');
-        const speedSlider = document.getElementById('speedSlider');
-        const statusMessage = document.getElementById('statusMessage');
-        const historyLog = document.getElementById('historyLog');
+        function createMarketStall(xPos, zPos) {
+            const stallGroup = new THREE.Group();
 
-        function init() {
-            targetInput.value = TARGET;
-            resetSimulation();
+            // Wooden Crate/Table
+            const tableGeo = new THREE.BoxGeometry(1.8, 0.8, 1.2);
+            const tableMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.8 });
+            const table = new THREE.Mesh(tableGeo, tableMat);
+            table.position.set(0, 0.4, 0);
+            table.castShadow = true;
+            table.receiveShadow = true;
+            stallGroup.add(table);
+
+            // Piles of fruits & vegetables (spheres and cones)
+            const fruitColors = [0xd9381e, 0xef832e, 0xf4d03f, 0x27ae60, 0x8e44ad];
+            for (let i = 0; i < 12; i++) {
+                const size = 0.15 + Math.random() * 0.1;
+                const fruitGeo = new THREE.SphereGeometry(size, 8, 8);
+                const fruitMat = new THREE.MeshStandardMaterial({ 
+                    color: fruitColors[Math.floor(Math.random() * fruitColors.length)],
+                    roughness: 0.4
+                });
+                const fruit = new THREE.Mesh(fruitGeo, fruitMat);
+                fruit.position.set(
+                    (Math.random() - 0.5) * 1.4,
+                    0.8 + size * 0.8,
+                    (Math.random() - 0.5) * 0.8
+                );
+                fruit.castShadow = true;
+                stallGroup.add(fruit);
+            }
+
+            stallGroup.position.set(xPos, 0, zPos);
+            environmentGroup.add(stallGroup);
         }
 
-        function updateTarget() {
-            const rawVal = targetInput.value.trim().toUpperCase();
-            if (rawVal.length === 0) {
-                alert("Please enter a valid target phrase.");
-                return;
-            }
-            if (rawVal.length > 25) {
-                alert("Please keep the target phrase to 25 characters or fewer for optimal display.");
-                return;
-            }
+        // Generate stalls along both sides (right and left)
+        for (let z = -80; z <= 20; z += 4) {
+            createMarketStall(-2.5, z); // Left side
+            createMarketStall(2.5, z);  // Right side
             
-            stopSimulation();
-            TARGET = rawVal;
-            targetDisplay.textContent = TARGET;
-            targetLengthInfo.textContent = `${TARGET.length} Characters`;
-            resetSimulation();
-        }
+            // Add grungy building walls behind stalls
+            if (z % 8 === 0) {
+                const wallGeo = new THREE.BoxGeometry(4, 6, 7);
+                const wallMat = new THREE.MeshStandardMaterial({ color: 0x4a403b, roughness: 0.9 });
+                const leftWall = new THREE.Mesh(wallGeo, wallMat);
+                leftWall.position.set(-5.5, 3, z);
+                environmentGroup.add(leftWall);
 
-        function getRandomChar() {
-            return CHARSET.charAt(Math.floor(Math.random() * CHARSET.length));
-        }
-
-        function generateRandomString(length) {
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += getRandomChar();
-            }
-            return result;
-        }
-
-        function getScore(str) {
-            let score = 0;
-            for (let i = 0; i < TARGET.length; i++) {
-                if (str[i] === TARGET[i]) score++;
-            }
-            return score;
-        }
-
-        function render() {
-            // Render characters with color coding
-            stringDisplay.innerHTML = '';
-            for (let i = 0; i < currentString.length; i++) {
-                const span = document.createElement('span');
-                span.textContent = currentString[i];
-                if (currentString[i] === TARGET[i]) {
-                    span.className = "text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]";
-                } else {
-                    span.className = "text-slate-500";
-                }
-                stringDisplay.appendChild(span);
-            }
-
-            // Update stats
-            genCountElem.textContent = generation;
-            const score = getScore(currentString);
-            matchScoreElem.textContent = `${score}/${TARGET.length}`;
-            const percent = Math.round((score / TARGET.length) * 100);
-            progressBar.style.width = `${percent}%`;
-            percentText.textContent = `${percent}%`;
-        }
-
-        function logHistory(gen, str, score) {
-            if (historyLog.querySelector('italic')) {
-                historyLog.innerHTML = '';
-            }
-
-            const div = document.createElement('div');
-            div.className = "flex justify-between items-center py-1 border-b border-slate-900/60 text-xs";
-            div.innerHTML = `
-                <span class="text-slate-500 font-semibold w-16">Gen ${gen}:</span> 
-                <span class="font-mono-custom text-slate-300 tracking-wider flex-1 text-center truncate px-2">${str}</span> 
-                <span class="text-emerald-400 font-semibold w-14 text-right">${score}/${TARGET.length}</span>
-            `;
-            historyLog.appendChild(div);
-            historyLog.scrollTop = historyLog.scrollHeight;
-        }
-
-        function clearHistory() {
-            historyLog.innerHTML = '<div class="text-slate-600 text-xs italic text-center py-10">History log cleared.</div>';
-        }
-
-        function resetSimulation() {
-            stopSimulation();
-            generation = 0;
-            currentString = generateRandomString(TARGET.length);
-            statusMessage.textContent = "Ready to start simulation.";
-            statusMessage.className = "text-sm font-medium text-slate-400 h-6";
-            historyLog.innerHTML = '<div class="text-slate-600 text-xs italic text-center py-10">History log will appear here as generations evolve...</div>';
-            render();
-        }
-
-        function toggleSimulation() {
-            if (isRunning) {
-                stopSimulation();
-            } else {
-                if (currentString === TARGET) {
-                    resetSimulation();
-                }
-                startSimulation();
+                const rightWall = new THREE.Mesh(wallGeo, wallMat);
+                rightWall.position.set(5.5, 3, z);
+                environmentGroup.add(rightWall);
             }
         }
 
-        function startSimulation() {
-            isRunning = true;
-            startBtn.textContent = "Pause";
-            startBtn.className = "flex-1 md:flex-none bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-amber-600/30 cursor-pointer";
-            statusMessage.textContent = "Evolving generations with imperfect fit mutation...";
-            statusMessage.className = "text-sm font-medium text-indigo-400 h-6 animate-pulse";
-            runEvolutionStep();
+        // --- CHARACTER: THE CLEAN NERD GUY WITH SWAGGER ---
+        const characterGroup = new THREE.Group();
+        scene.add(characterGroup);
+
+        // Materials
+        const skinMat = new THREE.MeshStandardMaterial({ color: 0xf5d0b1, roughness: 0.6 });
+        const winePoloMat = new THREE.MeshStandardMaterial({ color: 0x722f37, roughness: 0.5 }); // Wine colored Lacoste polo
+        const pantsMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.7 }); // Clean dark trousers
+        const shoeMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3 }); // Pristine clean shoes
+        const hairMat = new THREE.MeshStandardMaterial({ color: 0x2c1d0c, roughness: 0.8 });
+        const glassFrameMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.2 });
+
+        // Torso (Wine-colored polo)
+        const torsoGeo = new THREE.BoxGeometry(0.55, 0.75, 0.3);
+        const torso = new THREE.Mesh(torsoGeo, winePoloMat);
+        torso.position.set(0, 1.15, 0);
+        torso.castShadow = true;
+        characterGroup.add(torso);
+
+        // Head Group
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 1.65, 0);
+        characterGroup.add(headGroup);
+
+        // Head Base
+        const headGeo = new THREE.BoxGeometry(0.32, 0.38, 0.32);
+        const head = new THREE.Mesh(headGeo, skinMat);
+        head.castShadow = true;
+        headGroup.add(head);
+
+        // Hair
+        const hairGeo = new THREE.BoxGeometry(0.34, 0.15, 0.34);
+        const hair = new THREE.Mesh(hairGeo, hairMat);
+        hair.position.set(0, 0.13, 0);
+        headGroup.add(hair);
+
+        // Nerd Glasses (Sharp, stylish frames)
+        const glassFrameLeft = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.1, 0.04), glassFrameMat);
+        glassFrameLeft.position.set(-0.08, 0.02, 0.17);
+        headGroup.add(glassFrameLeft);
+
+        const glassFrameRight = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.1, 0.04), glassFrameMat);
+        glassFrameRight.position.set(0.08, 0.02, 0.17);
+        headGroup.add(glassFrameRight);
+
+        const glassBridge = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.02), glassFrameMat);
+        glassBridge.position.set(0, 0.04, 0.17);
+        headGroup.add(glassBridge);
+
+        // Limbs (Pivots for animation)
+        const leftArmGroup = new THREE.Group();
+        leftArmGroup.position.set(-0.35, 1.45, 0);
+        characterGroup.add(leftArmGroup);
+        const leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.6, 0.14), winePoloMat);
+        leftArm.position.set(0, -0.25, 0);
+        leftArm.castShadow = true;
+        leftArmGroup.add(leftArm);
+
+        const rightArmGroup = new THREE.Group();
+        rightArmGroup.position.set(0.35, 1.45, 0);
+        characterGroup.add(rightArmGroup);
+        const rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.6, 0.14), winePoloMat);
+        rightArm.position.set(0, -0.25, 0);
+        rightArm.castShadow = true;
+        rightArmGroup.add(rightArm);
+
+        const leftLegGroup = new THREE.Group();
+        leftLegGroup.position.set(-0.15, 0.8, 0);
+        characterGroup.add(leftLegGroup);
+        const leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.75, 0.18), pantsMat);
+        leftLeg.position.set(0, -0.35, 0);
+        leftLeg.castShadow = true;
+        leftLegGroup.add(leftLeg);
+        // Clean Shoe
+        const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 0.26), shoeMat);
+        leftShoe.position.set(0, -0.75, 0.04);
+        leftLegGroup.add(leftShoe);
+
+        const rightLegGroup = new THREE.Group();
+        rightLegGroup.position.set(0.15, 0.8, 0);
+        characterGroup.add(rightLegGroup);
+        const rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.75, 0.18), pantsMat);
+        rightLeg.position.set(0, -0.35, 0);
+        rightLeg.castShadow = true;
+        rightLegGroup.add(rightLeg);
+        // Clean Shoe
+        const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 0.26), shoeMat);
+        rightShoe.position.set(0, -0.75, 0.04);
+        rightLegGroup.add(rightLeg);
+
+
+        // --- ANIMATION & RENDER LOOP ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = clock.getElapsedTime() * 5; // Walk frequency synced to heavy swagger rhythm
+            const walkCycle = Math.sin(time);
+            const swaggerLean = Math.cos(time * 0.5);
+
+            // Character swagger & walk dynamics
+            characterGroup.position.y = Math.abs(Math.sin(time)) * 0.08; // Bounce
+            characterGroup.rotation.z = swaggerLean * 0.05; // Confident shoulder sway
+            headGroup.rotation.y = Math.sin(time * 0.5) * 0.1; // Cool confident head turns
+
+            // Limb swings (opposite arm and leg)
+            leftLegGroup.rotation.x = walkCycle * 0.6;
+            rightLegGroup.rotation.x = -walkCycle * 0.6;
+            leftArmGroup.rotation.x = -walkCycle * 0.5;
+            rightArmGroup.rotation.x = walkCycle * 0.5;
+
+            // Scroll environment toward the camera to simulate walking forward endlessly
+            environmentGroup.position.z += 0.08;
+            if (environmentGroup.position.z > 4) {
+                environmentGroup.position.z = 0; // Loop environment
+            }
+
+            // Subtle cinematic camera tracking drift
+            camera.position.x = Math.sin(clock.getElapsedTime() * 0.5) * 0.3;
+
+            renderer.render(scene, camera);
         }
 
-        function stopSimulation() {
-            isRunning = false;
-            clearTimeout(timeoutId);
-            startBtn.textContent = "Resume";
-            startBtn.className = "flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/30 cursor-pointer";
-            if (currentString !== TARGET) {
-                statusMessage.textContent = "Simulation paused.";
-                statusMessage.className = "text-sm font-medium text-slate-400 h-6";
-            }
-        }
+        animate();
 
-        function runEvolutionStep() {
-            if (!isRunning) return;
-
-            if (currentString === TARGET) {
-                stopSimulation();
-                startBtn.textContent = "Start Simulation";
-                statusMessage.textContent = `🎉 Target reached successfully in ${generation} generations!`;
-                statusMessage.className = "text-sm font-medium text-emerald-400 h-6 font-semibold";
-                logHistory(generation, currentString, getScore(currentString));
-                return;
-            }
-
-            generation++;
-
-            // Core evolutionary loop with differential (imperfect fit) mutation rates
-            let bestChild = currentString;
-            let bestScore = getScore(currentString);
-
-            for (let i = 0; i < OFFSPRING_COUNT; i++) {
-                let mutated = '';
-                for (let j = 0; j < currentString.length; j++) {
-                    const isMatch = (currentString[j] === TARGET[j]);
-                    const currentRate = isMatch ? MUTATION_RATE_MATCH : MUTATION_RATE_UNMATCH;
-
-                    if (Math.random() < currentRate) {
-                        mutated += getRandomChar();
-                    } else {
-                        mutated += currentString[j];
-                    }
-                }
-                let score = getScore(mutated);
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestChild = mutated;
-                }
-            }
-
-            currentString = bestChild;
-            render();
-            logHistory(generation, currentString, bestScore);
-
-            // Calculate delay based on slider (inverted: higher value = faster, so lower delay)
-            const sliderVal = parseInt(speedSlider.value);
-            const delay = Math.max(5, 250 - (sliderVal * 2.4));
-
-            timeoutId = setTimeout(runEvolutionStep, delay);
-        }
-
-        // Initialize on page load
-        window.onload = init;
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
