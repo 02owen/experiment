@@ -1,269 +1,616 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bad to the Bone - 3D Street Walk</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #1a1a1a;
-            font-family: sans-serif;
-        }
-        #info {
-            position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            letter-spacing: 1px;
-            pointer-events: none;
-            border: 1px solid rgba(255,255,255,0.2);
-            text-align: center;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Windows XP — Cinematic Lyrics</title>
+<style>
+:root {
+  --sky: #7fc7ed;
+  --blue: #245edb;
+  --blue-dark: #17469c;
+  --green: #7da94a;
+  --yellow: #fff3a6;
+  --white: #fff;
+  --timing: 6s;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; }
+body {
+  font-family: Tahoma, "Trebuchet MS", sans-serif;
+  color: #17355b;
+  background: #c4dff2;
+  overflow: hidden;
+}
+button, input { font: inherit; }
+button { cursor: pointer; }
+.desktop {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(8px, 2vw, 22px);
+  gap: 10px;
+  background: linear-gradient(#e8f5ff, #c5e2f7);
+}
+.window {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #1556a4;
+  border-radius: 8px 8px 3px 3px;
+  background: #ece9d8;
+  box-shadow: 2px 3px 9px #234c6535;
+}
+.titlebar {
+  height: 34px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 7px 4px 12px;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: .1px;
+  background: linear-gradient(#5aa5f8 0%, #2475e7 12%, #1460d5 55%, #1d58b6 100%);
+  text-shadow: 1px 1px #234d89;
+}
+.title-left { display: flex; align-items: center; gap: 8px; }
+.app-icon {
+  width: 18px; height: 18px; border-radius: 3px;
+  display: grid; place-items: center;
+  color: #fff; font-size: 12px;
+  background: linear-gradient(135deg, #8fd6ff, #2470cf);
+  border: 1px solid #d8efff;
+}
+.window-buttons { display: flex; gap: 3px; }
+.win-btn {
+  width: 22px; height: 21px;
+  padding: 0;
+  border: 1px solid #fff;
+  border-radius: 3px;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  background: linear-gradient(#77b8ff, #2469d4);
+  box-shadow: inset 1px 1px #ffffff80, 1px 1px #12428e;
+}
+.win-btn.close { background: linear-gradient(#f6a39b, #d33126); }
+.menubar {
+  min-height: 28px;
+  padding: 5px 12px;
+  background: #ece9d8;
+  border-bottom: 1px solid #c2c1b7;
+  color: #343434;
+  font-size: 12px;
+}
+.menubar span { margin-right: 18px; }
+.stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  perspective: 1000px;
+  background: linear-gradient(#79c7f3 0%, #a9e0fa 49%, #c3e6f4 65%, #d7e9bb 100%);
+}
+.sky-haze {
+  position: absolute; inset: 0;
+  z-index: -5;
+  background: radial-gradient(ellipse at 50% 18%, #fff8 0%, transparent 57%);
+}
+.sunlight {
+  position: absolute;
+  inset: -25% 10% 30%;
+  z-index: -4;
+  opacity: .18;
+  background: conic-gradient(from 230deg at 50% 100%, transparent, #fff9, transparent 12%, #fff5, transparent 28%);
+  animation: rays 25s ease-in-out infinite alternate;
+}
+.cloud-layer {
+  position: absolute; inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  transition: transform .7s ease;
+}
+.cloud {
+  position: absolute;
+  width: 125px; height: 28px;
+  border-radius: 50%;
+  background: #fff8;
+  filter: blur(1px);
+}
+.cloud::before, .cloud::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: inherit;
+}
+.cloud::before { width: 57px; height: 48px; left: 22px; top: -22px; }
+.cloud::after { width: 72px; height: 38px; left: 52px; top: -13px; }
+.cloud.c1 { top: 16%; left: -8%; transform: scale(1.15); animation: drift 42s linear infinite; }
+.cloud.c2 { top: 31%; left: 60%; transform: scale(.75); animation: drift 58s linear infinite reverse; }
+.cloud.c3 { top: 10%; left: 36%; transform: scale(.6); animation: drift 66s linear infinite; }
+.hills {
+  position: absolute; left: -12%; right: -12%;
+  bottom: -20%; height: 55%;
+  border-radius: 50% 50% 0 0 / 32% 32% 0 0;
+  z-index: -2;
+  background: linear-gradient(165deg, #a9ce69, #79a845 66%, #68933d);
+  transform-origin: center bottom;
+  transition: transform .7s ease;
+}
+.hills.back {
+  bottom: 5%; left: 28%; height: 37%; right: -25%;
+  opacity: .68;
+  background: linear-gradient(#9dc76c, #77a54c);
+  transform: rotate(-4deg);
+}
+.hills.front {
+  bottom: -23%; left: -20%; height: 48%; right: 16%;
+  background: linear-gradient(165deg, #a9ce64, #78a346 70%);
+}
+.hills.foreground {
+  bottom: -33%; left: 48%; height: 43%; right: -32%;
+  opacity: .75;
+  background: linear-gradient(170deg, #b2d36c, #699340);
+}
+.grass {
+  position: absolute; inset: auto 0 0; height: 13%;
+  z-index: -1;
+  background: linear-gradient(#659540, #7ba64a);
+  opacity: .65;
+}
+.lyric-view {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 8% 7%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.lyric {
+  max-width: 100%;
+  max-height: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
+  color: var(--yellow);
+  font-size: clamp(1.25rem, 4.5vw, 3.6rem);
+  line-height: 1.35;
+  font-weight: bold;
+  white-space: pre-wrap;
+  text-shadow: 0 2px 2px #143c24, 1px 1px 1px #143c24,
+               -1px -1px 1px #143c24, 0 0 10px #315c3450;
+  opacity: 0;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+.lyric.visible { opacity: 1; }
+.lyric.chorus::after {
+  content: "";
+  position: absolute;
+  inset: -8px -15px;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, #ffffff00 42%, #fff9 49%, #ffffff00 56%, transparent 64%);
+  transform: translateX(-120%);
+  animation: sweep 1.5s ease-in-out .35s both;
+  mix-blend-mode: screen;
+}
+.lyric-editor {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  padding: 12px;
+  border: 1px solid #7f9db9;
+  background: #fff;
+  color: #222;
+  font: 14px/1.6 Tahoma, sans-serif;
+}
+.editor-panel {
+  position: absolute;
+  z-index: 10;
+  inset: 8px;
+  display: none;
+  flex-direction: column;
+  padding: 12px;
+  gap: 8px;
+  border: 1px solid #7f9db9;
+  background: #ece9d8;
+  box-shadow: 0 3px 12px #123b5940;
+}
+.editor-panel.open { display: flex; }
+.editor-panel label { font-size: 12px; font-weight: bold; }
+.editor-panel textarea { flex: 1; min-height: 100px; }
+.editor-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.caption {
+  position: absolute;
+  bottom: 12px; left: 12px; right: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: #25476a;
+  opacity: .8;
+  pointer-events: none;
+}
+.toolbar {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid #8c9bb0;
+  border-radius: 4px;
+  background: linear-gradient(#faf9f0, #e2e0d1);
+  box-shadow: inset 1px 1px #fff;
+}
+.xp-button {
+  min-height: 30px;
+  padding: 5px 13px;
+  border: 1px solid #7f9db9;
+  border-radius: 3px;
+  color: #163c65;
+  background: linear-gradient(#fff, #e1edfa 48%, #c7ddf5);
+  box-shadow: inset 1px 1px #fff, 1px 1px #ffffff;
+  font-size: 12px;
+}
+.xp-button:hover { background: linear-gradient(#fff, #d5e8fb); }
+.xp-button:active { background: linear-gradient(#b6d3ee, #edf6ff); }
+.xp-button:focus-visible, input:focus-visible {
+  outline: 2px solid #245edb; outline-offset: 2px;
+}
+.spacer { flex: 1; }
+.speed-label { font-size: 12px; white-space: nowrap; }
+input[type="range"] { accent-color: #2468cf; width: clamp(85px, 15vw, 150px); }
+.statusbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 23px;
+  padding: 4px 8px;
+  border: 1px solid #c0c0b6;
+  border-top-color: #9e9e94;
+  background: #ece9d8;
+  color: #4b4b4b;
+  font-size: 11px;
+}
+@keyframes drift { from { margin-left: -12%; } to { margin-left: 35%; } }
+@keyframes rays { from { transform: rotate(-3deg); opacity: .1; } to { transform: rotate(4deg); opacity: .24; } }
+@keyframes sweep { 0% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+@media (max-width: 520px) {
+  .desktop { padding: 6px; gap: 6px; }
+  .menubar { min-height: 25px; }
+  .toolbar { gap: 6px; padding: 7px; }
+  .xp-button { padding: 5px 9px; }
+  .speed-label { width: 100%; }
+  .statusbar { font-size: 10px; }
+  .lyric-view { padding: 8% 5%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+</style>
 </head>
 <body>
-    <div id="info">🕶️ Clean Nerd Swagger — "Bad to the Bone" Vibe 🕶️</div>
+<div class="desktop">
+  <main class="window">
+    <header class="titlebar">
+      <div class="title-left">
+        <span class="app-icon">♫</span>
+        <span>Cinematic Lyrics Player</span>
+      </div>
+      <div class="window-buttons">
+        <button class="win-btn" aria-label="Minimize">_</button>
+        <button class="win-btn" aria-label="Maximize">□</button>
+        <button class="win-btn close" aria-label="Close" id="closeWindow">×</button>
+      </div>
+    </header>
+    <nav class="menubar" aria-label="Menu">
+      <span>File</span><span>View</span><span>Playback</span><span>Help</span>
+    </nav>
 
-    <!-- Include Three.js from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <section class="stage" id="stage" aria-label="Animated lyrics">
+      <div class="sky-haze"></div>
+      <div class="sunlight"></div>
+      <div class="cloud-layer" id="cloudLayer">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="cloud c3"></div>
+      </div>
+      <div class="hills back" id="backHill"></div>
+      <div class="hills front" id="frontHill"></div>
+      <div class="hills foreground" id="nearHill"></div>
+      <div class="grass"></div>
 
-    <script>
-        // Scene, Camera, Renderer setup
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x221f1e); // Gritty atmospheric sky
-        scene.fog = new THREE.FogExp2(0x221f1e, 0.035);
+      <div class="lyric-view" id="lyricView">
+        <div class="lyric" id="lyric" aria-live="off"></div>
+      </div>
+      <div class="caption" id="caption">A little nostalgia, one line at a time.</div>
 
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 1.8, 5); // Cinematic low-angle tracking shot
+      <section class="editor-panel" id="editorPanel" aria-label="Lyrics editor">
+        <label for="lyricsInput">Paste lyrics below. Line breaks and blank stanza lines are preserved.</label>
+        <textarea class="lyric-editor" id="lyricsInput" spellcheck="false">[PASTE LYRICS HERE]</textarea>
+        <div class="editor-actions">
+          <button class="xp-button" id="cancelEdit">Cancel</button>
+          <button class="xp-button" id="applyLyrics">Apply lyrics</button>
+        </div>
+      </section>
+    </section>
+  </main>
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        document.body.appendChild(renderer.domElement);
+  <div class="toolbar" role="toolbar" aria-label="Playback controls">
+    <button class="xp-button" id="playPause">▶ Play</button>
+    <button class="xp-button" id="restart">↺ Restart</button>
+    <button class="xp-button" id="editLyrics">♫ Edit lyrics</button>
+    <span class="spacer"></span>
+    <label class="speed-label" for="speed">Playback speed <strong id="speedValue">1.0×</strong></label>
+    <input id="speed" type="range" min="0.5" max="1.8" step="0.1" value="1" aria-label="Playback speed">
+  </div>
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffedd0, 0.6); // Warm street glow
-        scene.add(ambientLight);
+  <footer class="statusbar">
+    <span id="status">Ready</span>
+    <span id="counter">Line 0 / 0</span>
+  </footer>
+</div>
 
-        const sunLight = new THREE.DirectionalLight(0xfffaed, 1.2);
-        sunLight.position.set(5, 8, 3);
-        sunLight.castShadow = true;
-        sunLight.shadow.mapSize.width = 1024;
-        sunLight.shadow.mapSize.height = 1024;
-        scene.add(sunLight);
+<script>
+(() => {
+  "use strict";
 
-        // --- ENVIRONMENT: THE DIRTY HOOD & MARKET STALLS ---
-        
-        // Dusty/Muddy Ground
-        const groundGeo = new THREE.PlaneGeometry(30, 200);
-        const groundMat = new THREE.MeshStandardMaterial({ 
-            color: 0x3d342f, 
-            roughness: 0.9,
-            metalness: 0.1 
-        });
-        const ground = new THREE.Mesh(groundGeo, groundMat);
-        ground.rotation.x = -Math.PI / 2;
-        ground.receiveShadow = true;
-        scene.add(ground);
+  const $ = id => document.getElementById(id);
+  const lyric = $("lyric");
+  const stage = $("stage");
+  const lyricView = $("lyricView");
+  const input = $("lyricsInput");
+  const editor = $("editorPanel");
+  const playButton = $("playPause");
+  const speedInput = $("speed");
+  const speedValue = $("speedValue");
+  const status = $("status");
+  const counter = $("counter");
 
-        // Environment chunks pool to create endless walking effect
-        const environmentGroup = new THREE.Group();
-        scene.add(environmentGroup);
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const motions = [
+    { name: "Push in", from: "translate3d(0, 20px, -100px) scale(.88)", to: "translate3d(0, 0, 0) scale(1)" },
+    { name: "Side dolly", from: "translate3d(-65px, 0, -50px) rotateY(12deg)", to: "translate3d(0, 0, 0) rotateY(0)" },
+    { name: "Tilt up", from: "translate3d(0, 50px, 0) rotateX(-12deg)", to: "translate3d(0, 0, 0) rotateX(0)" },
+    { name: "Orbit", from: "translate3d(45px, 12px, -60px) rotateY(-10deg) rotateZ(-2deg)", to: "translate3d(0, 0, 0) rotateY(0) rotateZ(0)" }
+  ];
 
-        function createMarketStall(xPos, zPos) {
-            const stallGroup = new THREE.Group();
+  let lines = [];
+  let index = 0;
+  let playing = false;
+  let timer = null;
+  let startTime = 0;
+  let remaining = 6000;
+  let generation = 0;
+  let lastLine = "";
+  let repeatCount = 0;
 
-            // Wooden Crate/Table
-            const tableGeo = new THREE.BoxGeometry(1.8, 0.8, 1.2);
-            const tableMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.8 });
-            const table = new THREE.Mesh(tableGeo, tableMat);
-            table.position.set(0, 0.4, 0);
-            table.castShadow = true;
-            table.receiveShadow = true;
-            stallGroup.add(table);
+  function getDuration() {
+    return 6000 / Number(speedInput.value);
+  }
 
-            // Piles of fruits & vegetables (spheres and cones)
-            const fruitColors = [0xd9381e, 0xef832e, 0xf4d03f, 0x27ae60, 0x8e44ad];
-            for (let i = 0; i < 12; i++) {
-                const size = 0.15 + Math.random() * 0.1;
-                const fruitGeo = new THREE.SphereGeometry(size, 8, 8);
-                const fruitMat = new THREE.MeshStandardMaterial({ 
-                    color: fruitColors[Math.floor(Math.random() * fruitColors.length)],
-                    roughness: 0.4
-                });
-                const fruit = new THREE.Mesh(fruitGeo, fruitMat);
-                fruit.position.set(
-                    (Math.random() - 0.5) * 1.4,
-                    0.8 + size * 0.8,
-                    (Math.random() - 0.5) * 0.8
-                );
-                fruit.castShadow = true;
-                stallGroup.add(fruit);
-            }
+  function parseLyrics(text) {
+    // Keep original line text intact. Empty lines become deliberate pauses.
+    return text.replace(/\r\n?/g, "\n").split("\n");
+  }
 
-            stallGroup.position.set(xPos, 0, zPos);
-            environmentGroup.add(stallGroup);
-        }
+  function isChorus(line) {
+    if (!line.trim()) return false;
+    return lines.slice(0, index).some(previous => previous.trim() === line.trim());
+  }
 
-        // Generate stalls along both sides (right and left)
-        for (let z = -80; z <= 20; z += 4) {
-            createMarketStall(-2.5, z); // Left side
-            createMarketStall(2.5, z);  // Right side
-            
-            // Add grungy building walls behind stalls
-            if (z % 8 === 0) {
-                const wallGeo = new THREE.BoxGeometry(4, 6, 7);
-                const wallMat = new THREE.MeshStandardMaterial({ color: 0x4a403b, roughness: 0.9 });
-                const leftWall = new THREE.Mesh(wallGeo, wallMat);
-                leftWall.position.set(-5.5, 3, z);
-                environmentGroup.add(leftWall);
+  function updateCounter() {
+    counter.textContent = `Line ${lines.length ? Math.min(index + 1, lines.length) : 0} / ${lines.length}`;
+  }
 
-                const rightWall = new THREE.Mesh(wallGeo, wallMat);
-                rightWall.position.set(5.5, 3, z);
-                environmentGroup.add(rightWall);
-            }
-        }
+  function setStatus(message) {
+    status.textContent = message;
+  }
 
-        // --- CHARACTER: THE CLEAN NERD GUY WITH SWAGGER ---
-        const characterGroup = new THREE.Group();
-        scene.add(characterGroup);
+  function resetScene() {
+    lyricView.style.transform = "";
+    $("cloudLayer").style.transform = "";
+    $("backHill").style.transform = "";
+    $("frontHill").style.transform = "";
+    $("nearHill").style.transform = "";
+  }
 
-        // Materials
-        const skinMat = new THREE.MeshStandardMaterial({ color: 0xf5d0b1, roughness: 0.6 });
-        const winePoloMat = new THREE.MeshStandardMaterial({ color: 0x722f37, roughness: 0.5 }); // Wine colored Lacoste polo
-        const pantsMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.7 }); // Clean dark trousers
-        const shoeMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3 }); // Pristine clean shoes
-        const hairMat = new THREE.MeshStandardMaterial({ color: 0x2c1d0c, roughness: 0.8 });
-        const glassFrameMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.2 });
+  function stopTimer() {
+    clearTimeout(timer);
+    timer = null;
+    generation++;
+  }
 
-        // Torso (Wine-colored polo)
-        const torsoGeo = new THREE.BoxGeometry(0.55, 0.75, 0.3);
-        const torso = new THREE.Mesh(torsoGeo, winePoloMat);
-        torso.position.set(0, 1.15, 0);
-        torso.castShadow = true;
-        characterGroup.add(torso);
+  function updateParallax(n) {
+    if (reducedMotion.matches) {
+      resetScene();
+      return;
+    }
+    const direction = n % 2 ? 1 : -1;
+    $("cloudLayer").style.transform = `translateX(${direction * 9}px)`;
+    $("backHill").style.transform = `translate3d(${direction * 8}px,0,0) rotate(-4deg)`;
+    $("frontHill").style.transform = `translate3d(${direction * -5}px,0,0)`;
+    $("nearHill").style.transform = `translate3d(${direction * 14}px,0,0)`;
+  }
 
-        // Head Group
-        const headGroup = new THREE.Group();
-        headGroup.position.set(0, 1.65, 0);
-        characterGroup.add(headGroup);
+  function showLine(n) {
+    if (!lines.length) return;
+    index = n;
+    const line = lines[index];
+    const token = ++generation;
+    clearTimeout(timer);
 
-        // Head Base
-        const headGeo = new THREE.BoxGeometry(0.32, 0.38, 0.32);
-        const head = new THREE.Mesh(headGeo, skinMat);
-        head.castShadow = true;
-        headGroup.add(head);
+    lyric.className = "lyric";
+    lyric.style.transition = "none";
+    lyric.style.opacity = "0";
+    lyric.style.transform = "none";
+    lyric.textContent = line;
+    updateCounter();
 
-        // Hair
-        const hairGeo = new THREE.BoxGeometry(0.34, 0.15, 0.34);
-        const hair = new THREE.Mesh(hairGeo, hairMat);
-        hair.position.set(0, 0.13, 0);
-        headGroup.add(hair);
+    if (line.trim() && line.trim() === lastLine.trim()) repeatCount++;
+    else repeatCount = 0;
+    if (line.trim()) lastLine = line;
 
-        // Nerd Glasses (Sharp, stylish frames)
-        const glassFrameLeft = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.1, 0.04), glassFrameMat);
-        glassFrameLeft.position.set(-0.08, 0.02, 0.17);
-        headGroup.add(glassFrameLeft);
+    const chorus = isChorus(line);
+    if (chorus) lyric.classList.add("chorus");
 
-        const glassFrameRight = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.1, 0.04), glassFrameMat);
-        glassFrameRight.position.set(0.08, 0.02, 0.17);
-        headGroup.add(glassFrameRight);
+    if (!line.trim()) {
+      lyric.textContent = "";
+      lyric.style.opacity = "0";
+    }
 
-        const glassBridge = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.02), glassFrameMat);
-        glassBridge.position.set(0, 0.04, 0.17);
-        headGroup.add(glassBridge);
+    const duration = getDuration();
+    const motion = motions[index % motions.length];
+    const fadeIn = Math.min(1100, duration * .23);
+    const fadeOut = Math.min(900, duration * .18);
+    const hold = Math.max(300, duration - fadeIn - fadeOut);
 
-        // Limbs (Pivots for animation)
-        const leftArmGroup = new THREE.Group();
-        leftArmGroup.position.set(-0.35, 1.45, 0);
-        characterGroup.add(leftArmGroup);
-        const leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.6, 0.14), winePoloMat);
-        leftArm.position.set(0, -0.25, 0);
-        leftArm.castShadow = true;
-        leftArmGroup.add(leftArm);
+    updateParallax(index);
 
-        const rightArmGroup = new THREE.Group();
-        rightArmGroup.position.set(0.35, 1.45, 0);
-        characterGroup.add(rightArmGroup);
-        const rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.6, 0.14), winePoloMat);
-        rightArm.position.set(0, -0.25, 0);
-        rightArm.castShadow = true;
-        rightArmGroup.add(rightArm);
+    if (reducedMotion.matches) {
+      lyric.style.transform = "none";
+      lyric.style.transition = `opacity ${fadeIn}ms ease-in-out`;
+      requestAnimationFrame(() => {
+        lyric.style.opacity = line.trim() ? "1" : "0";
+      });
+    } else {
+      lyric.style.transform = motion.from;
+      lyric.style.transition = `opacity ${fadeIn}ms ease-in-out, transform ${fadeIn}ms ease-in-out`;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        lyric.style.opacity = line.trim() ? "1" : "0";
+        lyric.style.transform = motion.to;
+      }));
+    }
 
-        const leftLegGroup = new THREE.Group();
-        leftLegGroup.position.set(-0.15, 0.8, 0);
-        characterGroup.add(leftLegGroup);
-        const leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.75, 0.18), pantsMat);
-        leftLeg.position.set(0, -0.35, 0);
-        leftLeg.castShadow = true;
-        leftLegGroup.add(leftLeg);
-        // Clean Shoe
-        const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 0.26), shoeMat);
-        leftShoe.position.set(0, -0.75, 0.04);
-        leftLegGroup.add(leftShoe);
+    $("caption").textContent = line.trim()
+      ? (chorus ? "♪ Returning refrain" : motion.name + " · Scene " + (index + 1))
+      : "A breath between verses";
 
-        const rightLegGroup = new THREE.Group();
-        rightLegGroup.position.set(0.15, 0.8, 0);
-        characterGroup.add(rightLegGroup);
-        const rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.75, 0.18), pantsMat);
-        rightLeg.position.set(0, -0.35, 0);
-        rightLeg.castShadow = true;
-        rightLegGroup.add(rightLeg);
-        // Clean Shoe
-        const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 0.26), shoeMat);
-        rightShoe.position.set(0, -0.75, 0.04);
-        rightLegGroup.add(rightLeg);
+    startTime = performance.now();
+    remaining = duration;
+    setStatus(playing ? "Playing" : "Paused");
 
+    timer = setTimeout(() => {
+      if (token !== generation || !playing) return;
+      fadeThenAdvance(token, fadeOut);
+    }, hold + fadeIn);
+  }
 
-        // --- ANIMATION & RENDER LOOP ---
-        const clock = new THREE.Clock();
+  function fadeThenAdvance(token, fadeOut) {
+    if (token !== generation || !playing) return;
+    lyric.style.transition = `opacity ${fadeOut}ms ease-in-out`;
+    lyric.style.opacity = "0";
+    timer = setTimeout(() => {
+      if (token !== generation || !playing) return;
+      if (index >= lines.length - 1) {
+        playing = false;
+        playButton.textContent = "▶ Play";
+        setStatus("Finished");
+        return;
+      }
+      showLine(index + 1);
+    }, fadeOut);
+  }
 
-        function animate() {
-            requestAnimationFrame(animate);
+  function play() {
+    if (!lines.length) return;
+    if (index >= lines.length - 1 && !playing) {
+      index = 0;
+      lastLine = "";
+    }
+    playing = true;
+    playButton.textContent = "Ⅱ Pause";
+    showLine(index);
+  }
 
-            const time = clock.getElapsedTime() * 5; // Walk frequency synced to heavy swagger rhythm
-            const walkCycle = Math.sin(time);
-            const swaggerLean = Math.cos(time * 0.5);
+  function pause() {
+    playing = false;
+    stopTimer();
+    lyric.style.transition = "opacity 250ms ease";
+    setStatus("Paused");
+    playButton.textContent = "▶ Play";
+  }
 
-            // Character swagger & walk dynamics
-            characterGroup.position.y = Math.abs(Math.sin(time)) * 0.08; // Bounce
-            characterGroup.rotation.z = swaggerLean * 0.05; // Confident shoulder sway
-            headGroup.rotation.y = Math.sin(time * 0.5) * 0.1; // Cool confident head turns
+  function restart() {
+    stopTimer();
+    playing = false;
+    index = 0;
+    lastLine = "";
+    repeatCount = 0;
+    lyric.textContent = "";
+    lyric.style.opacity = "0";
+    resetScene();
+    playButton.textContent = "▶ Play";
+    setStatus("Ready");
+    updateCounter();
+    showLine(0);
+    playing = false;
+    stopTimer();
+    playButton.textContent = "▶ Play";
+    setStatus("Ready");
+  }
 
-            // Limb swings (opposite arm and leg)
-            leftLegGroup.rotation.x = walkCycle * 0.6;
-            rightLegGroup.rotation.x = -walkCycle * 0.6;
-            leftArmGroup.rotation.x = -walkCycle * 0.5;
-            rightArmGroup.rotation.x = walkCycle * 0.5;
+  function loadLyrics() {
+    stopTimer();
+    lines = parseLyrics(input.value);
+    index = 0;
+    lastLine = "";
+    repeatCount = 0;
+    lyric.textContent = "";
+    lyric.style.opacity = "0";
+    editor.classList.remove("open");
+    updateCounter();
+    setStatus("Lyrics loaded");
+    playing = false;
+    playButton.textContent = "▶ Play";
+  }
 
-            // Scroll environment toward the camera to simulate walking forward endlessly
-            environmentGroup.position.z += 0.08;
-            if (environmentGroup.position.z > 4) {
-                environmentGroup.position.z = 0; // Loop environment
-            }
+  playButton.addEventListener("click", () => {
+    if (playing) pause();
+    else play();
+  });
 
-            // Subtle cinematic camera tracking drift
-            camera.position.x = Math.sin(clock.getElapsedTime() * 0.5) * 0.3;
+  $("restart").addEventListener("click", restart);
+  $("editLyrics").addEventListener("click", () => {
+    if (playing) pause();
+    editor.classList.add("open");
+    input.focus();
+  });
+  $("cancelEdit").addEventListener("click", () => editor.classList.remove("open"));
+  $("applyLyrics").addEventListener("click", loadLyrics);
 
-            renderer.render(scene, camera);
-        }
+  speedInput.addEventListener("input", () => {
+    speedValue.textContent = Number(speedInput.value).toFixed(1) + "×";
+    if (playing) {
+      stopTimer();
+      showLine(index);
+    }
+  });
 
-        animate();
+  $("closeWindow").addEventListener("click", () => {
+    if (playing) pause();
+    setStatus("Window minimized to the taskbar");
+  });
 
-        // Handle Window Resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
+  reducedMotion.addEventListener?.("change", () => {
+    resetScene();
+    if (playing) showLine(index);
+  });
+
+  lines = parseLyrics(input.value);
+  updateCounter();
+  setStatus("Ready — press Play");
+})();
+</script>
 </body>
 </html>
