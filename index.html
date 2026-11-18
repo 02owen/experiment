@@ -1,616 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>Windows XP — Cinematic Lyrics</title>
-<style>
-:root {
-  --sky: #7fc7ed;
-  --blue: #245edb;
-  --blue-dark: #17469c;
-  --green: #7da94a;
-  --yellow: #fff3a6;
-  --white: #fff;
-  --timing: 6s;
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; width: 100%; height: 100%; }
-body {
-  font-family: Tahoma, "Trebuchet MS", sans-serif;
-  color: #17355b;
-  background: #c4dff2;
-  overflow: hidden;
-}
-button, input { font: inherit; }
-button { cursor: pointer; }
-.desktop {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(8px, 2vw, 22px);
-  gap: 10px;
-  background: linear-gradient(#e8f5ff, #c5e2f7);
-}
-.window {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid #1556a4;
-  border-radius: 8px 8px 3px 3px;
-  background: #ece9d8;
-  box-shadow: 2px 3px 9px #234c6535;
-}
-.titlebar {
-  height: 34px;
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 4px 7px 4px 12px;
-  color: white;
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: .1px;
-  background: linear-gradient(#5aa5f8 0%, #2475e7 12%, #1460d5 55%, #1d58b6 100%);
-  text-shadow: 1px 1px #234d89;
-}
-.title-left { display: flex; align-items: center; gap: 8px; }
-.app-icon {
-  width: 18px; height: 18px; border-radius: 3px;
-  display: grid; place-items: center;
-  color: #fff; font-size: 12px;
-  background: linear-gradient(135deg, #8fd6ff, #2470cf);
-  border: 1px solid #d8efff;
-}
-.window-buttons { display: flex; gap: 3px; }
-.win-btn {
-  width: 22px; height: 21px;
-  padding: 0;
-  border: 1px solid #fff;
-  border-radius: 3px;
-  color: white;
-  font-size: 13px;
-  font-weight: bold;
-  background: linear-gradient(#77b8ff, #2469d4);
-  box-shadow: inset 1px 1px #ffffff80, 1px 1px #12428e;
-}
-.win-btn.close { background: linear-gradient(#f6a39b, #d33126); }
-.menubar {
-  min-height: 28px;
-  padding: 5px 12px;
-  background: #ece9d8;
-  border-bottom: 1px solid #c2c1b7;
-  color: #343434;
-  font-size: 12px;
-}
-.menubar span { margin-right: 18px; }
-.stage {
-  flex: 1;
-  min-height: 0;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  perspective: 1000px;
-  background: linear-gradient(#79c7f3 0%, #a9e0fa 49%, #c3e6f4 65%, #d7e9bb 100%);
-}
-.sky-haze {
-  position: absolute; inset: 0;
-  z-index: -5;
-  background: radial-gradient(ellipse at 50% 18%, #fff8 0%, transparent 57%);
-}
-.sunlight {
-  position: absolute;
-  inset: -25% 10% 30%;
-  z-index: -4;
-  opacity: .18;
-  background: conic-gradient(from 230deg at 50% 100%, transparent, #fff9, transparent 12%, #fff5, transparent 28%);
-  animation: rays 25s ease-in-out infinite alternate;
-}
-.cloud-layer {
-  position: absolute; inset: 0;
-  z-index: -3;
-  overflow: hidden;
-  transition: transform .7s ease;
-}
-.cloud {
-  position: absolute;
-  width: 125px; height: 28px;
-  border-radius: 50%;
-  background: #fff8;
-  filter: blur(1px);
-}
-.cloud::before, .cloud::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  background: inherit;
-}
-.cloud::before { width: 57px; height: 48px; left: 22px; top: -22px; }
-.cloud::after { width: 72px; height: 38px; left: 52px; top: -13px; }
-.cloud.c1 { top: 16%; left: -8%; transform: scale(1.15); animation: drift 42s linear infinite; }
-.cloud.c2 { top: 31%; left: 60%; transform: scale(.75); animation: drift 58s linear infinite reverse; }
-.cloud.c3 { top: 10%; left: 36%; transform: scale(.6); animation: drift 66s linear infinite; }
-.hills {
-  position: absolute; left: -12%; right: -12%;
-  bottom: -20%; height: 55%;
-  border-radius: 50% 50% 0 0 / 32% 32% 0 0;
-  z-index: -2;
-  background: linear-gradient(165deg, #a9ce69, #79a845 66%, #68933d);
-  transform-origin: center bottom;
-  transition: transform .7s ease;
-}
-.hills.back {
-  bottom: 5%; left: 28%; height: 37%; right: -25%;
-  opacity: .68;
-  background: linear-gradient(#9dc76c, #77a54c);
-  transform: rotate(-4deg);
-}
-.hills.front {
-  bottom: -23%; left: -20%; height: 48%; right: 16%;
-  background: linear-gradient(165deg, #a9ce64, #78a346 70%);
-}
-.hills.foreground {
-  bottom: -33%; left: 48%; height: 43%; right: -32%;
-  opacity: .75;
-  background: linear-gradient(170deg, #b2d36c, #699340);
-}
-.grass {
-  position: absolute; inset: auto 0 0; height: 13%;
-  z-index: -1;
-  background: linear-gradient(#659540, #7ba64a);
-  opacity: .65;
-}
-.lyric-view {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 8% 7%;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.lyric {
-  max-width: 100%;
-  max-height: 100%;
-  overflow-wrap: anywhere;
-  text-align: center;
-  color: var(--yellow);
-  font-size: clamp(1.25rem, 4.5vw, 3.6rem);
-  line-height: 1.35;
-  font-weight: bold;
-  white-space: pre-wrap;
-  text-shadow: 0 2px 2px #143c24, 1px 1px 1px #143c24,
-               -1px -1px 1px #143c24, 0 0 10px #315c3450;
-  opacity: 0;
-  transform-origin: center center;
-  will-change: transform, opacity;
-}
-.lyric.visible { opacity: 1; }
-.lyric.chorus::after {
-  content: "";
-  position: absolute;
-  inset: -8px -15px;
-  pointer-events: none;
-  background: linear-gradient(110deg, transparent 35%, #ffffff00 42%, #fff9 49%, #ffffff00 56%, transparent 64%);
-  transform: translateX(-120%);
-  animation: sweep 1.5s ease-in-out .35s both;
-  mix-blend-mode: screen;
-}
-.lyric-editor {
-  width: 100%;
-  height: 100%;
-  resize: none;
-  padding: 12px;
-  border: 1px solid #7f9db9;
-  background: #fff;
-  color: #222;
-  font: 14px/1.6 Tahoma, sans-serif;
-}
-.editor-panel {
-  position: absolute;
-  z-index: 10;
-  inset: 8px;
-  display: none;
-  flex-direction: column;
-  padding: 12px;
-  gap: 8px;
-  border: 1px solid #7f9db9;
-  background: #ece9d8;
-  box-shadow: 0 3px 12px #123b5940;
-}
-.editor-panel.open { display: flex; }
-.editor-panel label { font-size: 12px; font-weight: bold; }
-.editor-panel textarea { flex: 1; min-height: 100px; }
-.editor-actions { display: flex; gap: 8px; justify-content: flex-end; }
-.caption {
-  position: absolute;
-  bottom: 12px; left: 12px; right: 12px;
-  text-align: center;
-  font-size: 11px;
-  color: #25476a;
-  opacity: .8;
-  pointer-events: none;
-}
-.toolbar {
-  min-height: 58px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 9px 10px;
-  border: 1px solid #8c9bb0;
-  border-radius: 4px;
-  background: linear-gradient(#faf9f0, #e2e0d1);
-  box-shadow: inset 1px 1px #fff;
-}
-.xp-button {
-  min-height: 30px;
-  padding: 5px 13px;
-  border: 1px solid #7f9db9;
-  border-radius: 3px;
-  color: #163c65;
-  background: linear-gradient(#fff, #e1edfa 48%, #c7ddf5);
-  box-shadow: inset 1px 1px #fff, 1px 1px #ffffff;
-  font-size: 12px;
-}
-.xp-button:hover { background: linear-gradient(#fff, #d5e8fb); }
-.xp-button:active { background: linear-gradient(#b6d3ee, #edf6ff); }
-.xp-button:focus-visible, input:focus-visible {
-  outline: 2px solid #245edb; outline-offset: 2px;
-}
-.spacer { flex: 1; }
-.speed-label { font-size: 12px; white-space: nowrap; }
-input[type="range"] { accent-color: #2468cf; width: clamp(85px, 15vw, 150px); }
-.statusbar {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 23px;
-  padding: 4px 8px;
-  border: 1px solid #c0c0b6;
-  border-top-color: #9e9e94;
-  background: #ece9d8;
-  color: #4b4b4b;
-  font-size: 11px;
-}
-@keyframes drift { from { margin-left: -12%; } to { margin-left: 35%; } }
-@keyframes rays { from { transform: rotate(-3deg); opacity: .1; } to { transform: rotate(4deg); opacity: .24; } }
-@keyframes sweep { 0% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
-@media (max-width: 520px) {
-  .desktop { padding: 6px; gap: 6px; }
-  .menubar { min-height: 25px; }
-  .toolbar { gap: 6px; padding: 7px; }
-  .xp-button { padding: 5px 9px; }
-  .speed-label { width: 100%; }
-  .statusbar { font-size: 10px; }
-  .lyric-view { padding: 8% 5%; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation: none !important;
-    scroll-behavior: auto !important;
-    transition: none !important;
-  }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Bubble</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0b0f19;
+            font-family: sans-serif;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .instructions {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            pointer-events: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
 </head>
 <body>
-<div class="desktop">
-  <main class="window">
-    <header class="titlebar">
-      <div class="title-left">
-        <span class="app-icon">♫</span>
-        <span>Cinematic Lyrics Player</span>
-      </div>
-      <div class="window-buttons">
-        <button class="win-btn" aria-label="Minimize">_</button>
-        <button class="win-btn" aria-label="Maximize">□</button>
-        <button class="win-btn close" aria-label="Close" id="closeWindow">×</button>
-      </div>
-    </header>
-    <nav class="menubar" aria-label="Menu">
-      <span>File</span><span>View</span><span>Playback</span><span>Help</span>
-    </nav>
 
-    <section class="stage" id="stage" aria-label="Animated lyrics">
-      <div class="sky-haze"></div>
-      <div class="sunlight"></div>
-      <div class="cloud-layer" id="cloudLayer">
-        <div class="cloud c1"></div>
-        <div class="cloud c2"></div>
-        <div class="cloud c3"></div>
-      </div>
-      <div class="hills back" id="backHill"></div>
-      <div class="hills front" id="frontHill"></div>
-      <div class="hills foreground" id="nearHill"></div>
-      <div class="grass"></div>
+    <div id="canvas-container"></div>
+    <div class="instructions">Move your cursor or touch to interact with the bubble</div>
 
-      <div class="lyric-view" id="lyricView">
-        <div class="lyric" id="lyric" aria-live="off"></div>
-      </div>
-      <div class="caption" id="caption">A little nostalgia, one line at a time.</div>
+    <!-- Include Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-      <section class="editor-panel" id="editorPanel" aria-label="Lyrics editor">
-        <label for="lyricsInput">Paste lyrics below. Line breaks and blank stanza lines are preserved.</label>
-        <textarea class="lyric-editor" id="lyricsInput" spellcheck="false">[PASTE LYRICS HERE]</textarea>
-        <div class="editor-actions">
-          <button class="xp-button" id="cancelEdit">Cancel</button>
-          <button class="xp-button" id="applyLyrics">Apply lyrics</button>
-        </div>
-      </section>
-    </section>
-  </main>
+    <script>
+        // Setup Scene, Camera, and Renderer
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 4.5;
 
-  <div class="toolbar" role="toolbar" aria-label="Playback controls">
-    <button class="xp-button" id="playPause">▶ Play</button>
-    <button class="xp-button" id="restart">↺ Restart</button>
-    <button class="xp-button" id="editLyrics">♫ Edit lyrics</button>
-    <span class="spacer"></span>
-    <label class="speed-label" for="speed">Playback speed <strong id="speedValue">1.0×</strong></label>
-    <input id="speed" type="range" min="0.5" max="1.8" step="0.1" value="1" aria-label="Playback speed">
-  </div>
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
 
-  <footer class="statusbar">
-    <span id="status">Ready</span>
-    <span id="counter">Line 0 / 0</span>
-  </footer>
-</div>
+        // Mouse and Interaction Tracking
+        const mouse = new THREE.Vector2(0, 0);
+        const targetMouse = new THREE.Vector2(0, 0);
 
-<script>
-(() => {
-  "use strict";
+        window.addEventListener('mousemove', (event) => {
+            targetMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            targetMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
 
-  const $ = id => document.getElementById(id);
-  const lyric = $("lyric");
-  const stage = $("stage");
-  const lyricView = $("lyricView");
-  const input = $("lyricsInput");
-  const editor = $("editorPanel");
-  const playButton = $("playPause");
-  const speedInput = $("speed");
-  const speedValue = $("speedValue");
-  const status = $("status");
-  const counter = $("counter");
+        window.addEventListener('touchmove', (event) => {
+            if (event.touches.length > 0) {
+                targetMouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+                targetMouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+            }
+        }, { passive: true });
 
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const motions = [
-    { name: "Push in", from: "translate3d(0, 20px, -100px) scale(.88)", to: "translate3d(0, 0, 0) scale(1)" },
-    { name: "Side dolly", from: "translate3d(-65px, 0, -50px) rotateY(12deg)", to: "translate3d(0, 0, 0) rotateY(0)" },
-    { name: "Tilt up", from: "translate3d(0, 50px, 0) rotateX(-12deg)", to: "translate3d(0, 0, 0) rotateX(0)" },
-    { name: "Orbit", from: "translate3d(45px, 12px, -60px) rotateY(-10deg) rotateZ(-2deg)", to: "translate3d(0, 0, 0) rotateY(0) rotateZ(0)" }
-  ];
+        // Custom Shader Material for Iridescent Bubble Effect
+        const bubbleMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                uTime: { value: 0.0 },
+                uMouse: { value: new THREE.Vector2(0, 0) }
+            },
+            vertexShader: `
+                uniform float uTime;
+                uniform vec2 uMouse;
+                varying vec3 vNormal;
+                varying vec3 vViewPosition;
+                varying float vDistortion;
 
-  let lines = [];
-  let index = 0;
-  let playing = false;
-  let timer = null;
-  let startTime = 0;
-  let remaining = 6000;
-  let generation = 0;
-  let lastLine = "";
-  let repeatCount = 0;
+                // Simple 3D noise function for vertex displacement
+                vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
+                vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+                
+                float snoise(vec3 v){
+                    const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+                    const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+                    vec3 i  = floor(v + dot(v, C.yyy));
+                    vec3 x0 = v - i + dot(i, C.xxx);
+                    vec3 g = step(x0.yzx, x0.xyz);
+                    vec3 l = 1.0 - g;
+                    vec3 i1 = min(g.xyz, l.zxy);
+                    vec3 i2 = max(g.xyz, l.zxy);
+                    vec3 x1 = x0 - i1 + 1.0 * C.xxx;
+                    vec3 x2 = x0 - i2 + 2.0 * C.xxx;
+                    vec3 x3 = x0 - 1.0 + 3.0 * C.xxx;
+                    i = mod(i, 289.0 );
+                    vec4 p = permute( permute( permute(
+                                i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+                            + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+                            + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+                    float n_ = 0.142857142857;
+                    vec3  ns = n_ * D.wyz - D.xzx;
+                    vec4 j = p - 49.0 * floor(p * ns.z);
+                    vec4 x_ = floor(j * ns.z);
+                    vec4 y_ = floor(j - 7.0 * x_ );
+                    vec4 x = x_ *ns.x + ns.yyyy;
+                    vec4 y = y_ *ns.x + ns.yyyy;
+                    vec4 h = 1.0 - abs(x) - abs(y);
+                    vec4 b0 = vec4( x.xy, y.xy );
+                    vec4 b1 = vec4( x.zw, y.zw );
+                    vec4 s0 = floor(b0)*2.0 + 1.0;
+                    vec4 s1 = floor(b1)*2.0 + 1.0;
+                    vec4 sh = -step(h, vec4(0.0));
+                    vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+                    vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+                    vec3 p0 = vec3(a0.xy,h.x);
+                    vec3 p1 = vec3(a0.zw,h.y);
+                    vec3 p2 = vec3(a1.xy,h.z);
+                    vec3 p3 = vec3(a1.zw,h.w);
+                    vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+                    p0 *= norm.x;
+                    p1 *= norm.y;
+                    p2 *= norm.z;
+                    p3 *= norm.w;
+                    vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+                    m = m * m;
+                    return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
+                                                dot(p2,x2), dot(p3,x3) ) );
+                }
 
-  function getDuration() {
-    return 6000 / Number(speedInput.value);
-  }
+                void main() {
+                    vNormal = normal;
+                    
+                    // Wave calculation influenced by time and mouse position
+                    float noise = snoise(normal * 2.5 + vec3(uTime * 0.8));
+                    float mouseInfluence = sin(dot(position.xy, uMouse) * 3.0 + uTime * 2.0) * 0.15;
+                    
+                    vDistortion = noise + mouseInfluence;
+                    
+                    vec3 newPosition = position + normal * (vDistortion * 0.12);
+                    
+                    vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
+                    vViewPosition = -mvPosition.xyz;
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform float uTime;
+                varying vec3 vNormal;
+                varying vec3 vViewPosition;
+                varying float vDistortion;
 
-  function parseLyrics(text) {
-    // Keep original line text intact. Empty lines become deliberate pauses.
-    return text.replace(/\r\n?/g, "\n").split("\n");
-  }
+                void main() {
+                    vec3 normal = normalize(vNormal);
+                    vec3 viewDir = normalize(vViewPosition);
+                    
+                    // Fresnel effect for translucent rim lighting
+                    float fresnel = dot(viewDir, normal);
+                    fresnel = clamp(1.0 - fresnel, 0.0, 1.0);
+                    fresnel = pow(fresnel, 2.0);
 
-  function isChorus(line) {
-    if (!line.trim()) return false;
-    return lines.slice(0, index).some(previous => previous.trim() === line.trim());
-  }
+                    // Iridescent color shift calculated using sine waves and distortion
+                    vec3 color1 = vec3(0.1, 0.5, 0.9); // Blue
+                    vec3 color2 = vec3(0.9, 0.2, 0.6); // Pink/Magenta
+                    vec3 color3 = vec3(0.2, 0.9, 0.6); // Teal
+                    
+                    float wave = sin(vDistortion * 5.0 + uTime * 2.0) * 0.5 + 0.5;
+                    vec3 iridescent = mix(color1, color2, wave);
+                    iridescent = mix(iridescent, color3, fresnel);
 
-  function updateCounter() {
-    counter.textContent = `Line ${lines.length ? Math.min(index + 1, lines.length) : 0} / ${lines.length}`;
-  }
+                    // Glassy transparency & highlights
+                    float alpha = smoothstep(0.0, 1.0, fresnel * 0.8 + 0.2);
+                    vec3 finalColor = iridescent + fresnel * 0.5;
 
-  function setStatus(message) {
-    status.textContent = message;
-  }
+                    gl_FragColor = vec4(finalColor, alpha * 0.75);
+                }
+            `,
+            transparent: true,
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
 
-  function resetScene() {
-    lyricView.style.transform = "";
-    $("cloudLayer").style.transform = "";
-    $("backHill").style.transform = "";
-    $("frontHill").style.transform = "";
-    $("nearHill").style.transform = "";
-  }
+        // Create Sphere Mesh
+        const geometry = new THREE.SphereGeometry(1.6, 128, 128);
+        const bubble = new THREE.Mesh(geometry, bubbleMaterial);
+        scene.add(bubble);
 
-  function stopTimer() {
-    clearTimeout(timer);
-    timer = null;
-    generation++;
-  }
+        // Add subtle ambient background particles to enhance the depth
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 300;
+        const posArray = new Float32Array(particlesCount * 3);
 
-  function updateParallax(n) {
-    if (reducedMotion.matches) {
-      resetScene();
-      return;
-    }
-    const direction = n % 2 ? 1 : -1;
-    $("cloudLayer").style.transform = `translateX(${direction * 9}px)`;
-    $("backHill").style.transform = `translate3d(${direction * 8}px,0,0) rotate(-4deg)`;
-    $("frontHill").style.transform = `translate3d(${direction * -5}px,0,0)`;
-    $("nearHill").style.transform = `translate3d(${direction * 14}px,0,0)`;
-  }
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 10;
+        }
 
-  function showLine(n) {
-    if (!lines.length) return;
-    index = n;
-    const line = lines[index];
-    const token = ++generation;
-    clearTimeout(timer);
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.015,
+            color: 0x4466ff,
+            transparent: true,
+            opacity: 0.5
+        });
+        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particles);
 
-    lyric.className = "lyric";
-    lyric.style.transition = "none";
-    lyric.style.opacity = "0";
-    lyric.style.transform = "none";
-    lyric.textContent = line;
-    updateCounter();
+        // Animation Loop
+        const clock = new THREE.Clock();
 
-    if (line.trim() && line.trim() === lastLine.trim()) repeatCount++;
-    else repeatCount = 0;
-    if (line.trim()) lastLine = line;
+        function animate() {
+            requestAnimationFrame(animate);
 
-    const chorus = isChorus(line);
-    if (chorus) lyric.classList.add("chorus");
+            const elapsedTime = clock.getElapsedTime();
 
-    if (!line.trim()) {
-      lyric.textContent = "";
-      lyric.style.opacity = "0";
-    }
+            // Smooth mouse interpolation (lerp)
+            mouse.x += (targetMouse.x - mouse.x) * 0.05;
+            mouse.y += (targetMouse.y - mouse.y) * 0.05;
 
-    const duration = getDuration();
-    const motion = motions[index % motions.length];
-    const fadeIn = Math.min(1100, duration * .23);
-    const fadeOut = Math.min(900, duration * .18);
-    const hold = Math.max(300, duration - fadeIn - fadeOut);
+            // Update Shader Uniforms
+            bubbleMaterial.uniforms.uTime.value = elapsedTime;
+            bubbleMaterial.uniforms.uMouse.value.set(mouse.x, mouse.y);
 
-    updateParallax(index);
+            // Gentle automatic rotation & reactive tilt based on mouse position
+            bubble.rotation.y = elapsedTime * 0.15 + mouse.x * 0.5;
+            bubble.rotation.x = mouse.y * 0.5;
 
-    if (reducedMotion.matches) {
-      lyric.style.transform = "none";
-      lyric.style.transition = `opacity ${fadeIn}ms ease-in-out`;
-      requestAnimationFrame(() => {
-        lyric.style.opacity = line.trim() ? "1" : "0";
-      });
-    } else {
-      lyric.style.transform = motion.from;
-      lyric.style.transition = `opacity ${fadeIn}ms ease-in-out, transform ${fadeIn}ms ease-in-out`;
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        lyric.style.opacity = line.trim() ? "1" : "0";
-        lyric.style.transform = motion.to;
-      }));
-    }
+            particles.rotation.y = elapsedTime * 0.05;
 
-    $("caption").textContent = line.trim()
-      ? (chorus ? "♪ Returning refrain" : motion.name + " · Scene " + (index + 1))
-      : "A breath between verses";
+            renderer.render(scene, camera);
+        }
 
-    startTime = performance.now();
-    remaining = duration;
-    setStatus(playing ? "Playing" : "Paused");
+        animate();
 
-    timer = setTimeout(() => {
-      if (token !== generation || !playing) return;
-      fadeThenAdvance(token, fadeOut);
-    }, hold + fadeIn);
-  }
-
-  function fadeThenAdvance(token, fadeOut) {
-    if (token !== generation || !playing) return;
-    lyric.style.transition = `opacity ${fadeOut}ms ease-in-out`;
-    lyric.style.opacity = "0";
-    timer = setTimeout(() => {
-      if (token !== generation || !playing) return;
-      if (index >= lines.length - 1) {
-        playing = false;
-        playButton.textContent = "▶ Play";
-        setStatus("Finished");
-        return;
-      }
-      showLine(index + 1);
-    }, fadeOut);
-  }
-
-  function play() {
-    if (!lines.length) return;
-    if (index >= lines.length - 1 && !playing) {
-      index = 0;
-      lastLine = "";
-    }
-    playing = true;
-    playButton.textContent = "Ⅱ Pause";
-    showLine(index);
-  }
-
-  function pause() {
-    playing = false;
-    stopTimer();
-    lyric.style.transition = "opacity 250ms ease";
-    setStatus("Paused");
-    playButton.textContent = "▶ Play";
-  }
-
-  function restart() {
-    stopTimer();
-    playing = false;
-    index = 0;
-    lastLine = "";
-    repeatCount = 0;
-    lyric.textContent = "";
-    lyric.style.opacity = "0";
-    resetScene();
-    playButton.textContent = "▶ Play";
-    setStatus("Ready");
-    updateCounter();
-    showLine(0);
-    playing = false;
-    stopTimer();
-    playButton.textContent = "▶ Play";
-    setStatus("Ready");
-  }
-
-  function loadLyrics() {
-    stopTimer();
-    lines = parseLyrics(input.value);
-    index = 0;
-    lastLine = "";
-    repeatCount = 0;
-    lyric.textContent = "";
-    lyric.style.opacity = "0";
-    editor.classList.remove("open");
-    updateCounter();
-    setStatus("Lyrics loaded");
-    playing = false;
-    playButton.textContent = "▶ Play";
-  }
-
-  playButton.addEventListener("click", () => {
-    if (playing) pause();
-    else play();
-  });
-
-  $("restart").addEventListener("click", restart);
-  $("editLyrics").addEventListener("click", () => {
-    if (playing) pause();
-    editor.classList.add("open");
-    input.focus();
-  });
-  $("cancelEdit").addEventListener("click", () => editor.classList.remove("open"));
-  $("applyLyrics").addEventListener("click", loadLyrics);
-
-  speedInput.addEventListener("input", () => {
-    speedValue.textContent = Number(speedInput.value).toFixed(1) + "×";
-    if (playing) {
-      stopTimer();
-      showLine(index);
-    }
-  });
-
-  $("closeWindow").addEventListener("click", () => {
-    if (playing) pause();
-    setStatus("Window minimized to the taskbar");
-  });
-
-  reducedMotion.addEventListener?.("change", () => {
-    resetScene();
-    if (playing) showLine(index);
-  });
-
-  lines = parseLyrics(input.value);
-  updateCounter();
-  setStatus("Ready — press Play");
-})();
-</script>
+        // Handle Window Resizing
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
 </body>
 </html>
