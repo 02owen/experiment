@@ -94,11 +94,11 @@
     }
 
     .hamburger-btn {
-      width: 42px;
-      height: 42px;
+      width: 48px;
+      height: 48px;
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      border-radius: 8px;
+      border-radius: 10px;
       color: var(--text-primary);
       cursor: pointer;
       display: inline-flex;
@@ -356,6 +356,7 @@
       margin: 1rem 0;
     }
 
+    /* Uniform Icon Action Controls */
     .controls {
       display: flex;
       align-items: center;
@@ -366,50 +367,65 @@
 
     .btn-group {
       display: flex;
-      gap: 0.65rem;
-      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
     }
 
-    button.btn {
-      font-family: inherit;
-      font-size: 0.9rem;
-      font-weight: 500;
-      padding: 0.6rem 1.15rem;
-      border-radius: 6px;
+    button.icon-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
       cursor: pointer;
       border: 1px solid var(--border-subtle);
-      transition: all 0.15s ease;
+      background: var(--bg-card);
+      color: var(--text-primary);
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
     }
 
-    button.btn-primary {
+    button.icon-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    button.icon-btn.primary {
       background: var(--accent);
       color: #111111;
       border-color: var(--accent);
-      font-weight: 600;
     }
 
-    button.btn-primary:hover {
+    button.icon-btn.primary:hover {
       background: var(--accent-hover);
       border-color: var(--accent-hover);
     }
 
-    button.btn-secondary {
-      background: var(--bg-card);
-      color: var(--text-primary);
-    }
-
-    button.btn-secondary:hover {
+    button.icon-btn.secondary:hover {
       background: var(--bg-elevated);
       border-color: var(--border-active);
     }
 
-    button.btn-saved {
+    button.icon-btn.active-toggle {
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    button.icon-btn.saved {
       background: var(--success-bg);
       color: var(--success);
-      border-color: rgba(78, 201, 176, 0.4);
+      border-color: rgba(78, 201, 176, 0.45);
+    }
+
+    button.icon-btn.saved svg {
+      fill: var(--success);
     }
 
     .status-note {
@@ -556,9 +572,25 @@
 
     <div class="controls">
       <div class="btn-group">
-        <button class="btn btn-primary" id="btn-new">New Problem</button>
-        <button class="btn btn-secondary" id="btn-toggle-solution">Show Solution</button>
-        <button class="btn btn-secondary" id="btn-save-problem">Save Problem</button>
+        <button class="icon-btn primary" id="btn-new" type="button" title="New Problem" aria-label="New Problem">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+            <polyline points="21 3 21 9 15 9" />
+          </svg>
+        </button>
+
+        <button class="icon-btn secondary" id="btn-toggle-solution" type="button" title="Show Solution" aria-label="Show Solution">
+          <svg id="icon-eye" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
+
+        <button class="icon-btn secondary" id="btn-save-problem" type="button" title="Save Problem" aria-label="Save Problem">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+          </svg>
+        </button>
       </div>
       <span class="status-note" id="status-note"></span>
     </div>
@@ -1182,6 +1214,7 @@
       problemText: document.getElementById("problem-text"),
       btnNew: document.getElementById("btn-new"),
       btnToggle: document.getElementById("btn-toggle-solution"),
+      iconEye: document.getElementById("icon-eye"),
       btnSave: document.getElementById("btn-save-problem"),
       statusNote: document.getElementById("status-note"),
       solutionCard: document.getElementById("solution-card"),
@@ -1233,8 +1266,11 @@
 
     function updateSaveButtonState() {
       const saved = isCurrentProblemSaved();
-      dom.btnSave.textContent = saved ? "Saved" : "Save Problem";
-      dom.btnSave.classList.toggle("btn-saved", saved);
+      dom.btnSave.classList.toggle("saved", saved);
+      dom.btnSave.classList.toggle("secondary", !saved);
+      const label = saved ? "Saved" : "Save Problem";
+      dom.btnSave.title = label;
+      dom.btnSave.setAttribute("aria-label", label);
     }
 
     function renderSavedInMenu() {
@@ -1264,10 +1300,23 @@
       state.solutionVisible = visible;
       if (visible) {
         dom.solutionCard.classList.add("visible");
-        dom.btnToggle.textContent = "Hide Solution";
+        dom.btnToggle.classList.add("active-toggle");
+        dom.btnToggle.title = "Hide Solution";
+        dom.btnToggle.setAttribute("aria-label", "Hide Solution");
+        dom.iconEye.innerHTML = `
+          <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+          <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+          <line x1="1" y1="1" x2="23" y2="23" />
+        `;
       } else {
         dom.solutionCard.classList.remove("visible");
-        dom.btnToggle.textContent = "Show Solution";
+        dom.btnToggle.classList.remove("active-toggle");
+        dom.btnToggle.title = "Show Solution";
+        dom.btnToggle.setAttribute("aria-label", "Show Solution");
+        dom.iconEye.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        `;
       }
     }
 
@@ -1306,7 +1355,7 @@
       const sig = getProblemSignature(state.currentProblem);
       const exists = state.savedProblems.some(item => item.id === sig);
       if (exists) {
-        dom.statusNote.textContent = "Already saved (unique problems only).";
+        dom.statusNote.textContent = "Already saved.";
         updateSaveButtonState();
         return;
       }
@@ -1322,7 +1371,7 @@
       persistSavedToStorage(state.savedProblems);
       updateSaveButtonState();
       renderSavedInMenu();
-      dom.statusNote.textContent = "Saved to menu list.";
+      dom.statusNote.textContent = "Saved.";
     });
 
     dom.savedMenuContainer.addEventListener("click", (e) => {
@@ -1338,7 +1387,7 @@
         persistSavedToStorage(state.savedProblems);
         updateSaveButtonState();
         renderSavedInMenu();
-        dom.statusNote.textContent = "Deleted saved problem.";
+        dom.statusNote.textContent = "Deleted.";
       } else if (action === "open") {
         const found = state.savedProblems.find(item => item.id === id);
         if (found) {
