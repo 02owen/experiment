@@ -126,8 +126,10 @@
       position: absolute;
       top: calc(100% + 0.5rem);
       right: 0;
-      width: 340px;
+      width: 360px;
       max-width: 100%;
+      max-height: 78vh;
+      overflow-y: auto;
       background: var(--bg-card);
       border: 1px solid var(--border-active);
       border-radius: 10px;
@@ -196,7 +198,8 @@
       transform: rotate(-90deg);
     }
 
-    .book-section.collapsed .unit-list {
+    .book-section.collapsed .unit-list,
+    .book-section.collapsed .saved-menu-list {
       display: none;
     }
 
@@ -230,6 +233,77 @@
       background: var(--accent-bg);
       color: var(--accent);
       font-weight: 500;
+    }
+
+    .saved-menu-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      padding: 0.25rem 0.25rem 0.35rem;
+    }
+
+    .saved-menu-empty {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0.3rem 0.4rem;
+    }
+
+    .saved-menu-item {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 7px;
+      padding: 0.55rem 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .saved-menu-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .saved-menu-preview {
+      font-size: 0.82rem;
+      color: var(--text-primary);
+      line-height: 1.45;
+      max-height: 4.5rem;
+      overflow: hidden;
+    }
+
+    .saved-menu-actions {
+      display: flex;
+      gap: 0.4rem;
+      justify-content: flex-end;
+    }
+
+    .btn-mini {
+      font-family: inherit;
+      font-size: 0.74rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      transition: all 0.12s ease;
+    }
+
+    .btn-mini:hover {
+      border-color: var(--border-active);
+    }
+
+    .btn-mini.delete:hover {
+      background: var(--danger-bg);
+      border-color: rgba(241, 108, 108, 0.45);
+      color: var(--danger);
     }
 
     .card {
@@ -415,123 +489,16 @@
       margin-right: 0.5rem;
     }
 
-    /* Saved Problems Section */
-    .saved-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 1.25rem 1.5rem;
-    }
-
-    .saved-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.85rem;
-    }
-
-    .saved-title {
-      font-size: 0.88rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .saved-count {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      padding: 0.15rem 0.55rem;
-      border-radius: 999px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .saved-empty {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-    }
-
-    .saved-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .saved-item {
-      background: var(--bg-primary);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 0.9rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .saved-item-body {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .saved-item-meta {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--accent);
-      margin-bottom: 0.35rem;
-      font-weight: 600;
-    }
-
-    .saved-item-text {
-      font-size: 0.95rem;
-      color: var(--text-primary);
-      line-height: 1.6;
-    }
-
-    .saved-item-actions {
-      display: flex;
-      gap: 0.45rem;
-      flex-shrink: 0;
-    }
-
-    .btn-mini {
-      font-family: inherit;
-      font-size: 0.78rem;
-      padding: 0.35rem 0.65rem;
-      border-radius: 5px;
-      cursor: pointer;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      color: var(--text-primary);
-      transition: all 0.12s ease;
-    }
-
-    .btn-mini:hover {
-      border-color: var(--border-active);
-    }
-
-    .btn-mini.delete:hover {
-      background: var(--danger-bg);
-      border-color: rgba(241, 108, 108, 0.45);
-      color: var(--danger);
-    }
-
     .katex {
       font-size: 1.06em;
     }
 
     @media (max-width: 600px) {
-      .card, .solution-card, .saved-section {
+      .card, .solution-card {
         padding: 1.2rem;
       }
       .brand-logo {
         font-size: 1.9rem;
-      }
-      .saved-item {
-        flex-direction: column;
       }
     }
   </style>
@@ -547,7 +514,7 @@
         <span class="hamburger-line"></span>
       </button>
 
-      <nav class="menu-drawer" id="menu-drawer" aria-label="Books and Units">
+      <nav class="menu-drawer" id="menu-drawer" aria-label="Books, Units and Saved Problems">
         <button class="menu-all-btn active" data-unit="all">All Books &amp; Units (Random)</button>
 
         <div class="book-section" data-book="analysis">
@@ -564,6 +531,14 @@
             <span class="book-chevron">▾</span>
           </button>
           <ul class="unit-list" data-book-units="algebra-vectors"></ul>
+        </div>
+
+        <div class="book-section" data-book="saved">
+          <button class="book-header" type="button">
+            <span>Saved Problems (<span id="menu-saved-count">0</span>)</span>
+            <span class="book-chevron">▾</span>
+          </button>
+          <div class="saved-menu-list" id="saved-menu-container"></div>
         </div>
       </nav>
     </header>
@@ -592,14 +567,6 @@
       <div class="solution-header">Step-by-Step Derivation</div>
       <ol class="steps-list" id="solution-steps"></ol>
       <div class="final-answer-box" id="final-answer"></div>
-    </section>
-
-    <section class="saved-section" id="saved-section">
-      <div class="saved-header">
-        <span class="saved-title">Saved Problems</span>
-        <span class="saved-count" id="saved-count">0</span>
-      </div>
-      <div id="saved-container"></div>
     </section>
   </div>
 
@@ -1140,7 +1107,7 @@
     }
 
     /* =========================================================================
-       4. CURRICULUM, SAVED PROBLEMS & STATE
+       4. CURRICULUM, MENU SAVED SECTION & STATE
        ========================================================================= */
     const STORAGE_KEY = "traps_saved_problems_v1";
 
@@ -1220,8 +1187,8 @@
       solutionCard: document.getElementById("solution-card"),
       solutionSteps: document.getElementById("solution-steps"),
       finalAnswer: document.getElementById("final-answer"),
-      savedCount: document.getElementById("saved-count"),
-      savedContainer: document.getElementById("saved-container")
+      menuSavedCount: document.getElementById("menu-saved-count"),
+      savedMenuContainer: document.getElementById("saved-menu-container")
     };
 
     function populateMenuUnits() {
@@ -1270,29 +1237,27 @@
       dom.btnSave.classList.toggle("btn-saved", saved);
     }
 
-    function renderSavedList() {
-      dom.savedCount.textContent = String(state.savedProblems.length);
+    function renderSavedInMenu() {
+      dom.menuSavedCount.textContent = String(state.savedProblems.length);
       if (state.savedProblems.length === 0) {
-        dom.savedContainer.innerHTML = `<p class="saved-empty">No saved problems yet. Click "Save Problem" to bookmark unique ones.</p>`;
+        dom.savedMenuContainer.innerHTML = `<p class="saved-menu-empty">No saved problems yet.</p>`;
         return;
       }
 
-      dom.savedContainer.innerHTML = `<ul class="saved-list">${
-        state.savedProblems.map(item => `
-          <li class="saved-item" data-id="${encodeURIComponent(item.id)}">
-            <div class="saved-item-body">
-              <div class="saved-item-meta">${item.book} &middot; ${item.unit}</div>
-              <div class="saved-item-text">${item.statement}</div>
-            </div>
-            <div class="saved-item-actions">
-              <button class="btn-mini open" type="button" data-action="open">Open</button>
-              <button class="btn-mini delete" type="button" data-action="delete">Delete</button>
-            </div>
-          </li>
-        `).join("")
-      }</ul>`;
+      dom.savedMenuContainer.innerHTML = state.savedProblems.map((item, idx) => `
+        <div class="saved-menu-item" data-id="${encodeURIComponent(item.id)}">
+          <div class="saved-menu-top">
+            <span>#${idx + 1} &middot; ${item.unit}</span>
+          </div>
+          <div class="saved-menu-preview">${item.statement}</div>
+          <div class="saved-menu-actions">
+            <button class="btn-mini open" type="button" data-action="open">Open</button>
+            <button class="btn-mini delete" type="button" data-action="delete">Delete</button>
+          </div>
+        </div>
+      `).join("");
 
-      typesetMath(dom.savedContainer);
+      typesetMath(dom.savedMenuContainer);
     }
 
     function setSolutionVisibility(visible) {
@@ -1356,30 +1321,30 @@
       });
       persistSavedToStorage(state.savedProblems);
       updateSaveButtonState();
-      renderSavedList();
-      dom.statusNote.textContent = "Problem saved.";
+      renderSavedInMenu();
+      dom.statusNote.textContent = "Saved to menu list.";
     });
 
-    dom.savedContainer.addEventListener("click", (e) => {
+    dom.savedMenuContainer.addEventListener("click", (e) => {
       const actionBtn = e.target.closest("[data-action]");
       if (!actionBtn) return;
-      const li = actionBtn.closest(".saved-item");
-      if (!li) return;
-      const id = decodeURIComponent(li.dataset.id);
+      const card = actionBtn.closest(".saved-menu-item");
+      if (!card) return;
+      const id = decodeURIComponent(card.dataset.id);
       const action = actionBtn.dataset.action;
 
       if (action === "delete") {
         state.savedProblems = state.savedProblems.filter(item => item.id !== id);
         persistSavedToStorage(state.savedProblems);
         updateSaveButtonState();
-        renderSavedList();
-        dom.statusNote.textContent = "Saved problem deleted.";
+        renderSavedInMenu();
+        dom.statusNote.textContent = "Deleted saved problem.";
       } else if (action === "open") {
         const found = state.savedProblems.find(item => item.id === id);
         if (found) {
-          dom.statusNote.textContent = "Viewing saved problem.";
+          dom.statusNote.textContent = "Opened saved problem.";
           renderProblem(found, state.problemIndex);
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          setMenuOpen(false);
         }
       }
     });
@@ -1419,7 +1384,7 @@
     window.addEventListener("DOMContentLoaded", () => {
       populateMenuUnits();
       highlightActiveUnit();
-      renderSavedList();
+      renderSavedInMenu();
       const waitForKatex = setInterval(() => {
         if (typeof renderMathInElement === "function") {
           clearInterval(waitForKatex);
