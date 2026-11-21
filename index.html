@@ -1,250 +1,1056 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive 3D Bubble</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #0b0f19;
-            font-family: sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baccalaureate Advanced Mathematics Generator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg-primary: #1e1e1e;
+      --bg-card: #252526;
+      --bg-elevated: #2d2d30;
+      --border-subtle: #333333;
+      --border-active: #555555;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --text-muted: #767676;
+      --accent: #4ea1f3;
+      --accent-hover: #3b8be0;
+      --accent-bg: rgba(78, 161, 243, 0.12);
+      --success: #4ec9b0;
+      --success-bg: rgba(78, 201, 176, 0.12);
+    }
 
-        #canvas-container {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .instructions {
-            position: absolute;
-            bottom: 30px;
-            width: 100%;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            pointer-events: none;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-    </style>
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .title-group h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .title-group p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .session-stats {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+    }
+
+    .session-stats span strong {
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .pill {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.35rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .pill:hover {
+      border-color: var(--border-active);
+      color: var(--text-primary);
+    }
+
+    .pill.active {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.75rem;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.15rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .badge {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .problem-statement {
+      font-size: 1.08rem;
+      color: var(--text-primary);
+      line-height: 1.8;
+    }
+
+    .problem-statement .katex-display {
+      margin: 1rem 0;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    button.btn {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.6rem 1.15rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button.btn-primary {
+      background: var(--accent);
+      color: #111111;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    button.btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    button.btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    button.btn-secondary:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-active);
+    }
+
+    .shortcut-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    kbd {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .solution-card {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--success);
+      border-radius: 10px;
+      padding: 1.75rem;
+    }
+
+    .solution-card.visible {
+      display: block;
+    }
+
+    .solution-header {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--success);
+      font-weight: 600;
+      margin-bottom: 1.1rem;
+    }
+
+    .steps-list {
+      list-style: none;
+      counter-reset: step-counter;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .steps-list li {
+      counter-increment: step-counter;
+      position: relative;
+      padding-left: 2.2rem;
+      font-size: 0.98rem;
+      line-height: 1.75;
+    }
+
+    .steps-list li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0.2rem;
+      width: 1.45rem;
+      height: 1.45rem;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .final-answer-box {
+      margin-top: 1.35rem;
+      padding: 0.9rem 1.15rem;
+      background: var(--success-bg);
+      border: 1px solid rgba(78, 201, 176, 0.3);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 1.05rem;
+    }
+
+    .final-answer-box strong {
+      color: var(--success);
+      margin-right: 0.5rem;
+    }
+
+    .katex {
+      font-size: 1.08em;
+    }
+
+    @media (max-width: 600px) {
+      .card, .solution-card {
+        padding: 1.25rem;
+      }
+      .shortcut-hint {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <div class="title-group">
+        <h1>Analysis, Complex Numbers &amp; 3D Geometry</h1>
+        <p>Procedural Baccalaureate Problem Engine</p>
+      </div>
+      <div class="session-stats">
+        <span>Generated: <strong id="stat-generated">0</strong></span>
+        <span>Solved: <strong id="stat-solved">0</strong></span>
+      </div>
+    </header>
 
-    <div id="canvas-container"></div>
-    <div class="instructions">Move your cursor or touch to interact with the bubble</div>
+    <div class="filter-bar" id="filter-bar">
+      <button class="pill active" data-topic="all">All Archetypes (Random)</button>
+      <button class="pill" data-topic="composite-limit">Composite Rational Limits</button>
+      <button class="pill" data-topic="chain-trig">Chain Rule &amp; Trig Intervals</button>
+      <button class="pill" data-topic="complex-arg">Complex Arguments</button>
+      <button class="pill" data-topic="space-proj">3D Orthogonal Projections</button>
+      <button class="pill" data-topic="floor-limit">Floor Function Limits</button>
+    </div>
 
-    <!-- Include Three.js from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <main class="card">
+      <div class="card-meta">
+        <span class="badge" id="problem-category">Loading...</span>
+        <span id="problem-id">#001</span>
+      </div>
+      <div class="problem-statement" id="problem-text"></div>
+    </main>
 
-    <script>
-        // Setup Scene, Camera, and Renderer
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 4.5;
+    <div class="controls">
+      <div class="btn-group">
+        <button class="btn btn-primary" id="btn-new">New Problem</button>
+        <button class="btn btn-secondary" id="btn-toggle-solution">Show Solution</button>
+      </div>
+      <div class="shortcut-hint">
+        Press <kbd>N</kbd> or <kbd>Space</kbd> for next &middot; <kbd>S</kbd> for solution
+      </div>
+    </div>
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
+    <section class="solution-card" id="solution-card">
+      <div class="solution-header">Step-by-Step Derivation</div>
+      <ol class="steps-list" id="solution-steps"></ol>
+      <div class="final-answer-box" id="final-answer"></div>
+    </section>
+  </div>
 
-        // Mouse and Interaction Tracking
-        const mouse = new THREE.Vector2(0, 0);
-        const targetMouse = new THREE.Vector2(0, 0);
-
-        window.addEventListener('mousemove', (event) => {
-            targetMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            targetMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        });
-
-        window.addEventListener('touchmove', (event) => {
-            if (event.touches.length > 0) {
-                targetMouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-                targetMouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
-            }
-        }, { passive: true });
-
-        // Custom Shader Material for Iridescent Bubble Effect
-        const bubbleMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                uTime: { value: 0.0 },
-                uMouse: { value: new THREE.Vector2(0, 0) }
-            },
-            vertexShader: `
-                uniform float uTime;
-                uniform vec2 uMouse;
-                varying vec3 vNormal;
-                varying vec3 vViewPosition;
-                varying float vDistortion;
-
-                // Simple 3D noise function for vertex displacement
-                vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
-                vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
-                
-                float snoise(vec3 v){
-                    const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-                    const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-                    vec3 i  = floor(v + dot(v, C.yyy));
-                    vec3 x0 = v - i + dot(i, C.xxx);
-                    vec3 g = step(x0.yzx, x0.xyz);
-                    vec3 l = 1.0 - g;
-                    vec3 i1 = min(g.xyz, l.zxy);
-                    vec3 i2 = max(g.xyz, l.zxy);
-                    vec3 x1 = x0 - i1 + 1.0 * C.xxx;
-                    vec3 x2 = x0 - i2 + 2.0 * C.xxx;
-                    vec3 x3 = x0 - 1.0 + 3.0 * C.xxx;
-                    i = mod(i, 289.0 );
-                    vec4 p = permute( permute( permute(
-                                i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
-                            + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
-                            + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
-                    float n_ = 0.142857142857;
-                    vec3  ns = n_ * D.wyz - D.xzx;
-                    vec4 j = p - 49.0 * floor(p * ns.z);
-                    vec4 x_ = floor(j * ns.z);
-                    vec4 y_ = floor(j - 7.0 * x_ );
-                    vec4 x = x_ *ns.x + ns.yyyy;
-                    vec4 y = y_ *ns.x + ns.yyyy;
-                    vec4 h = 1.0 - abs(x) - abs(y);
-                    vec4 b0 = vec4( x.xy, y.xy );
-                    vec4 b1 = vec4( x.zw, y.zw );
-                    vec4 s0 = floor(b0)*2.0 + 1.0;
-                    vec4 s1 = floor(b1)*2.0 + 1.0;
-                    vec4 sh = -step(h, vec4(0.0));
-                    vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
-                    vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
-                    vec3 p0 = vec3(a0.xy,h.x);
-                    vec3 p1 = vec3(a0.zw,h.y);
-                    vec3 p2 = vec3(a1.xy,h.z);
-                    vec3 p3 = vec3(a1.zw,h.w);
-                    vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-                    p0 *= norm.x;
-                    p1 *= norm.y;
-                    p2 *= norm.z;
-                    p3 *= norm.w;
-                    vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-                    m = m * m;
-                    return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
-                                                dot(p2,x2), dot(p3,x3) ) );
-                }
-
-                void main() {
-                    vNormal = normal;
-                    
-                    // Wave calculation influenced by time and mouse position
-                    float noise = snoise(normal * 2.5 + vec3(uTime * 0.8));
-                    float mouseInfluence = sin(dot(position.xy, uMouse) * 3.0 + uTime * 2.0) * 0.15;
-                    
-                    vDistortion = noise + mouseInfluence;
-                    
-                    vec3 newPosition = position + normal * (vDistortion * 0.12);
-                    
-                    vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
-                    vViewPosition = -mvPosition.xyz;
-                    gl_Position = projectionMatrix * mvPosition;
-                }
-            `,
-            fragmentShader: `
-                uniform float uTime;
-                varying vec3 vNormal;
-                varying vec3 vViewPosition;
-                varying float vDistortion;
-
-                void main() {
-                    vec3 normal = normalize(vNormal);
-                    vec3 viewDir = normalize(vViewPosition);
-                    
-                    // Fresnel effect for translucent rim lighting
-                    float fresnel = dot(viewDir, normal);
-                    fresnel = clamp(1.0 - fresnel, 0.0, 1.0);
-                    fresnel = pow(fresnel, 2.0);
-
-                    // Iridescent color shift calculated using sine waves and distortion
-                    vec3 color1 = vec3(0.1, 0.5, 0.9); // Blue
-                    vec3 color2 = vec3(0.9, 0.2, 0.6); // Pink/Magenta
-                    vec3 color3 = vec3(0.2, 0.9, 0.6); // Teal
-                    
-                    float wave = sin(vDistortion * 5.0 + uTime * 2.0) * 0.5 + 0.5;
-                    vec3 iridescent = mix(color1, color2, wave);
-                    iridescent = mix(iridescent, color3, fresnel);
-
-                    // Glassy transparency & highlights
-                    float alpha = smoothstep(0.0, 1.0, fresnel * 0.8 + 0.2);
-                    vec3 finalColor = iridescent + fresnel * 0.5;
-
-                    gl_FragColor = vec4(finalColor, alpha * 0.75);
-                }
-            `,
-            transparent: true,
-            side: THREE.DoubleSide,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-
-        // Create Sphere Mesh
-        const geometry = new THREE.SphereGeometry(1.6, 128, 128);
-        const bubble = new THREE.Mesh(geometry, bubbleMaterial);
-        scene.add(bubble);
-
-        // Add subtle ambient background particles to enhance the depth
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 300;
-        const posArray = new Float32Array(particlesCount * 3);
-
-        for(let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 10;
+  <script>
+    /* =========================================================================
+       1. EXACT ALGEBRAIC & SYMBOLIC UTILITIES
+       ========================================================================= */
+    const MathFmt = {
+      gcd(a, b) {
+        a = Math.abs(Math.round(a));
+        b = Math.abs(Math.round(b));
+        while (b !== 0) {
+          const t = b;
+          b = a % b;
+          a = t;
         }
+        return a === 0 ? 1 : a;
+      },
 
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.015,
-            color: 0x4466ff,
-            transparent: true,
-            opacity: 0.5
-        });
-        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-        scene.add(particles);
+      // Exact reduced fraction { n, d } with d > 0
+      frac(n, d = 1) {
+        if (d === 0) throw new Error("Division by zero in fraction");
+        if (n === 0) return { n: 0, d: 1 };
+        if (d < 0) { n = -n; d = -d; }
+        const g = this.gcd(n, d);
+        return { n: n / g, d: d / g };
+      },
 
-        // Animation Loop
-        const clock = new THREE.Clock();
+      addFrac(f1, f2) {
+        return this.frac(f1.n * f2.d + f2.n * f1.d, f1.d * f2.d);
+      },
 
-        function animate() {
-            requestAnimationFrame(animate);
+      subFrac(f1, f2) {
+        return this.frac(f1.n * f2.d - f2.n * f1.d, f1.d * f2.d);
+      },
 
-            const elapsedTime = clock.getElapsedTime();
+      mulFrac(f1, f2) {
+        return this.frac(f1.n * f2.n, f1.d * f2.d);
+      },
 
-            // Smooth mouse interpolation (lerp)
-            mouse.x += (targetMouse.x - mouse.x) * 0.05;
-            mouse.y += (targetMouse.y - mouse.y) * 0.05;
+      // Format fraction as LaTeX
+      texFrac(f, showPlus = false) {
+        if (f.n === 0) return showPlus ? "" : "0";
+        const sign = f.n < 0 ? "-" : (showPlus ? "+" : "");
+        const absN = Math.abs(f.n);
+        if (f.d === 1) return `${sign}${absN}`;
+        return `${sign}\\frac{${absN}}{${f.d}}`;
+      },
 
-            // Update Shader Uniforms
-            bubbleMaterial.uniforms.uTime.value = elapsedTime;
-            bubbleMaterial.uniforms.uMouse.value.set(mouse.x, mouse.y);
-
-            // Gentle automatic rotation & reactive tilt based on mouse position
-            bubble.rotation.y = elapsedTime * 0.15 + mouse.x * 0.5;
-            bubble.rotation.x = mouse.y * 0.5;
-
-            particles.rotation.y = elapsedTime * 0.05;
-
-            renderer.render(scene, camera);
+      // Format linear expression a*v + b cleanly
+      linear(a, b, v = "x") {
+        let out = "";
+        if (a !== 0) {
+          if (a === 1) out += v;
+          else if (a === -1) out += `-${v}`;
+          else out += `${a}${v}`;
         }
+        if (b !== 0) {
+          if (out === "") {
+            out += `${b}`;
+          } else {
+            out += b > 0 ? ` + ${b}` : ` - ${Math.abs(b)}`;
+          }
+        }
+        return out === "" ? "0" : out;
+      },
 
-        animate();
+      // Format rational (ax + b)/(cx + d) with simplified signs
+      rational(a, b, c, d, v = "x") {
+        return `\\frac{${this.linear(a, b, v)}}{${this.linear(c, d, v)}}`;
+      },
 
-        // Handle Window Resizing
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+      // Format coefficient * symbol (e.g., 1 -> "", -1 -> "-", 3 -> "3")
+      coeff(k, sym, leading = true) {
+        if (k === 0) return "";
+        if (leading) {
+          if (k === 1) return sym;
+          if (k === -1) return `-${sym}`;
+          return `${k}${sym}`;
+        } else {
+          if (k === 1) return ` + ${sym}`;
+          if (k === -1) return ` - ${sym}`;
+          return k > 0 ? ` + ${k}${sym}` : ` - ${Math.abs(k)}${sym}`;
+        }
+      },
+
+      // Simplify sqrt(n) -> { out, inside } where n = out^2 * inside
+      simplifySqrt(n) {
+        if (n === 0) return { out: 0, inside: 1 };
+        let out = 1;
+        let inside = n;
+        for (let i = 2; i * i <= inside; i++) {
+          while (inside % (i * i) === 0) {
+            out *= i;
+            inside /= (i * i);
+          }
+        }
+        return { out, inside };
+      },
+
+      texSqrt(n) {
+        if (n === 0) return "0";
+        const { out, inside } = this.simplifySqrt(n);
+        if (inside === 1) return `${out}`;
+        if (out === 1) return `\\sqrt{${inside}}`;
+        return `${out}\\sqrt{${inside}}`;
+      },
+
+      // Format multiple of pi: frac * pi
+      texPi(f) {
+        if (f.n === 0) return "0";
+        const sign = f.n < 0 ? "-" : "";
+        const absN = Math.abs(f.n);
+        const numStr = absN === 1 ? "\\pi" : `${absN}\\pi`;
+        if (f.d === 1) return `${sign}${numStr}`;
+        return `${sign}\\frac{${numStr}}{${f.d}}`;
+      }
+    };
+
+    const Rand = {
+      int(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      },
+      pick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      },
+      nonZeroInt(min, max) {
+        let v = 0;
+        while (v === 0) v = this.int(min, max);
+        return v;
+      }
+    };
+
+    /* =========================================================================
+       2. PROCEDURAL PROBLEM GENERATORS (MODELED ON REFERENCE SET)
+       ========================================================================= */
+
+    /**
+     * ARCHETYPE 1 (Reference Problem 1):
+     * Let f be defined on R \ {r} by f(x) = (ax + b)/(cx + d), where the horizontal
+     * asymptote y = a/c equals the vertical asymptote r = -d/c!
+     * Consequently, lim_{x -> +-inf} f(x) approaches r from one side (r^+ or r^-),
+     * forcing the outer limit lim f(f(x)) to diverge to +inf or -inf!
+     */
+    function generateCompositeRationalLimit() {
+      // Choose c in {1, 2, 3} and integer vertical asymptote r in [-5, 5] \ {0}
+      const c = Rand.pick([1, 1, 2, 3]);
+      const r = Rand.nonZeroInt(-5, 5);
+      // Horizontal asymptote a/c must equal r => a = c * r
+      const a = c * r;
+      const d = -c * r; // so cx + d = c(x - r)
+
+      // Choose b != a * r so f(x) is non-constant (ad - bc != 0)
+      let b = a * r;
+      while (b === a * r || Math.abs(b) > 18) {
+        b = a * r + Rand.nonZeroInt(-7, 7);
+      }
+
+      const dirSign = Rand.pick([-1, 1]); // -1 for -inf, +1 for +inf
+      const dirTex = dirSign === -1 ? "-\\infty" : "+\\infty";
+
+      // Remainder term: f(x) = r + k / (cx + d), where k = b - a*r != 0
+      const k = b - a * r;
+      // Sign of cx + d as x -> dirSign * inf: since c > 0, sign(cx + d) = dirSign
+      // Thus sign of k / (cx + d) is sign(k) * dirSign
+      const approachDir = (k * dirSign > 0) ? "+" : "-";
+      const approachSym = approachDir === "+" ? "^{+}" : "^{-}";
+
+      // Now evaluate lim_{u -> r^(approachDir)} f(u) = (a*r + b) / (c*(u - r))
+      // Numerator at u = r is a*r + b = c*r^2 + b = k + 2*a*r
+      // Wait: f(r) numerator is a*r + b. Let's make sure a*r + b != 0 so it's not 0/0!
+      if (a * r + b === 0) {
+        return generateCompositeRationalLimit();
+      }
+
+      const numAtR = a * r + b;
+      // Denominator c*(u - r): since c > 0, as u -> r^+, denom -> 0^+; as u -> r^-, denom -> 0^-
+      const denomSign = approachDir === "+" ? 1 : -1;
+      const finalInfSign = (numAtR * denomSign > 0) ? "+\\infty" : "-\\infty";
+
+      const fTex = MathFmt.rational(a, b, c, d, "x");
+      const domainTex = `\\mathbb{R} \\setminus \\{${r}\\}`;
+
+      // Build clean canonical decomposition: f(x) = r + k / (cx + d)
+      const remSign = k > 0 ? "+" : "-";
+      const decompTex = `${r} ${remSign} \\frac{${Math.abs(k)}}{${MathFmt.linear(c, d, "x")}}`;
+
+      return {
+        category: "Composite Rational Limits",
+        statement: `Let $f$ be the function defined on $${domainTex}$ by:
+        $$f(x) = ${fTex}$$
+        Determine the exact value of:
+        $$\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$$`,
+        steps: [
+          `Identify the horizontal and vertical asymptotes of $f$. As $x \\to ${dirTex}$, the ratio of leading coefficients gives:
+          $$\\lim_{x \\to ${dirTex}} f(x) = \\frac{${a}}{${c}} = ${r}$$
+          Notice that $x = ${r}$ is precisely the excluded point of the domain $${domainTex}$.`,
+          `Determine whether $f(x)$ approaches $${r}$ from above ($${r}^{+}$) or below ($${r}^{-}$) by performing polynomial division:
+          $$f(x) = ${fTex} = ${decompTex}$$`,
+          `As $x \\to ${dirTex}$, the denominator $${MathFmt.linear(c, d, "x")} \\to ${dirTex}$, so the remainder term $\\dfrac{${k}}{${MathFmt.linear(c, d, "x")}}$ approaches $0^{${approachDir}}$. Therefore:
+          $$\\lim_{x \\to ${dirTex}} f(x) = ${r}${approachSym}$$`,
+          `Set $u = f(x)$ and evaluate the outer limit as $u \\to ${r}${approachSym}$:
+          $$\\lim_{u \\to ${r}${approachSym}} \\frac{${MathFmt.linear(a, b, "u")}}{${MathFmt.linear(c, d, "u")}}$$
+          The numerator approaches $${a}(${r}) + (${b}) = ${numAtR}$, while the denominator $${MathFmt.linear(c, d, "u")} = ${c === 1 ? "" : c}(u - ${r < 0 ? `(${r})` : r})$ approaches $0^{${approachDir}}$.`
+        ],
+        answer: `\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big] = ${finalInfSign}`
+      };
+    }
+
+    /**
+     * ARCHETYPE 2 (Reference Problem 3):
+     * f is differentiable on ]-1, 1[ (or R) with given derivative f'(x) (e.g., 1/sqrt(1-x^2),
+     * 1/(1+x^2), x/sqrt(1-x^2), etc.), and g(x) = f(trig(x)) on a specific quadrant interval I
+     * where sqrt(sin^2 x) or sqrt(cos^2 x) simplifies with a crucial sign!
+     */
+    function generateChainTrigDerivative() {
+      const variants = [
+        // Variant A: f'(u) = k / sqrt(1 - u^2), u = cos(x) or sin(x)
+        () => {
+          const k = Rand.nonZeroInt(-5, 5);
+          const innerIsCos = Rand.pick([true, false]);
+          const innerFn = innerIsCos ? "\\cos x" : "\\sin x";
+          const innerDeriv = innerIsCos ? "-\\sin x" : "\\cos x";
+          const identityRem = innerIsCos ? "\\sin^2 x" : "\\cos^2 x";
+          const absRem = innerIsCos ? "|\\sin x|" : "|\\cos x|";
+
+          // Pick an open interval of length pi or pi/2 where innerFn in ]-1, 1[ and trig has fixed sign
+          const intervals = innerIsCos
+            ? [
+                { tex: "]-\\pi, 0[", sign: -1, reason: "\\sin x < 0 \\text{ on } ]-\\pi, 0[" },
+                { tex: "]0, \\pi[", sign: 1, reason: "\\sin x > 0 \\text{ on } ]0, \\pi[" },
+                { tex: "]\\pi, 2\\pi[", sign: -1, reason: "\\sin x < 0 \\text{ on } ]\\pi, 2\\pi[" }
+              ]
+            : [
+                { tex: "\\left]-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right[", sign: 1, reason: "\\cos x > 0 \\text{ on } \\left]-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right[" },
+                { tex: "\\left]\\frac{\\pi}{2}, \\frac{3\\pi}{2}\\right[", sign: -1, reason: "\\cos x < 0 \\text{ on } \\left]\\frac{\\pi}{2}, \\frac{3\\pi}{2}\\right[" }
+              ];
+          const chosen = Rand.pick(intervals);
+
+          // For innerIsCos: g'(x) = k * (-sin x) / (chosen.sign * sin x) = -k * chosen.sign
+          // For !innerIsCos: g'(x) = k * (cos x) / (chosen.sign * cos x) = k * chosen.sign
+          const finalConst = innerIsCos ? (-k * chosen.sign) : (k * chosen.sign);
+          const signedAbsTex = chosen.sign === 1
+            ? (innerIsCos ? "\\sin x" : "\\cos x")
+            : (innerIsCos ? "-\\sin x" : "-\\cos x");
+
+          return {
+            category: "Chain Rule & Trig Intervals",
+            statement: `Let $f$ be a differentiable function on $]-1, 1[$ whose derivative is given by:
+            $$f'(x) = \\frac{${k}}{\\sqrt{1 - x^2}}$$
+            Let $g$ be the function defined on $${chosen.tex}$ by $g(x) = f(${innerFn})$. Find a simplified expression for $g'(x)$.`,
+            steps: [
+              `For all $x \\in ${chosen.tex}$, we have $${innerFn} \\in ]-1, 1[$, so $g$ is differentiable by composition. Applying the chain rule $g'(x) = (${innerFn})' \\cdot f'(${innerFn})$:
+              $$g'(x) = (${innerDeriv}) \\cdot \\frac{${k}}{\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}}}$$`,
+              `Apply the Pythagorean identity $1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"} = ${identityRem}$ and recall that $\\sqrt{u^2} = |u|$:
+              $$\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = \\sqrt{${identityRem}} = ${absRem}$$`,
+              `Since $${chosen.reason}$, it follows that $${absRem} = ${signedAbsTex}$. Substituting this into $g'(x)$ gives:
+              $$g'(x) = \\frac{${k}(${innerDeriv})}{${signedAbsTex}} = ${finalConst}$$`
+            ],
+            answer: `g'(x) = ${finalConst}`
+          };
+        },
+
+        // Variant B: f'(u) = k / (1 + u^2), u = tan(x) or cot(x)
+        () => {
+          const k = Rand.nonZeroInt(-6, 6);
+          const useTan = Rand.pick([true, false]);
+          const innerFn = useTan ? "\\tan x" : "\\cot x";
+          const intervalTex = useTan
+            ? "\\left]-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right["
+            : "]0, \\pi[";
+          const innerDeriv = useTan ? "1 + \\tan^2 x" : "-(1 + \\cot^2 x)";
+          const finalConst = useTan ? k : -k;
+
+          return {
+            category: "Chain Rule & Trig Intervals",
+            statement: `Let $f$ be a differentiable function on $\\mathbb{R}$ whose derivative is:
+            $$f'(x) = \\frac{${k}}{1 + x^2}$$
+            Let $g$ be the function defined on $${intervalTex}$ by $g(x) = f(${innerFn})$. Compute $g'(x)$ in simplest form.`,
+            steps: [
+              `On $${intervalTex}$, $${innerFn}$ is differentiable and maps into $\\mathbb{R}$. By the chain rule:
+              $$g'(x) = (${innerFn})' \\cdot f'(${innerFn})$$`,
+              `Recall that $(${innerFn})' = ${innerDeriv}$. Substituting into the expression for $g'(x)$:
+              $$g'(x) = \\left(${innerDeriv}\\right) \\cdot \\frac{${k}}{1 + ${useTan ? "\\tan^2 x" : "\\cot^2 x"}}$$`,
+              `Canceling the strictly positive factor $1 + ${useTan ? "\\tan^2 x" : "\\cot^2 x"}$ yields a constant derivative:
+              $$g'(x) = ${finalConst}$$`
+            ],
+            answer: `g'(x) = ${finalConst}`
+          };
+        },
+
+        // Variant C: f'(u) = k * u / sqrt(1 - u^2), u = cos(x) or sin(x)
+        () => {
+          const k = Rand.nonZeroInt(-4, 4);
+          const innerIsCos = Rand.pick([true, false]);
+          const innerFn = innerIsCos ? "\\cos x" : "\\sin x";
+          const innerDeriv = innerIsCos ? "-\\sin x" : "\\cos x";
+          const interval = innerIsCos
+            ? { tex: "]-\\pi, 0[", sign: -1, reason: "\\sin x < 0" }
+            : { tex: "\\left]\\frac{\\pi}{2}, \\frac{3\\pi}{2}\\right[", sign: -1, reason: "\\cos x < 0" };
+
+          // If innerIsCos: g'(x) = (-sin x) * k * cos x / (-sin x) = k cos x
+          // If !innerIsCos: g'(x) = (cos x) * k * sin x / (-cos x) = -k sin x
+          const resCoeff = innerIsCos ? k : -k;
+          const resTex = MathFmt.coeff(resCoeff, innerFn, true);
+
+          return {
+            category: "Chain Rule & Trig Intervals",
+            statement: `Let $f$ be a differentiable function on $]-1, 1[$ with derivative:
+            $$f'(x) = \\frac{${MathFmt.coeff(k, "x", true)}}{\\sqrt{1 - x^2}}$$
+            Let $g$ be defined on $${interval.tex}$ by $g(x) = f(${innerFn})$. Determine $g'(x)$.`,
+            steps: [
+              `Apply the chain rule for $g(x) = f(${innerFn})$ on $${interval.tex}$:
+              $$g'(x) = (${innerDeriv}) \\cdot \\frac{${MathFmt.coeff(k, innerFn, true)}}{\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}}}$$`,
+              `Simplify the radical using $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${innerIsCos ? "|\\sin x|" : "|\\cos x|"}$. Because $${interval.reason}$ on $${interval.tex}$, we have $${innerIsCos ? "|\\sin x| = -\\sin x" : "|\\cos x| = -\\cos x"}$.`,
+              `Substitute and cancel the common trigonometric factor:
+              $$g'(x) = \\frac{(${innerDeriv})(${MathFmt.coeff(k, innerFn, true)})}{${innerIsCos ? "-\\sin x" : "-\\cos x"}} = ${resTex}$$`
+            ],
+            answer: `g'(x) = ${resTex}`
+          };
+        }
+      ];
+
+      return Rand.pick(variants)();
+    }
+
+    /**
+     * ARCHETYPE 3 (Reference Problem 8):
+     * Complex number Z combining powers of i, complex exponential e^{i*theta},
+     * and real or special-angle complex factors (like 1 - sqrt(3), -1 + i*sqrt(3), sqrt(3) - i, etc.).
+     * Compute the principal argument arg(Z) in ]-pi, pi].
+     */
+    function generateComplexArgument() {
+      // Numerator factor 1: i^m * e^{i * alpha}
+      const m = Rand.pick([1, 2, 3]); // i, -1, -i
+      const iLabel = m === 1 ? "i" : (m === 2 ? "-1" : "-i");
+      const iArg = MathFmt.frac(m, 2); // pi/2, pi, 3pi/2
+
+      const alphas = [
+        { tex: "\\frac{\\pi}{6}", f: MathFmt.frac(1, 6) },
+        { tex: "\\frac{\\pi}{4}", f: MathFmt.frac(1, 4) },
+        { tex: "\\frac{\\pi}{3}", f: MathFmt.frac(1, 3) },
+        { tex: "-\\frac{\\pi}{6}", f: MathFmt.frac(-1, 6) },
+        { tex: "-\\frac{\\pi}{4}", f: MathFmt.frac(-1, 4) },
+        { tex: "-\\frac{\\pi}{3}", f: MathFmt.frac(-1, 3) },
+        { tex: "\\frac{2\\pi}{3}", f: MathFmt.frac(2, 3) },
+        { tex: "\\frac{3\\pi}{4}", f: MathFmt.frac(3, 4) }
+      ];
+      const alpha = Rand.pick(alphas);
+
+      // Denominator (or second factor): tricky negative real scalar or special complex number
+      const denoms = [
+        { tex: "1 - \\sqrt{3}", arg: MathFmt.frac(1, 1), note: "Since $1 - \\sqrt{3} < 0$, it is a strictly negative real number, so $\\arg(1 - \\sqrt{3}) \\equiv \\pi \\pmod{2\\pi}$." },
+        { tex: "1 - \\sqrt{2}", arg: MathFmt.frac(1, 1), note: "Since $1 - \\sqrt{2} < 0$, it is a strictly negative real number, so $\\arg(1 - \\sqrt{2}) \\equiv \\pi \\pmod{2\\pi}$." },
+        { tex: "2 - \\sqrt{5}", arg: MathFmt.frac(1, 1), note: "Since $2 - \\sqrt{5} < 0$, it is a strictly negative real number, so $\\arg(2 - \\sqrt{5}) \\equiv \\pi \\pmod{2\\pi}$." },
+        { tex: "1 + i\\sqrt{3}", arg: MathFmt.frac(1, 3), note: "Write $1 + i\\sqrt{3} = 2\\left(\\frac{1}{2} + i\\frac{\\sqrt{3}}{2}\\right) = 2e^{i\\frac{\\pi}{3}}$, so $\\arg(1 + i\\sqrt{3}) \\equiv \\frac{\\pi}{3} \\pmod{2\\pi}$." },
+        { tex: "1 - i\\sqrt{3}", arg: MathFmt.frac(-1, 3), note: "Write $1 - i\\sqrt{3} = 2\\left(\\frac{1}{2} - i\\frac{\\sqrt{3}}{2}\\right) = 2e^{-i\\frac{\\pi}{3}}$, so $\\arg(1 - i\\sqrt{3}) \\equiv -\\frac{\\pi}{3} \\pmod{2\\pi}$." },
+        { tex: "-1 + i\\sqrt{3}", arg: MathFmt.frac(2, 3), note: "Write $-1 + i\\sqrt{3} = 2\\left(-\\frac{1}{2} + i\\frac{\\sqrt{3}}{2}\\right) = 2e^{i\\frac{2\\pi}{3}}$, so $\\arg(-1 + i\\sqrt{3}) \\equiv \\frac{2\\pi}{3} \\pmod{2\\pi}$." },
+        { tex: "\\sqrt{3} + i", arg: MathFmt.frac(1, 6), note: "Write $\\sqrt{3} + i = 2\\left(\\frac{\\sqrt{3}}{2} + \\frac{1}{2}i\\right) = 2e^{i\\frac{\\pi}{6}}$, so $\\arg(\\sqrt{3} + i) \\equiv \\frac{\\pi}{6} \\pmod{2\\pi}$." },
+        { tex: "-\\sqrt{3} + i", arg: MathFmt.frac(5, 6), note: "Write $-\\sqrt{3} + i = 2\\left(-\\frac{\\sqrt{3}}{2} + \\frac{1}{2}i\\right) = 2e^{i\\frac{5\\pi}{6}}$, so $\\arg(-\\sqrt{3} + i) \\equiv \\frac{5\\pi}{6} \\pmod{2\\pi}$." },
+        { tex: "-1 - i", arg: MathFmt.frac(-3, 4), note: "Write $-1 - i = \\sqrt{2}\\left(-\\frac{\\sqrt{2}}{2} - i\\frac{\\sqrt{2}}{2}\\right) = \\sqrt{2}e^{-i\\frac{3\\pi}{4}}$, so $\\arg(-1 - i) \\equiv -\\frac{3\\pi}{4} \\pmod{2\\pi}$." }
+      ];
+      const denom = Rand.pick(denoms);
+
+      const power = Rand.pick([1, 1, 2]); // Occasionally raise Z^2 or keep Z
+      const zExpr = `\\frac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}`;
+
+      // rawArg = power * (iArg + alpha.f - denom.arg)
+      let rawArg = MathFmt.subFrac(MathFmt.addFrac(iArg, alpha.f), denom.arg);
+      if (power === 2) {
+        rawArg = MathFmt.mulFrac(rawArg, MathFmt.frac(2, 1));
+      }
+
+      // Normalize to ]-1, 1] (multiples of pi)
+      let norm = { n: rawArg.n, d: rawArg.d };
+      while (norm.n > norm.d) {
+        norm = MathFmt.subFrac(norm, MathFmt.frac(2, 1));
+      }
+      while (norm.n <= -norm.d) {
+        norm = MathFmt.addFrac(norm, MathFmt.frac(2, 1));
+      }
+
+      const lhs = power === 1 ? "Z" : "Z^2";
+      const target = power === 1 ? "\\arg(Z)" : "\\arg(Z^2)";
+
+      const steps = [
+        `Use the property $\\arg\\!\\left(\\frac{u \\cdot v}{w}\\right) \\equiv \\arg(u) + \\arg(v) - \\arg(w) \\pmod{2\\pi}$:
+        $$\\arg\\!\\left(${zExpr}\\right) \\equiv \\arg(${iLabel}) + \\arg\\!\\left(e^{i${alpha.tex}}\\right) - \\arg(${denom.tex}) \\pmod{2\\pi}$$`,
+        `Evaluate the numerator arguments: $\\arg(${iLabel}) \\equiv ${MathFmt.texPi(iArg)} \\pmod{2\\pi}$ and $\\arg\\!\\left(e^{i${alpha.tex}}\\right) \\equiv ${MathFmt.texPi(alpha.f)} \\pmod{2\\pi}$.`,
+        denom.note,
+        power === 1
+          ? `Combine all terms:
+            $$\\arg(Z) \\equiv ${MathFmt.texPi(iArg)} + \\left(${MathFmt.texPi(alpha.f)}\\right) - \\left(${MathFmt.texPi(denom.arg)}\\right) = ${MathFmt.texPi(rawArg)} \\pmod{2\\pi}$$`
+          : `First find $\\arg(Z) \\equiv ${MathFmt.texPi(iArg)} + \\left(${MathFmt.texPi(alpha.f)}\\right) - \\left(${MathFmt.texPi(denom.arg)}\\right) = ${MathFmt.texPi(MathFmt.subFrac(MathFmt.addFrac(iArg, alpha.f), denom.arg))} \\pmod{2\\pi}$, then multiply by $2$ for $Z^2$:
+            $$\\arg(Z^2) \\equiv 2\\arg(Z) \\equiv ${MathFmt.texPi(rawArg)} \\pmod{2\\pi}$$`
+      ];
+
+      if (rawArg.n !== norm.n || rawArg.d !== norm.d) {
+        steps.push(`Reduce modulo $2\\pi$ into the principal interval $]-\\pi, \\pi]$:
+        $$${MathFmt.texPi(rawArg)} \\equiv ${MathFmt.texPi(norm)} \\pmod{2\\pi}$$`);
+      }
+
+      return {
+        category: "Complex Arguments",
+        statement: `Consider the complex number $Z$ defined by:
+        $$Z = ${zExpr}$$
+        Determine the principal argument $${target} \\in ]-\\pi, \\pi]$.`,
+        steps,
+        answer: `${target} = ${MathFmt.texPi(norm)}`
+      };
+    }
+
+    /**
+     * ARCHETYPE 4 (Reference Problem 9):
+     * 3D analytical geometry in an orthonormal frame (O; i, j, k):
+     * Given M(x0, y0, z0), P is the orthogonal projection of M onto a coordinate plane
+     * (xOy), (yOz), or (xOz), and H is the orthogonal projection of P onto one of the
+     * coordinate axes in that plane. Find the exact distance MH (Three Perpendiculars Theorem!).
+     */
+    function generateSpaceProjection() {
+      const x0 = Rand.nonZeroInt(-6, 6);
+      const y0 = Rand.nonZeroInt(-6, 6);
+      const z0 = Rand.nonZeroInt(-6, 6);
+
+      const configs = [
+        {
+          plane: "(xOy)",
+          P: [x0, y0, 0],
+          planeNote: "setting the $z$-coordinate to $0$",
+          axes: [
+            { axisName: "$x$-axis $(Ox)$", H: [x0, 0, 0], axisNote: "setting the $y$-coordinate to $0$" },
+            { axisName: "$y$-axis $(Oy)$", H: [0, y0, 0], axisNote: "setting the $x$-coordinate to $0$" }
+          ]
+        },
+        {
+          plane: "(yOz)",
+          P: [0, y0, z0],
+          planeNote: "setting the $x$-coordinate to $0$",
+          axes: [
+            { axisName: "$y$-axis $(Oy)$", H: [0, y0, 0], axisNote: "setting the $z$-coordinate to $0$" },
+            { axisName: "$z$-axis $(Oz)$", H: [0, 0, z0], axisNote: "setting the $y$-coordinate to $0$" }
+          ]
+        },
+        {
+          plane: "(xOz)",
+          P: [x0, 0, z0],
+          planeNote: "setting the $y$-coordinate to $0$",
+          axes: [
+            { axisName: "$x$-axis $(Ox)$", H: [x0, 0, 0], axisNote: "setting the $z$-coordinate to $0$" },
+            { axisName: "$z$-axis $(Oz)$", H: [0, 0, z0], axisNote: "setting the $x$-coordinate to $0$" }
+          ]
+        }
+      ];
+
+      const cfg = Rand.pick(configs);
+      const ax = Rand.pick(cfg.axes);
+      const M = [x0, y0, z0];
+      const P = cfg.P;
+      const H = ax.H;
+
+      const dx = M[0] - H[0];
+      const dy = M[1] - H[1];
+      const dz = M[2] - H[2];
+      const distSq = dx * dx + dy * dy + dz * dz;
+      const distTex = MathFmt.texSqrt(distSq);
+
+      return {
+        category: "3D Orthogonal Projections",
+        statement: `In an orthonormal frame $(O; \\vec{i}, \\vec{j}, \\vec{k})$ in space, consider the point $M(${x0}, ${y0}, ${z0})$. Let $P$ be the orthogonal projection of $M$ onto the plane $${cfg.plane}$, and let $H$ be the orthogonal projection of $P$ onto the ${ax.axisName}. Calculate the exact length of the segment $[MH]$.`,
+        steps: [
+          `Find the coordinates of $P$, the orthogonal projection of $M(${x0}, ${y0}, ${z0})$ onto the plane $${cfg.plane}$, by ${cfg.planeNote}:
+          $$P(${P[0]}, ${P[1]}, ${P[2]})$$`,
+          `Find the coordinates of $H$, the orthogonal projection of $P(${P[0]}, ${P[1]}, ${P[2]})$ onto the ${ax.axisName}, by ${ax.axisNote}:
+          $$H(${H[0]}, ${H[1]}, ${H[2]})$$`,
+          `Apply the 3D Euclidean distance formula between $M(${M[0]}, ${M[1]}, ${M[2]})$ and $H(${H[0]}, ${H[1]}, ${H[2]})$ (equivalently, by the Theorem of the Three Perpendiculars, $MH^2 = MP^2 + PH^2$):
+          $$MH = \\sqrt{(${M[0]} - ${H[0] < 0 ? `(${H[0]})` : H[0]})^2 + (${M[1]} - ${H[1] < 0 ? `(${H[1]})` : H[1]})^2 + (${M[2]} - ${H[2] < 0 ? `(${H[2]})` : H[2]})^2}$$
+          $$MH = \\sqrt{${dx * dx} + ${dy * dy} + ${dz * dz}} = \\sqrt{${distSq}} = ${distTex}$$`
+        ],
+        answer: `MH = ${distTex}`
+      };
+    }
+
+    /**
+     * ARCHETYPE 5 (Reference Problem 10):
+     * Limits at +-infinity involving the floor (greatest integer) function E(x),
+     * requiring the defining inequalities x - 1 < E(x) <= x (or 0 <= x - E(x) < 1)
+     * and the Squeeze Theorem.
+     */
+    function generateFloorFunctionLimit() {
+      const variants = [
+        // Variant A: sqrt((a*(x - E(x)) + b) / (c*x + d)) as x -> +inf => 0
+        () => {
+          const a = Rand.int(1, 5);
+          const b = Rand.int(0, 6);
+          const c = Rand.int(1, 4);
+          const d = Rand.int(1, 8);
+          const numTex = MathFmt.linear(a, b, "(x - E(x))");
+          const denTex = MathFmt.linear(c, d, "x");
+
+          return {
+            category: "Floor Function Limits",
+            statement: `Let $E(x)$ denote the floor (greatest integer) function, and let $f$ be the function defined on $[0, +\\infty[$ by:
+            $$f(x) = \\sqrt{\\frac{${numTex}}{${denTex}}}$$
+            Evaluate $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+            steps: [
+              `By definition of the floor function $E(x)$, for every $x \\in \\mathbb{R}$ we have $E(x) \\le x < E(x) + 1$, which implies:
+              $$0 \\le x - E(x) < 1$$`,
+              `Multiply through by $${a}$ and add $${b}$ (with $x > 0$, so $${denTex} > 0$):
+              $$${b} \\le ${numTex} < ${a + b}$$
+              $$\\frac{${b}}{${denTex}} \\le \\frac{${numTex}}{${denTex}} < \\frac{${a + b}}{${denTex}}$$`,
+              `Since $\\displaystyle\\lim_{x \\to +\\infty} \\frac{${b}}{${denTex}} = 0$ and $\\displaystyle\\lim_{x \\to +\\infty} \\frac{${a + b}}{${denTex}} = 0$, the Squeeze Theorem yields:
+              $$\\lim_{x \\to +\\infty} \\frac{${numTex}}{${denTex}} = 0$$`,
+              `By continuity of the square root function at $0$:
+              $$\\lim_{x \\to +\\infty} f(x) = \\sqrt{0} = 0$$`
+            ],
+            answer: `\\lim_{x \\to +\\infty} f(x) = 0`
+          };
+        },
+
+        // Variant B: (a*E(x) + b) / (c*x + d) as x -> +-inf => a/c
+        () => {
+          const a = Rand.nonZeroInt(-6, 6);
+          const b = Rand.nonZeroInt(-8, 8);
+          const c = Rand.int(1, 5);
+          const d = Rand.int(1, 7);
+          const dir = Rand.pick(["+\\infty", "-\\infty"]);
+          const limFrac = MathFmt.frac(a, c);
+          const numTex = MathFmt.linear(a, b, "E(x)");
+          const denTex = MathFmt.linear(c, d, "x");
+
+          return {
+            category: "Floor Function Limits",
+            statement: `Let $E(x)$ denote the floor (greatest integer) function, and let $f$ be defined for $x > 0$ by:
+            $$f(x) = \\frac{${numTex}}{${denTex}}$$
+            Determine $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+            steps: [
+              `Start from the fundamental inequality for the floor function:
+              $$x - 1 < E(x) \\le x$$`,
+              `For $x > 0$, we have $${denTex} > 0$. ${a > 0
+                ? `Multiplying by $${a} > 0$ preserves the inequality direction:
+                   $$${a}(x - 1) + (${b}) < ${numTex} \\le ${a}x + (${b})$$`
+                : `Multiplying by $${a} < 0$ reverses the inequality direction:
+                   $$${a}x + (${b}) \\le ${numTex} < ${a}(x - 1) + (${b})$$`}`,
+              `Dividing by $${denTex} > 0$, both bounding rational functions have leading ratio $\\dfrac{${a}}{${c}} = ${MathFmt.texFrac(limFrac)}$:
+              $$\\lim_{x \\to +\\infty} \\frac{${MathFmt.linear(a, b - a, "x")}}{${denTex}} = ${MathFmt.texFrac(limFrac)} \\quad \\text{and} \\quad \\lim_{x \\to +\\infty} \\frac{${MathFmt.linear(a, b, "x")}}{${denTex}} = ${MathFmt.texFrac(limFrac)}$$`,
+              `By the Squeeze Theorem, $f(x)$ converges to the same limit:
+              $$\\lim_{x \\to +\\infty} f(x) = ${MathFmt.texFrac(limFrac)}$$`
+            ],
+            answer: `\\lim_{x \\to +\\infty} f(x) = ${MathFmt.texFrac(limFrac)}`
+          };
+        },
+
+        // Variant C: (x * E(1/x)) as x -> +inf or 0+ => 1, or E(x)*sin(1/x) as x -> +inf => 1
+        () => {
+          const k = Rand.int(2, 6);
+          return {
+            category: "Floor Function Limits",
+            statement: `Let $E(x)$ denote the floor (greatest integer) function, and let $f$ be defined on $[1, +\\infty[$ by:
+            $$f(x) = E(x) \\cdot \\sin\\!\\left(\\frac{${k}}{x}\\right)$$
+            Evaluate $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+            steps: [
+              `For all $x \\ge 1$, the floor function satisfies $x - 1 < E(x) \\le x$, and $\\sin\\!\\left(\\frac{${k}}{x}\\right) > 0$ because $0 < \\frac{${k}}{x} \\le ${k}$ (and for $x > ${k}$, $0 < \\frac{${k}}{x} < 1 < \\pi$).`,
+              `Multiply the inequality $x - 1 < E(x) \\le x$ by the positive quantity $\\sin\\!\\left(\\frac{${k}}{x}\\right)$ for $x > ${k}$:
+              $$(x - 1)\\sin\\!\\left(\\frac{${k}}{x}\\right) < f(x) \\le x\\sin\\!\\left(\\frac{${k}}{x}\\right)$$`,
+              `Rewrite $x\\sin\\!\\left(\\frac{${k}}{x}\\right) = ${k} \\cdot \\frac{\\sin(${k}/x)}{${k}/x}$. Using the standard limit $\\displaystyle\\lim_{t \\to 0} \\frac{\\sin t}{t} = 1$:
+              $$\\lim_{x \\to +\\infty} x\\sin\\!\\left(\\frac{${k}}{x}\\right) = ${k} \\quad \\text{and} \\quad \\lim_{x \\to +\\infty} (x - 1)\\sin\\!\\left(\\frac{${k}}{x}\\right) = ${k} - 0 = ${k}$$`,
+              `By the Squeeze Theorem, the limit of $f(x)$ is $${k}$.`
+            ],
+            answer: `\\lim_{x \\to +\\infty} f(x) = ${k}`
+          };
+        }
+      ];
+
+      return Rand.pick(variants)();
+    }
+
+    /* =========================================================================
+       3. CONTROLLER & UI STATE MANAGEMENT
+       ========================================================================= */
+    const GENERATORS = {
+      "composite-limit": generateCompositeRationalLimit,
+      "chain-trig": generateChainTrigDerivative,
+      "complex-arg": generateComplexArgument,
+      "space-proj": generateSpaceProjection,
+      "floor-limit": generateFloorFunctionLimit
+    };
+
+    const state = {
+      activeTopic: "all",
+      generatedCount: 0,
+      solvedCount: 0,
+      currentSolved: false,
+      solutionVisible: false
+    };
+
+    const dom = {
+      filterBar: document.getElementById("filter-bar"),
+      category: document.getElementById("problem-category"),
+      problemId: document.getElementById("problem-id"),
+      problemText: document.getElementById("problem-text"),
+      btnNew: document.getElementById("btn-new"),
+      btnToggle: document.getElementById("btn-toggle-solution"),
+      solutionCard: document.getElementById("solution-card"),
+      solutionSteps: document.getElementById("solution-steps"),
+      finalAnswer: document.getElementById("final-answer"),
+      statGenerated: document.getElementById("stat-generated"),
+      statSolved: document.getElementById("stat-solved")
+    };
+
+    function typesetMath(element) {
+      if (typeof renderMathInElement === "function") {
+        renderMathInElement(element, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          throwOnError: false
         });
-    </script>
+      }
+    }
+
+    function updateStats() {
+      dom.statGenerated.textContent = state.generatedCount;
+      dom.statSolved.textContent = state.solvedCount;
+    }
+
+    function setSolutionVisibility(visible) {
+      state.solutionVisible = visible;
+      if (visible) {
+        dom.solutionCard.classList.add("visible");
+        dom.btnToggle.textContent = "Hide Solution";
+        if (!state.currentSolved) {
+          state.currentSolved = true;
+          state.solvedCount += 1;
+          updateStats();
+        }
+      } else {
+        dom.solutionCard.classList.remove("visible");
+        dom.btnToggle.textContent = "Show Solution";
+      }
+    }
+
+    function loadNewProblem() {
+      const keys = Object.keys(GENERATORS);
+      const chosenKey = state.activeTopic === "all" ? Rand.pick(keys) : state.activeTopic;
+      const problem = GENERATORS[chosenKey]();
+
+      state.generatedCount += 1;
+      state.currentSolved = false;
+      setSolutionVisibility(false);
+      updateStats();
+
+      dom.category.textContent = problem.category;
+      dom.problemId.textContent = `#${String(state.generatedCount).padStart(3, "0")}`;
+      dom.problemText.innerHTML = problem.statement;
+
+      dom.solutionSteps.innerHTML = problem.steps
+        .map(step => `<li>${step}</li>`)
+        .join("");
+      dom.finalAnswer.innerHTML = `<strong>Final Answer:</strong> $${problem.answer}$`;
+
+      typesetMath(dom.problemText);
+      typesetMath(dom.solutionCard);
+    }
+
+    // Event Listeners
+    dom.filterBar.addEventListener("click", (e) => {
+      const pill = e.target.closest(".pill");
+      if (!pill) return;
+      document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      state.activeTopic = pill.dataset.topic;
+      loadNewProblem();
+    });
+
+    dom.btnNew.addEventListener("click", loadNewProblem);
+
+    dom.btnToggle.addEventListener("click", () => {
+      setSolutionVisibility(!state.solutionVisible);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.code === "KeyN" || e.code === "Space") {
+        e.preventDefault();
+        loadNewProblem();
+      } else if (e.code === "KeyS") {
+        e.preventDefault();
+        setSolutionVisibility(!state.solutionVisible);
+      }
+    });
+
+    // Boot once KaTeX auto-render is ready
+    window.addEventListener("DOMContentLoaded", () => {
+      const waitForKatex = setInterval(() => {
+        if (typeof renderMathInElement === "function") {
+          clearInterval(waitForKatex);
+          loadNewProblem();
+        }
+      }, 30);
+    });
+  </script>
 </body>
 </html>
