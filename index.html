@@ -25,6 +25,8 @@
       --accent-bg: rgba(78, 161, 243, 0.12);
       --success: #4ec9b0;
       --success-bg: rgba(78, 201, 176, 0.12);
+      --danger: #f16c6c;
+      --danger-bg: rgba(241, 108, 108, 0.12);
     }
 
     * {
@@ -119,7 +121,6 @@
       border-radius: 2px;
     }
 
-    /* Retractable Dropdown Menu aligned to right */
     .menu-drawer {
       display: none;
       position: absolute;
@@ -284,7 +285,7 @@
     .controls {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       flex-wrap: wrap;
       gap: 0.75rem;
     }
@@ -329,6 +330,18 @@
     button.btn-secondary:hover {
       background: var(--bg-elevated);
       border-color: var(--border-active);
+    }
+
+    button.btn-saved {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: rgba(78, 201, 176, 0.4);
+    }
+
+    .status-note {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      min-height: 1.2rem;
     }
 
     .solution-card {
@@ -402,16 +415,123 @@
       margin-right: 0.5rem;
     }
 
+    /* Saved Problems Section */
+    .saved-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .saved-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .saved-title {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .saved-count {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .saved-empty {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .saved-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .saved-item {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .saved-item-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .saved-item-meta {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+
+    .saved-item-text {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .saved-item-actions {
+      display: flex;
+      gap: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    .btn-mini {
+      font-family: inherit;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      transition: all 0.12s ease;
+    }
+
+    .btn-mini:hover {
+      border-color: var(--border-active);
+    }
+
+    .btn-mini.delete:hover {
+      background: var(--danger-bg);
+      border-color: rgba(241, 108, 108, 0.45);
+      color: var(--danger);
+    }
+
     .katex {
-      font-size: 1.08em;
+      font-size: 1.06em;
     }
 
     @media (max-width: 600px) {
-      .card, .solution-card {
-        padding: 1.25rem;
+      .card, .solution-card, .saved-section {
+        padding: 1.2rem;
       }
       .brand-logo {
         font-size: 1.9rem;
+      }
+      .saved-item {
+        flex-direction: column;
       }
     }
   </style>
@@ -463,13 +583,23 @@
       <div class="btn-group">
         <button class="btn btn-primary" id="btn-new">New Problem</button>
         <button class="btn btn-secondary" id="btn-toggle-solution">Show Solution</button>
+        <button class="btn btn-secondary" id="btn-save-problem">Save Problem</button>
       </div>
+      <span class="status-note" id="status-note"></span>
     </div>
 
     <section class="solution-card" id="solution-card">
       <div class="solution-header">Step-by-Step Derivation</div>
       <ol class="steps-list" id="solution-steps"></ol>
       <div class="final-answer-box" id="final-answer"></div>
+    </section>
+
+    <section class="saved-section" id="saved-section">
+      <div class="saved-header">
+        <span class="saved-title">Saved Problems</span>
+        <span class="saved-count" id="saved-count">0</span>
+      </div>
+      <div id="saved-container"></div>
     </section>
   </div>
 
@@ -950,7 +1080,6 @@
       };
     }
 
-    // Unit 4: Counting Techniques
     function genCountingTechniques() {
       const mode = Rand.pick(["combinations", "arrangements"]);
       if (mode === "combinations") {
@@ -1011,8 +1140,10 @@
     }
 
     /* =========================================================================
-       4. CURRICULUM, RETRACTABLE MENU & STATE
+       4. CURRICULUM, SAVED PROBLEMS & STATE
        ========================================================================= */
+    const STORAGE_KEY = "traps_saved_problems_v1";
+
     const CURRICULUM = {
       analysis: {
         label: "1. Analysis",
@@ -1043,11 +1174,35 @@
       ...CURRICULUM["algebra-vectors"].units
     ];
 
+    function loadSavedFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function persistSavedToStorage(list) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      } catch {
+        // Ignore storage quota errors
+      }
+    }
+
+    function getProblemSignature(problem) {
+      return `${problem.book}::${problem.unit}::${problem.statement}`.replace(/\s+/g, " ").trim();
+    }
+
     const state = {
       activeUnit: "all",
       problemIndex: 0,
+      currentProblem: null,
       solutionVisible: false,
-      menuOpen: false
+      menuOpen: false,
+      savedProblems: loadSavedFromStorage()
     };
 
     const dom = {
@@ -1060,9 +1215,13 @@
       problemText: document.getElementById("problem-text"),
       btnNew: document.getElementById("btn-new"),
       btnToggle: document.getElementById("btn-toggle-solution"),
+      btnSave: document.getElementById("btn-save-problem"),
+      statusNote: document.getElementById("status-note"),
       solutionCard: document.getElementById("solution-card"),
       solutionSteps: document.getElementById("solution-steps"),
-      finalAnswer: document.getElementById("final-answer")
+      finalAnswer: document.getElementById("final-answer"),
+      savedCount: document.getElementById("saved-count"),
+      savedContainer: document.getElementById("saved-container")
     };
 
     function populateMenuUnits() {
@@ -1099,6 +1258,43 @@
       }
     }
 
+    function isCurrentProblemSaved() {
+      if (!state.currentProblem) return false;
+      const sig = getProblemSignature(state.currentProblem);
+      return state.savedProblems.some(item => item.id === sig);
+    }
+
+    function updateSaveButtonState() {
+      const saved = isCurrentProblemSaved();
+      dom.btnSave.textContent = saved ? "Saved" : "Save Problem";
+      dom.btnSave.classList.toggle("btn-saved", saved);
+    }
+
+    function renderSavedList() {
+      dom.savedCount.textContent = String(state.savedProblems.length);
+      if (state.savedProblems.length === 0) {
+        dom.savedContainer.innerHTML = `<p class="saved-empty">No saved problems yet. Click "Save Problem" to bookmark unique ones.</p>`;
+        return;
+      }
+
+      dom.savedContainer.innerHTML = `<ul class="saved-list">${
+        state.savedProblems.map(item => `
+          <li class="saved-item" data-id="${encodeURIComponent(item.id)}">
+            <div class="saved-item-body">
+              <div class="saved-item-meta">${item.book} &middot; ${item.unit}</div>
+              <div class="saved-item-text">${item.statement}</div>
+            </div>
+            <div class="saved-item-actions">
+              <button class="btn-mini open" type="button" data-action="open">Open</button>
+              <button class="btn-mini delete" type="button" data-action="delete">Delete</button>
+            </div>
+          </li>
+        `).join("")
+      }</ul>`;
+
+      typesetMath(dom.savedContainer);
+    }
+
     function setSolutionVisibility(visible) {
       state.solutionVisible = visible;
       if (visible) {
@@ -1110,19 +1306,14 @@
       }
     }
 
-    function loadNewProblem() {
-      const selectedUnit = state.activeUnit === "all"
-        ? Rand.pick(ALL_UNITS)
-        : (ALL_UNITS.find(u => u.id === state.activeUnit) || Rand.pick(ALL_UNITS));
-
-      const problem = selectedUnit.fn();
-
-      state.problemIndex += 1;
+    function renderProblem(problem, labelNumber) {
+      state.currentProblem = problem;
       setSolutionVisibility(false);
+      updateSaveButtonState();
 
       dom.problemBook.textContent = problem.book;
       dom.problemUnit.textContent = problem.unit;
-      dom.problemId.textContent = `#${String(state.problemIndex).padStart(3, "0")}`;
+      dom.problemId.textContent = `#${String(labelNumber).padStart(3, "0")}`;
       dom.problemText.innerHTML = problem.statement;
 
       dom.solutionSteps.innerHTML = problem.steps
@@ -1133,6 +1324,65 @@
       typesetMath(dom.problemText);
       typesetMath(dom.solutionCard);
     }
+
+    function loadNewProblem() {
+      const selectedUnit = state.activeUnit === "all"
+        ? Rand.pick(ALL_UNITS)
+        : (ALL_UNITS.find(u => u.id === state.activeUnit) || Rand.pick(ALL_UNITS));
+
+      const problem = selectedUnit.fn();
+      state.problemIndex += 1;
+      dom.statusNote.textContent = "";
+      renderProblem(problem, state.problemIndex);
+    }
+
+    dom.btnSave.addEventListener("click", () => {
+      if (!state.currentProblem) return;
+      const sig = getProblemSignature(state.currentProblem);
+      const exists = state.savedProblems.some(item => item.id === sig);
+      if (exists) {
+        dom.statusNote.textContent = "Already saved (unique problems only).";
+        updateSaveButtonState();
+        return;
+      }
+
+      state.savedProblems.unshift({
+        id: sig,
+        book: state.currentProblem.book,
+        unit: state.currentProblem.unit,
+        statement: state.currentProblem.statement,
+        steps: state.currentProblem.steps,
+        answer: state.currentProblem.answer
+      });
+      persistSavedToStorage(state.savedProblems);
+      updateSaveButtonState();
+      renderSavedList();
+      dom.statusNote.textContent = "Problem saved.";
+    });
+
+    dom.savedContainer.addEventListener("click", (e) => {
+      const actionBtn = e.target.closest("[data-action]");
+      if (!actionBtn) return;
+      const li = actionBtn.closest(".saved-item");
+      if (!li) return;
+      const id = decodeURIComponent(li.dataset.id);
+      const action = actionBtn.dataset.action;
+
+      if (action === "delete") {
+        state.savedProblems = state.savedProblems.filter(item => item.id !== id);
+        persistSavedToStorage(state.savedProblems);
+        updateSaveButtonState();
+        renderSavedList();
+        dom.statusNote.textContent = "Saved problem deleted.";
+      } else if (action === "open") {
+        const found = state.savedProblems.find(item => item.id === id);
+        if (found) {
+          dom.statusNote.textContent = "Viewing saved problem.";
+          renderProblem(found, state.problemIndex);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+    });
 
     dom.btnMenu.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -1169,6 +1419,7 @@
     window.addEventListener("DOMContentLoaded", () => {
       populateMenuUnits();
       highlightActiveUnit();
+      renderSavedList();
       const waitForKatex = setInterval(() => {
         if (typeof renderMathInElement === "function") {
           clearInterval(waitForKatex);
