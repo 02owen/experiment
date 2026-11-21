@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Baccalaureate Advanced Mathematics Generator</title>
+  <title>TRAPS — Baccalaureate Advanced Mathematics Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
@@ -56,19 +59,47 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 0.75rem;
-      padding-bottom: 0.75rem;
+      padding-bottom: 0.9rem;
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .title-group h1 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--text-primary);
+    /* Vintage script logo inspired by Holing vintage script styling */
+    .brand-logo {
+      position: relative;
+      display: inline-block;
+      font-family: "Holing", "Pacifico", cursive;
+      font-size: 2.35rem;
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+      color: #ef4437;
+      transform: rotate(-4deg);
+      padding-right: 10px;
+      padding-bottom: 6px;
+      user-select: none;
+      text-shadow:
+        2px 2px 0 #1e1e1e,
+        4px 4px 0 #26c6da,
+        6px 6px 0 #111111;
+    }
+
+    .brand-logo::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      color: #ef4437;
+      -webkit-text-stroke: 1.5px #ef4437;
+      pointer-events: none;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
     .title-group p {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: var(--text-secondary);
     }
 
@@ -303,6 +334,9 @@
       .shortcut-hint {
         display: none;
       }
+      .brand-logo {
+        font-size: 1.95rem;
+      }
     }
   </style>
 </head>
@@ -310,7 +344,7 @@
   <div class="container">
     <header>
       <div class="title-group">
-        <h1>Analysis, Complex Numbers &amp; 3D Geometry</h1>
+        <span class="brand-logo" data-text="TRAPS">TRAPS</span>
         <p>Procedural Baccalaureate Problem Engine</p>
       </div>
       <div class="session-stats">
@@ -369,7 +403,6 @@
         return a === 0 ? 1 : a;
       },
 
-      // Exact reduced fraction { n, d } with d > 0
       frac(n, d = 1) {
         if (d === 0) throw new Error("Division by zero in fraction");
         if (n === 0) return { n: 0, d: 1 };
@@ -390,7 +423,6 @@
         return this.frac(f1.n * f2.n, f1.d * f2.d);
       },
 
-      // Format fraction as LaTeX
       texFrac(f, showPlus = false) {
         if (f.n === 0) return showPlus ? "" : "0";
         const sign = f.n < 0 ? "-" : (showPlus ? "+" : "");
@@ -399,7 +431,6 @@
         return `${sign}\\frac{${absN}}{${f.d}}`;
       },
 
-      // Format linear expression a*v + b cleanly
       linear(a, b, v = "x") {
         let out = "";
         if (a !== 0) {
@@ -417,12 +448,10 @@
         return out === "" ? "0" : out;
       },
 
-      // Format rational (ax + b)/(cx + d) with simplified signs
       rational(a, b, c, d, v = "x") {
         return `\\frac{${this.linear(a, b, v)}}{${this.linear(c, d, v)}}`;
       },
 
-      // Format coefficient * symbol (e.g., 1 -> "", -1 -> "-", 3 -> "3")
       coeff(k, sym, leading = true) {
         if (k === 0) return "";
         if (leading) {
@@ -436,7 +465,6 @@
         }
       },
 
-      // Simplify sqrt(n) -> { out, inside } where n = out^2 * inside
       simplifySqrt(n) {
         if (n === 0) return { out: 0, inside: 1 };
         let out = 1;
@@ -458,7 +486,6 @@
         return `${out}\\sqrt{${inside}}`;
       },
 
-      // Format multiple of pi: frac * pi
       texPi(f) {
         if (f.n === 0) return "0";
         const sign = f.n < 0 ? "-" : "";
@@ -487,53 +514,35 @@
        2. PROCEDURAL PROBLEM GENERATORS (MODELED ON REFERENCE SET)
        ========================================================================= */
 
-    /**
-     * ARCHETYPE 1 (Reference Problem 1):
-     * Let f be defined on R \ {r} by f(x) = (ax + b)/(cx + d), where the horizontal
-     * asymptote y = a/c equals the vertical asymptote r = -d/c!
-     * Consequently, lim_{x -> +-inf} f(x) approaches r from one side (r^+ or r^-),
-     * forcing the outer limit lim f(f(x)) to diverge to +inf or -inf!
-     */
     function generateCompositeRationalLimit() {
-      // Choose c in {1, 2, 3} and integer vertical asymptote r in [-5, 5] \ {0}
       const c = Rand.pick([1, 1, 2, 3]);
       const r = Rand.nonZeroInt(-5, 5);
-      // Horizontal asymptote a/c must equal r => a = c * r
       const a = c * r;
-      const d = -c * r; // so cx + d = c(x - r)
+      const d = -c * r;
 
-      // Choose b != a * r so f(x) is non-constant (ad - bc != 0)
       let b = a * r;
       while (b === a * r || Math.abs(b) > 18) {
         b = a * r + Rand.nonZeroInt(-7, 7);
       }
 
-      const dirSign = Rand.pick([-1, 1]); // -1 for -inf, +1 for +inf
+      const dirSign = Rand.pick([-1, 1]);
       const dirTex = dirSign === -1 ? "-\\infty" : "+\\infty";
 
-      // Remainder term: f(x) = r + k / (cx + d), where k = b - a*r != 0
       const k = b - a * r;
-      // Sign of cx + d as x -> dirSign * inf: since c > 0, sign(cx + d) = dirSign
-      // Thus sign of k / (cx + d) is sign(k) * dirSign
       const approachDir = (k * dirSign > 0) ? "+" : "-";
       const approachSym = approachDir === "+" ? "^{+}" : "^{-}";
 
-      // Now evaluate lim_{u -> r^(approachDir)} f(u) = (a*r + b) / (c*(u - r))
-      // Numerator at u = r is a*r + b = c*r^2 + b = k + 2*a*r
-      // Wait: f(r) numerator is a*r + b. Let's make sure a*r + b != 0 so it's not 0/0!
       if (a * r + b === 0) {
         return generateCompositeRationalLimit();
       }
 
       const numAtR = a * r + b;
-      // Denominator c*(u - r): since c > 0, as u -> r^+, denom -> 0^+; as u -> r^-, denom -> 0^-
       const denomSign = approachDir === "+" ? 1 : -1;
       const finalInfSign = (numAtR * denomSign > 0) ? "+\\infty" : "-\\infty";
 
       const fTex = MathFmt.rational(a, b, c, d, "x");
       const domainTex = `\\mathbb{R} \\setminus \\{${r}\\}`;
 
-      // Build clean canonical decomposition: f(x) = r + k / (cx + d)
       const remSign = k > 0 ? "+" : "-";
       const decompTex = `${r} ${remSign} \\frac{${Math.abs(k)}}{${MathFmt.linear(c, d, "x")}}`;
 
@@ -559,15 +568,8 @@
       };
     }
 
-    /**
-     * ARCHETYPE 2 (Reference Problem 3):
-     * f is differentiable on ]-1, 1[ (or R) with given derivative f'(x) (e.g., 1/sqrt(1-x^2),
-     * 1/(1+x^2), x/sqrt(1-x^2), etc.), and g(x) = f(trig(x)) on a specific quadrant interval I
-     * where sqrt(sin^2 x) or sqrt(cos^2 x) simplifies with a crucial sign!
-     */
     function generateChainTrigDerivative() {
       const variants = [
-        // Variant A: f'(u) = k / sqrt(1 - u^2), u = cos(x) or sin(x)
         () => {
           const k = Rand.nonZeroInt(-5, 5);
           const innerIsCos = Rand.pick([true, false]);
@@ -576,7 +578,6 @@
           const identityRem = innerIsCos ? "\\sin^2 x" : "\\cos^2 x";
           const absRem = innerIsCos ? "|\\sin x|" : "|\\cos x|";
 
-          // Pick an open interval of length pi or pi/2 where innerFn in ]-1, 1[ and trig has fixed sign
           const intervals = innerIsCos
             ? [
                 { tex: "]-\\pi, 0[", sign: -1, reason: "\\sin x < 0 \\text{ on } ]-\\pi, 0[" },
@@ -589,8 +590,6 @@
               ];
           const chosen = Rand.pick(intervals);
 
-          // For innerIsCos: g'(x) = k * (-sin x) / (chosen.sign * sin x) = -k * chosen.sign
-          // For !innerIsCos: g'(x) = k * (cos x) / (chosen.sign * cos x) = k * chosen.sign
           const finalConst = innerIsCos ? (-k * chosen.sign) : (k * chosen.sign);
           const signedAbsTex = chosen.sign === 1
             ? (innerIsCos ? "\\sin x" : "\\cos x")
@@ -613,7 +612,6 @@
           };
         },
 
-        // Variant B: f'(u) = k / (1 + u^2), u = tan(x) or cot(x)
         () => {
           const k = Rand.nonZeroInt(-6, 6);
           const useTan = Rand.pick([true, false]);
@@ -641,7 +639,6 @@
           };
         },
 
-        // Variant C: f'(u) = k * u / sqrt(1 - u^2), u = cos(x) or sin(x)
         () => {
           const k = Rand.nonZeroInt(-4, 4);
           const innerIsCos = Rand.pick([true, false]);
@@ -651,8 +648,6 @@
             ? { tex: "]-\\pi, 0[", sign: -1, reason: "\\sin x < 0" }
             : { tex: "\\left]\\frac{\\pi}{2}, \\frac{3\\pi}{2}\\right[", sign: -1, reason: "\\cos x < 0" };
 
-          // If innerIsCos: g'(x) = (-sin x) * k * cos x / (-sin x) = k cos x
-          // If !innerIsCos: g'(x) = (cos x) * k * sin x / (-cos x) = -k sin x
           const resCoeff = innerIsCos ? k : -k;
           const resTex = MathFmt.coeff(resCoeff, innerFn, true);
 
@@ -676,17 +671,10 @@
       return Rand.pick(variants)();
     }
 
-    /**
-     * ARCHETYPE 3 (Reference Problem 8):
-     * Complex number Z combining powers of i, complex exponential e^{i*theta},
-     * and real or special-angle complex factors (like 1 - sqrt(3), -1 + i*sqrt(3), sqrt(3) - i, etc.).
-     * Compute the principal argument arg(Z) in ]-pi, pi].
-     */
     function generateComplexArgument() {
-      // Numerator factor 1: i^m * e^{i * alpha}
-      const m = Rand.pick([1, 2, 3]); // i, -1, -i
+      const m = Rand.pick([1, 2, 3]);
       const iLabel = m === 1 ? "i" : (m === 2 ? "-1" : "-i");
-      const iArg = MathFmt.frac(m, 2); // pi/2, pi, 3pi/2
+      const iArg = MathFmt.frac(m, 2);
 
       const alphas = [
         { tex: "\\frac{\\pi}{6}", f: MathFmt.frac(1, 6) },
@@ -700,7 +688,6 @@
       ];
       const alpha = Rand.pick(alphas);
 
-      // Denominator (or second factor): tricky negative real scalar or special complex number
       const denoms = [
         { tex: "1 - \\sqrt{3}", arg: MathFmt.frac(1, 1), note: "Since $1 - \\sqrt{3} < 0$, it is a strictly negative real number, so $\\arg(1 - \\sqrt{3}) \\equiv \\pi \\pmod{2\\pi}$." },
         { tex: "1 - \\sqrt{2}", arg: MathFmt.frac(1, 1), note: "Since $1 - \\sqrt{2} < 0$, it is a strictly negative real number, so $\\arg(1 - \\sqrt{2}) \\equiv \\pi \\pmod{2\\pi}$." },
@@ -714,16 +701,14 @@
       ];
       const denom = Rand.pick(denoms);
 
-      const power = Rand.pick([1, 1, 2]); // Occasionally raise Z^2 or keep Z
+      const power = Rand.pick([1, 1, 2]);
       const zExpr = `\\frac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}`;
 
-      // rawArg = power * (iArg + alpha.f - denom.arg)
       let rawArg = MathFmt.subFrac(MathFmt.addFrac(iArg, alpha.f), denom.arg);
       if (power === 2) {
         rawArg = MathFmt.mulFrac(rawArg, MathFmt.frac(2, 1));
       }
 
-      // Normalize to ]-1, 1] (multiples of pi)
       let norm = { n: rawArg.n, d: rawArg.d };
       while (norm.n > norm.d) {
         norm = MathFmt.subFrac(norm, MathFmt.frac(2, 1));
@@ -732,7 +717,6 @@
         norm = MathFmt.addFrac(norm, MathFmt.frac(2, 1));
       }
 
-      const lhs = power === 1 ? "Z" : "Z^2";
       const target = power === 1 ? "\\arg(Z)" : "\\arg(Z^2)";
 
       const steps = [
@@ -762,13 +746,6 @@
       };
     }
 
-    /**
-     * ARCHETYPE 4 (Reference Problem 9):
-     * 3D analytical geometry in an orthonormal frame (O; i, j, k):
-     * Given M(x0, y0, z0), P is the orthogonal projection of M onto a coordinate plane
-     * (xOy), (yOz), or (xOz), and H is the orthogonal projection of P onto one of the
-     * coordinate axes in that plane. Find the exact distance MH (Three Perpendiculars Theorem!).
-     */
     function generateSpaceProjection() {
       const x0 = Rand.nonZeroInt(-6, 6);
       const y0 = Rand.nonZeroInt(-6, 6);
@@ -832,15 +809,8 @@
       };
     }
 
-    /**
-     * ARCHETYPE 5 (Reference Problem 10):
-     * Limits at +-infinity involving the floor (greatest integer) function E(x),
-     * requiring the defining inequalities x - 1 < E(x) <= x (or 0 <= x - E(x) < 1)
-     * and the Squeeze Theorem.
-     */
     function generateFloorFunctionLimit() {
       const variants = [
-        // Variant A: sqrt((a*(x - E(x)) + b) / (c*x + d)) as x -> +inf => 0
         () => {
           const a = Rand.int(1, 5);
           const b = Rand.int(0, 6);
@@ -869,13 +839,11 @@
           };
         },
 
-        // Variant B: (a*E(x) + b) / (c*x + d) as x -> +-inf => a/c
         () => {
           const a = Rand.nonZeroInt(-6, 6);
           const b = Rand.nonZeroInt(-8, 8);
           const c = Rand.int(1, 5);
           const d = Rand.int(1, 7);
-          const dir = Rand.pick(["+\\infty", "-\\infty"]);
           const limFrac = MathFmt.frac(a, c);
           const numTex = MathFmt.linear(a, b, "E(x)");
           const denTex = MathFmt.linear(c, d, "x");
@@ -902,7 +870,6 @@
           };
         },
 
-        // Variant C: (x * E(1/x)) as x -> +inf or 0+ => 1, or E(x)*sin(1/x) as x -> +inf => 1
         () => {
           const k = Rand.int(2, 6);
           return {
@@ -911,7 +878,7 @@
             $$f(x) = E(x) \\cdot \\sin\\!\\left(\\frac{${k}}{x}\\right)$$
             Evaluate $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
             steps: [
-              `For all $x \\ge 1$, the floor function satisfies $x - 1 < E(x) \\le x$, and $\\sin\\!\\left(\\frac{${k}}{x}\\right) > 0$ because $0 < \\frac{${k}}{x} \\le ${k}$ (and for $x > ${k}$, $0 < \\frac{${k}}{x} < 1 < \\pi$).`,
+              `For all $x \\ge 1$, the floor function satisfies $x - 1 < E(x) \\le x$, and $\\sin\\!\\left(\\frac{${k}}{x}\\right) > 0$ for $x > ${k}$ where $0 < \\frac{${k}}{x} < 1 < \\pi$.`,
               `Multiply the inequality $x - 1 < E(x) \\le x$ by the positive quantity $\\sin\\!\\left(\\frac{${k}}{x}\\right)$ for $x > ${k}$:
               $$(x - 1)\\sin\\!\\left(\\frac{${k}}{x}\\right) < f(x) \\le x\\sin\\!\\left(\\frac{${k}}{x}\\right)$$`,
               `Rewrite $x\\sin\\!\\left(\\frac{${k}}{x}\\right) = ${k} \\cdot \\frac{\\sin(${k}/x)}{${k}/x}$. Using the standard limit $\\displaystyle\\lim_{t \\to 0} \\frac{\\sin t}{t} = 1$:
@@ -1015,7 +982,6 @@
       typesetMath(dom.solutionCard);
     }
 
-    // Event Listeners
     dom.filterBar.addEventListener("click", (e) => {
       const pill = e.target.closest(".pill");
       if (!pill) return;
@@ -1042,7 +1008,6 @@
       }
     });
 
-    // Boot once KaTeX auto-render is ready
     window.addEventListener("DOMContentLoaded", () => {
       const waitForKatex = setInterval(() => {
         if (typeof renderMathInElement === "function") {
