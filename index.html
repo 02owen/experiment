@@ -306,20 +306,23 @@
       color: var(--danger);
     }
 
+    /* Two-Section Problem Block */
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      padding: 1.75rem;
+      overflow: hidden;
     }
 
     .card-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1.15rem;
+      gap: 0.75rem;
+      min-height: 54px;
+      padding: 0.85rem 1.5rem;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
       font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -330,20 +333,39 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      flex-wrap: wrap;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .badge {
-      background: var(--bg-elevated);
+      background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
+      padding: 0.24rem 0.65rem;
+      border-radius: 5px;
       color: var(--accent);
       font-weight: 600;
+      white-space: nowrap;
     }
 
     .badge-book {
       color: var(--success);
+    }
+
+    .badge-unit {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .problem-number {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .problem-body {
+      padding: 1.75rem;
     }
 
     .problem-statement {
@@ -356,19 +378,20 @@
       margin: 1rem 0;
     }
 
-    /* Uniform Icon Action Controls */
+    /* Centered Icon Action Controls */
     .controls {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
+      justify-content: center;
+      gap: 0.55rem;
     }
 
     .btn-group {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.85rem;
       align-items: center;
+      justify-content: center;
     }
 
     button.icon-btn {
@@ -431,7 +454,8 @@
     .status-note {
       font-size: 0.82rem;
       color: var(--text-secondary);
-      min-height: 1.2rem;
+      min-height: 1.15rem;
+      text-align: center;
     }
 
     .solution-card {
@@ -510,7 +534,10 @@
     }
 
     @media (max-width: 600px) {
-      .card, .solution-card {
+      .card-meta {
+        padding: 0.75rem 1rem;
+      }
+      .problem-body, .solution-card {
         padding: 1.2rem;
       }
       .brand-logo {
@@ -560,14 +587,16 @@
     </header>
 
     <main class="card">
-      <div class="card-meta">
+      <div class="card-meta" id="tags-section">
         <div class="meta-badges">
           <span class="badge badge-book" id="problem-book">Loading...</span>
-          <span class="badge" id="problem-unit">Loading...</span>
+          <span class="badge badge-unit" id="problem-unit">Loading...</span>
         </div>
-        <span id="problem-id">#001</span>
+        <span class="problem-number" id="problem-id">#001</span>
       </div>
-      <div class="problem-statement" id="problem-text"></div>
+      <div class="problem-body" id="problem-section">
+        <div class="problem-statement" id="problem-text"></div>
+      </div>
     </main>
 
     <div class="controls">
