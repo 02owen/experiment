@@ -64,40 +64,6 @@
       position: relative;
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-    }
-
-    .hamburger-btn {
-      width: 40px;
-      height: 40px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      color: var(--text-primary);
-      cursor: pointer;
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      transition: all 0.15s ease;
-    }
-
-    .hamburger-btn:hover {
-      background: var(--bg-elevated);
-      border-color: var(--border-active);
-    }
-
-    .hamburger-line {
-      width: 17px;
-      height: 2px;
-      background: currentColor;
-      border-radius: 2px;
-    }
-
     .brand-logo {
       position: relative;
       display: inline-block;
@@ -125,29 +91,40 @@
       pointer-events: none;
     }
 
-    .session-stats {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-size: 0.82rem;
-      color: var(--text-secondary);
+    .hamburger-btn {
+      width: 42px;
+      height: 42px;
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      padding: 0.4rem 0.85rem;
-      border-radius: 6px;
-    }
-
-    .session-stats span strong {
+      border-radius: 8px;
       color: var(--text-primary);
-      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.15s ease;
     }
 
-    /* Retractable Dropdown Menu */
+    .hamburger-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-active);
+    }
+
+    .hamburger-line {
+      width: 18px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+    }
+
+    /* Retractable Dropdown Menu aligned to right */
     .menu-drawer {
       display: none;
       position: absolute;
       top: calc(100% + 0.5rem);
-      left: 0;
+      right: 0;
       width: 340px;
       max-width: 100%;
       background: var(--bg-card);
@@ -442,19 +419,13 @@
 <body>
   <div class="container">
     <header>
-      <div class="header-left">
-        <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
-        <span class="brand-logo" data-text="TRAPS">TRAPS</span>
-      </div>
+      <span class="brand-logo" data-text="TRAPS">TRAPS</span>
 
-      <div class="session-stats">
-        <span>Generated: <strong id="stat-generated">0</strong></span>
-        <span>Solved: <strong id="stat-solved">0</strong></span>
-      </div>
+      <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
 
       <nav class="menu-drawer" id="menu-drawer" aria-label="Books and Units">
         <button class="menu-all-btn active" data-unit="all">All Books &amp; Units (Random)</button>
@@ -604,6 +575,24 @@
         const numStr = absN === 1 ? "\\pi" : `${absN}\\pi`;
         if (f.d === 1) return `${sign}${numStr}`;
         return `${sign}\\frac{${numStr}}{${f.d}}`;
+      },
+
+      comb(n, k) {
+        if (k < 0 || k > n) return 0;
+        let res = 1;
+        for (let i = 1; i <= k; i++) {
+          res = (res * (n - i + 1)) / i;
+        }
+        return Math.round(res);
+      },
+
+      perm(n, k) {
+        if (k < 0 || k > n) return 0;
+        let res = 1;
+        for (let i = 0; i < k; i++) {
+          res *= (n - i);
+        }
+        return Math.round(res);
       }
     };
 
@@ -961,29 +950,46 @@
       };
     }
 
-    function genHarmonicAnalysis() {
-      const presets = [
-        { a: "1", b: "1", rTex: "\\sqrt{2}", phiTex: "\\frac{\\pi}{4}" },
-        { a: "-1", b: "1", rTex: "\\sqrt{2}", phiTex: "\\frac{3\\pi}{4}" },
-        { a: "1", b: "-1", rTex: "\\sqrt{2}", phiTex: "-\\frac{\\pi}{4}" },
-        { a: "\\sqrt{3}", b: "1", rTex: "2", phiTex: "\\frac{\\pi}{6}" },
-        { a: "1", b: "\\sqrt{3}", rTex: "2", phiTex: "\\frac{\\pi}{3}" },
-        { a: "\\sqrt{3}", b: "-1", rTex: "2", phiTex: "-\\frac{\\pi}{6}" }
-      ];
-      const p = Rand.pick(presets);
-      const w = Rand.int(2, 6);
-      const bSign = p.b.startsWith("-") ? ` - ${p.b.slice(1)}` : ` + ${p.b}`;
+    // Unit 4: Counting Techniques
+    function genCountingTechniques() {
+      const mode = Rand.pick(["combinations", "arrangements"]);
+      if (mode === "combinations") {
+        const men = Rand.int(4, 7);
+        const women = Rand.int(3, 6);
+        const kMen = Rand.int(1, 3);
+        const kWomen = Rand.int(1, 3);
+        const totalSize = kMen + kWomen;
+        const cMen = MathFmt.comb(men, kMen);
+        const cWomen = MathFmt.comb(women, kWomen);
+        const ans = cMen * cWomen;
 
-      return {
-        book: "Algebra and Vectors",
-        unit: "Harmonic Analysis",
-        statement: `Write $x(t) = ${p.a}\\cos(${w}t)${bSign}\\sin(${w}t)$ in the form $R\\cos(${w}t - \\varphi)$ with $R > 0$ and $\\varphi \\in ]-\\pi, \\pi]$.`,
-        steps: [
-          `Compute $R = \\sqrt{a^2 + b^2} = ${p.rTex}$.`,
-          `Factor out $R$ to identify $\\cos\\varphi = \\dfrac{${p.a}}{${p.rTex}}$ and $\\sin\\varphi = \\dfrac{${p.b}}{${p.rTex}}$, so $\\varphi = ${p.phiTex}$.`
-        ],
-        answer: `x(t) = ${p.rTex}\\cos\\!\\left(${w}t - \\left(${p.phiTex}\\right)\\right)`
-      };
+        return {
+          book: "Algebra and Vectors",
+          unit: "Counting Techniques",
+          statement: `A committee of $${totalSize}$ members is selected simultaneously from $${men}$ men and $${women}$ women. How many committees contain exactly $${kMen}$ ${kMen === 1 ? "man" : "men"} and $${kWomen}$ ${kWomen === 1 ? "woman" : "women"}?`,
+          steps: [
+            `Since order does not matter in a committee, use combinations $\\binom{n}{r} = \\dfrac{n!}{r!(n-r)!}$.`,
+            `Select $${kMen}$ ${kMen === 1 ? "man" : "men"} out of $${men}$ in $\\binom{${men}}{${kMen}} = ${cMen}$ ways, and $${kWomen}$ ${kWomen === 1 ? "woman" : "women"} out of $${women}$ in $\\binom{${women}}{${kWomen}} = ${cWomen}$ ways.`,
+            `By the fundamental counting principle (multiplication rule), total committees $= ${cMen} \\times ${cWomen} = ${ans}$.`
+          ],
+          answer: `${ans}`
+        };
+      } else {
+        const n = Rand.int(5, 8);
+        const k = Rand.int(2, 4);
+        const ans = MathFmt.perm(n, k);
+
+        return {
+          book: "Algebra and Vectors",
+          unit: "Counting Techniques",
+          statement: `From a group of $${n}$ distinct candidates, how many ordered selections of $${k}$ distinct positions (for example: President, Vice-President, Secretary, Treasurer) can be formed without repetition?`,
+          steps: [
+            `Because the $${k}$ positions are distinct and repetition is not allowed, use arrangements (permutations) $A_{n}^{k} = \\dfrac{n!}{(n-k)!}$.`,
+            `Compute $A_{${n}}^{${k}} = ${n} \\times ${n - 1}${k >= 3 ? ` \\times ${n - 2}` : ""}${k >= 4 ? ` \\times ${n - 3}` : ""} = ${ans}$.`
+          ],
+          answer: `${ans}`
+        };
+      }
     }
 
     function genProbability() {
@@ -1026,7 +1032,7 @@
           { id: "vector", label: "Vector", fn: genVector },
           { id: "complex-numbers", label: "Complex Numbers", fn: genComplexNumbers },
           { id: "complex-geometry", label: "Applications of Complex Numbers in Geometry", fn: genComplexGeometry },
-          { id: "harmonic-analysis", label: "Harmonic Analysis", fn: genHarmonicAnalysis },
+          { id: "counting-techniques", label: "Counting Techniques", fn: genCountingTechniques },
           { id: "probability", label: "Probability", fn: genProbability }
         ]
       }
@@ -1039,9 +1045,7 @@
 
     const state = {
       activeUnit: "all",
-      generatedCount: 0,
-      solvedCount: 0,
-      currentSolved: false,
+      problemIndex: 0,
       solutionVisible: false,
       menuOpen: false
     };
@@ -1058,9 +1062,7 @@
       btnToggle: document.getElementById("btn-toggle-solution"),
       solutionCard: document.getElementById("solution-card"),
       solutionSteps: document.getElementById("solution-steps"),
-      finalAnswer: document.getElementById("final-answer"),
-      statGenerated: document.getElementById("stat-generated"),
-      statSolved: document.getElementById("stat-solved")
+      finalAnswer: document.getElementById("final-answer")
     };
 
     function populateMenuUnits() {
@@ -1097,21 +1099,11 @@
       }
     }
 
-    function updateStats() {
-      dom.statGenerated.textContent = state.generatedCount;
-      dom.statSolved.textContent = state.solvedCount;
-    }
-
     function setSolutionVisibility(visible) {
       state.solutionVisible = visible;
       if (visible) {
         dom.solutionCard.classList.add("visible");
         dom.btnToggle.textContent = "Hide Solution";
-        if (!state.currentSolved) {
-          state.currentSolved = true;
-          state.solvedCount += 1;
-          updateStats();
-        }
       } else {
         dom.solutionCard.classList.remove("visible");
         dom.btnToggle.textContent = "Show Solution";
@@ -1125,14 +1117,12 @@
 
       const problem = selectedUnit.fn();
 
-      state.generatedCount += 1;
-      state.currentSolved = false;
+      state.problemIndex += 1;
       setSolutionVisibility(false);
-      updateStats();
 
       dom.problemBook.textContent = problem.book;
       dom.problemUnit.textContent = problem.unit;
-      dom.problemId.textContent = `#${String(state.generatedCount).padStart(3, "0")}`;
+      dom.problemId.textContent = `#${String(state.problemIndex).padStart(3, "0")}`;
       dom.problemText.innerHTML = problem.statement;
 
       dom.solutionSteps.innerHTML = problem.steps
