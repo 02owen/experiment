@@ -83,6 +83,34 @@
       user-select: none;
     }
 
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .diff-select {
+      height: 48px;
+      padding: 0 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .diff-select:hover,
+    .diff-select:focus {
+      background: var(--bg-elevated);
+      border-color: var(--border-active);
+      outline: none;
+    }
+
     .hamburger-btn {
       width: 48px;
       height: 48px;
@@ -324,6 +352,7 @@
       gap: 0.5rem;
       min-width: 0;
       overflow: hidden;
+      flex-wrap: wrap;
     }
 
     .badge {
@@ -340,9 +369,26 @@
       color: var(--success);
     }
 
+    .badge-diff {
+      color: var(--text-primary);
+    }
+
     .badge-unit {
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .meta-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    .seed-tag {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
     }
 
     .problem-number {
@@ -350,7 +396,6 @@
       font-weight: 600;
       color: var(--text-secondary);
       white-space: nowrap;
-      flex-shrink: 0;
     }
 
     .problem-body {
@@ -440,6 +485,12 @@
       fill: var(--success);
     }
 
+    button.icon-btn.copied {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: rgba(78, 201, 176, 0.45);
+    }
+
     .status-note {
       font-size: 0.78rem;
       color: var(--text-secondary);
@@ -525,12 +576,22 @@
     @media (max-width: 600px) {
       .card-meta {
         padding: 0.75rem 1rem;
+        flex-wrap: wrap;
       }
       .problem-body, .solution-card {
         padding: 1.2rem;
       }
       .brand-logo {
         font-size: 1.65rem;
+      }
+      .diff-select {
+        height: 42px;
+        padding: 0 0.55rem;
+        font-size: 0.7rem;
+      }
+      .hamburger-btn {
+        width: 42px;
+        height: 42px;
       }
     }
   </style>
@@ -540,11 +601,19 @@
     <header>
       <span class="brand-logo">TRAPS</span>
 
-      <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
+      <div class="header-controls">
+        <select class="diff-select" id="difficulty-select" aria-label="Difficulty">
+          <option value="standard">STD</option>
+          <option value="bac">BAC</option>
+          <option value="olympiad">OLY</option>
+        </select>
+
+        <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
 
       <nav class="menu-drawer" id="menu-drawer" aria-label="Books, Units and Saved Problems">
         <button class="menu-all-btn active" data-unit="all">All Books &amp; Units (Random)</button>
@@ -580,8 +649,12 @@
         <div class="meta-badges">
           <span class="badge badge-book" id="problem-book">Loading...</span>
           <span class="badge badge-unit" id="problem-unit">Loading...</span>
+          <span class="badge badge-diff" id="problem-diff">STD</span>
         </div>
-        <span class="problem-number" id="problem-id">#001</span>
+        <div class="meta-right">
+          <span class="seed-tag" id="problem-seed">SEED: --------</span>
+          <span class="problem-number" id="problem-id">#001</span>
+        </div>
       </div>
       <div class="problem-body" id="problem-section">
         <div class="problem-statement" id="problem-text"></div>
@@ -609,6 +682,13 @@
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
           </svg>
         </button>
+
+        <button class="icon-btn secondary" id="btn-share-link" type="button" title="Copy Shareable Seeded Link" aria-label="Copy Shareable Seeded Link">
+          <svg id="icon-share" viewBox="0 0 24 24">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
+        </button>
       </div>
       <span class="status-note" id="status-note"></span>
     </div>
@@ -622,8 +702,52 @@
 
   <script>
     /* =========================================================================
-       1. EXACT ALGEBRAIC & SYMBOLIC UTILITIES
+       1. SEEDED PRNG (MULBERRY32) & EXACT ALGEBRAIC UTILITIES
        ========================================================================= */
+    let activeRng = Math.random;
+
+    function createSeededRng(seedUint32) {
+      let a = seedUint32 >>> 0;
+      return function () {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function generateRandomSeed() {
+      if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+        const buf = new Uint32Array(1);
+        window.crypto.getRandomValues(buf);
+        return (buf[0] >>> 0) || 1;
+      }
+      return (Math.floor(Math.random() * 0xffffffff) >>> 0) || 1;
+    }
+
+    function encodeSeedBase36(seedUint32) {
+      return (seedUint32 >>> 0).toString(36).toUpperCase();
+    }
+
+    function parseSeedParam(rawParam) {
+      if (!rawParam) return null;
+      const trimmed = rawParam.trim();
+      if (/^[0-9a-zA-Z]{1,10}$/.test(trimmed)) {
+        const parsed = parseInt(trimmed, 36);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          return (parsed >>> 0);
+        }
+      }
+      if (/^\d{1,12}$/.test(trimmed)) {
+        const parsed = Number(trimmed);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          return (parsed >>> 0);
+        }
+      }
+      return null;
+    }
+
     const MathFmt = {
       gcd(a, b) {
         a = Math.abs(Math.round(a));
@@ -745,15 +869,20 @@
 
     const Rand = {
       int(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+        return Math.floor(activeRng() * (max - min + 1)) + min;
       },
       pick(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
+        return arr[Math.floor(activeRng() * arr.length)];
       },
       nonZeroInt(min, max) {
         let v = 0;
         while (v === 0) v = this.int(min, max);
         return v;
+      },
+      scaleRange(difficulty, baseMin, baseMax) {
+        if (difficulty === "standard") return [baseMin, baseMax];
+        if (difficulty === "bac") return [baseMin - 1, baseMax + 2];
+        return [baseMin - 2, baseMax + 4];
       }
     };
 
@@ -761,10 +890,10 @@
        2. BOOK 1: ANALYSIS GENERATORS (7 UNITS)
        ========================================================================= */
 
-    function genSequences() {
+    function genSequences(difficulty) {
       const mode = Rand.pick(["arithmetic-geometric", "telescoping"]);
       if (mode === "arithmetic-geometric") {
-        const a = Rand.pick([2, 3, -2, -3]);
+        const a = Rand.pick(difficulty === "standard" ? [2, 3] : [2, 3, -2, -3]);
         const oneMinusA = 1 - a;
         const k = Rand.nonZeroInt(-3, 3);
         const b = k * oneMinusA;
@@ -773,7 +902,7 @@
           u0 = k + Rand.nonZeroInt(-4, 4);
         }
         const v0 = u0 - k;
-        const targetN = Rand.int(4, 7);
+        const targetN = difficulty === "olympiad" ? Rand.int(6, 9) : Rand.int(4, 7);
         const aPowN = Math.pow(a, targetN);
         const uN = k + v0 * aPowN;
 
@@ -792,7 +921,8 @@
           answer: `u_n = ${k}${v0 > 0 ? ` + ${v0}` : ` - ${Math.abs(v0)}`} \\cdot (${a})^n, \\quad u_{${targetN}} = ${uN}`
         };
       } else {
-        const m = Rand.int(4, 9);
+        const [mMin, mMax] = Rand.scaleRange(difficulty, 4, 8);
+        const m = Rand.int(Math.max(2, mMin), mMax);
         const sFrac = MathFmt.frac(m, m + 1);
         return {
           book: "Analysis",
@@ -808,8 +938,8 @@
       }
     }
 
-    function genLimits() {
-      const type = Rand.pick(["composite-trap", "floor-trap"]);
+    function genLimits(difficulty) {
+      const type = difficulty === "standard" ? "composite-trap" : Rand.pick(["composite-trap", "floor-trap"]);
       if (type === "composite-trap") {
         const c = Rand.pick([1, 2, 3]);
         const r = Rand.nonZeroInt(-4, 4);
@@ -859,8 +989,8 @@
       }
     }
 
-    function genDifferentiation() {
-      const k = Rand.nonZeroInt(-5, 5);
+    function genDifferentiation(difficulty) {
+      const k = Rand.nonZeroInt(difficulty === "olympiad" ? -7 : -5, difficulty === "olympiad" ? 7 : 5);
       const innerIsCos = Rand.pick([true, false]);
       const innerFn = innerIsCos ? "\\cos x" : "\\sin x";
       const innerDeriv = innerIsCos ? "-\\sin x" : "\\cos x";
@@ -892,7 +1022,7 @@
       };
     }
 
-    function genMonotonicitySequence() {
+    function genMonotonicitySequence(difficulty) {
       const mode = Rand.pick(["difference", "ratio"]);
       if (mode === "difference") {
         const a = Rand.int(1, 3);
@@ -911,7 +1041,7 @@
           answer: `(u_n)_{n \\ge 1} \\text{ is strictly increasing}`
         };
       } else {
-        const a = Rand.int(2, 6);
+        const a = Rand.int(difficulty === "olympiad" ? 4 : 2, difficulty === "olympiad" ? 8 : 6);
         return {
           book: "Analysis",
           unit: "Monotonicity of a Sequence",
@@ -925,10 +1055,10 @@
       }
     }
 
-    function genLogarithmic() {
+    function genLogarithmic(difficulty) {
       const mode = Rand.pick(["equation", "derivative-limit"]);
       if (mode === "equation") {
-        const r1 = Rand.int(2, 6);
+        const r1 = Rand.int(2, difficulty === "olympiad" ? 9 : 6);
         const a = Rand.int(1, 4);
         const b = Rand.int(1, 4);
         const c = (r1 + a) * (r1 + b);
@@ -962,9 +1092,10 @@
       }
     }
 
-    function genExponential() {
-      const k = Rand.nonZeroInt(-4, 4);
-      const a = Rand.nonZeroInt(-4, 4);
+    function genExponential(difficulty) {
+      const bound = difficulty === "olympiad" ? 6 : 4;
+      const k = Rand.nonZeroInt(-bound, bound);
+      const a = Rand.nonZeroInt(-bound, bound);
       const m = Rand.nonZeroInt(-5, 5);
       const constPart = k + a * m;
       const xCoeff = a * k;
@@ -984,8 +1115,8 @@
       };
     }
 
-    function genIntegration() {
-      const p = Rand.int(1, 4);
+    function genIntegration(difficulty) {
+      const p = Rand.int(1, difficulty === "olympiad" ? 5 : 4);
       const a = 3 * Rand.nonZeroInt(-2, 2);
       const b = 2 * Rand.nonZeroInt(-3, 3);
       const c = Rand.nonZeroInt(-5, 5);
@@ -1010,9 +1141,10 @@
        3. BOOK 2: ALGEBRA AND VECTORS GENERATORS (5 UNITS)
        ========================================================================= */
 
-    function genVector() {
-      const u = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
-      const v = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
+    function genVector(difficulty) {
+      const range = difficulty === "olympiad" ? 6 : 4;
+      const u = [Rand.nonZeroInt(-range, range), Rand.nonZeroInt(-range, range), Rand.nonZeroInt(-range, range)];
+      const v = [Rand.nonZeroInt(-range, range), Rand.nonZeroInt(-range, range), Rand.nonZeroInt(-range, range)];
       const dot = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
       const cx = u[1] * v[2] - u[2] * v[1];
       const cy = u[2] * v[0] - u[0] * v[2];
@@ -1097,11 +1229,11 @@
       };
     }
 
-    function genCountingTechniques() {
+    function genCountingTechniques(difficulty) {
       const mode = Rand.pick(["combinations", "arrangements"]);
       if (mode === "combinations") {
-        const men = Rand.int(4, 7);
-        const women = Rand.int(3, 6);
+        const men = Rand.int(4, difficulty === "olympiad" ? 10 : 7);
+        const women = Rand.int(3, difficulty === "olympiad" ? 9 : 6);
         const kMen = Rand.int(1, 3);
         const kWomen = Rand.int(1, 3);
         const totalSize = kMen + kWomen;
@@ -1121,7 +1253,7 @@
           answer: `${ans}`
         };
       } else {
-        const n = Rand.int(5, 8);
+        const n = Rand.int(5, difficulty === "olympiad" ? 10 : 8);
         const k = Rand.int(2, 4);
         const ans = MathFmt.perm(n, k);
 
@@ -1138,9 +1270,9 @@
       }
     }
 
-    function genProbability() {
-      const r = Rand.int(3, 6);
-      const b = Rand.int(2, 5);
+    function genProbability(difficulty) {
+      const r = Rand.int(3, difficulty === "olympiad" ? 9 : 6);
+      const b = Rand.int(2, difficulty === "olympiad" ? 8 : 5);
       const total = r + b;
       const prob = MathFmt.frac(r * (r - 1), total * (total - 1));
 
@@ -1157,9 +1289,15 @@
     }
 
     /* =========================================================================
-       4. CURRICULUM, MENU SAVED SECTION & STATE
+       4. CURRICULUM, SEEDED URL ENCODING, SAVED LIST & STATE
        ========================================================================= */
     const STORAGE_KEY = "traps_saved_problems_v1";
+
+    const DIFFICULTIES = {
+      standard: { code: "standard", badge: "STD" },
+      bac: { code: "bac", badge: "BAC" },
+      olympiad: { code: "olympiad", badge: "OLY" }
+    };
 
     const CURRICULUM = {
       analysis: {
@@ -1215,25 +1353,32 @@
 
     const state = {
       activeUnit: "all",
+      difficulty: "standard",
       problemIndex: 0,
       currentProblem: null,
+      currentMeta: null,
       solutionVisible: false,
       menuOpen: false,
       savedProblems: loadSavedFromStorage()
     };
 
     const dom = {
+      diffSelect: document.getElementById("difficulty-select"),
       btnMenu: document.getElementById("btn-menu"),
       menuDrawer: document.getElementById("menu-drawer"),
       menuAllBtn: document.querySelector(".menu-all-btn"),
       problemBook: document.getElementById("problem-book"),
       problemUnit: document.getElementById("problem-unit"),
+      problemDiff: document.getElementById("problem-diff"),
+      problemSeed: document.getElementById("problem-seed"),
       problemId: document.getElementById("problem-id"),
       problemText: document.getElementById("problem-text"),
       btnNew: document.getElementById("btn-new"),
       btnToggle: document.getElementById("btn-toggle-solution"),
       iconEye: document.getElementById("icon-eye"),
       btnSave: document.getElementById("btn-save-problem"),
+      btnShare: document.getElementById("btn-share-link"),
+      iconShare: document.getElementById("icon-share"),
       statusNote: document.getElementById("status-note"),
       solutionCard: document.getElementById("solution-card"),
       solutionSteps: document.getElementById("solution-steps"),
@@ -1273,6 +1418,26 @@
           ],
           throwOnError: false
         });
+      }
+    }
+
+    function buildShareUrl(meta) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("gen", meta.generatorId);
+      url.searchParams.set("diff", meta.difficulty);
+      url.searchParams.set("seed", encodeSeedBase36(meta.seed));
+      return url.toString();
+    }
+
+    function syncUrlToProblem(meta) {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("gen", meta.generatorId);
+        url.searchParams.set("diff", meta.difficulty);
+        url.searchParams.set("seed", encodeSeedBase36(meta.seed));
+        window.history.replaceState(null, "", url.toString());
+      } catch {
+        // Ignore history restrictions in sandboxed environments
       }
     }
 
@@ -1338,13 +1503,17 @@
       }
     }
 
-    function renderProblem(problem, labelNumber) {
+    function renderProblem(problem, labelNumber, meta) {
       state.currentProblem = problem;
+      state.currentMeta = meta;
       setSolutionVisibility(false);
       updateSaveButtonState();
 
+      const diffInfo = DIFFICULTIES[meta.difficulty] || DIFFICULTIES.standard;
       dom.problemBook.textContent = problem.book;
       dom.problemUnit.textContent = problem.unit;
+      dom.problemDiff.textContent = diffInfo.badge;
+      dom.problemSeed.textContent = `SEED:${encodeSeedBase36(meta.seed)}`;
       dom.problemId.textContent = `#${String(labelNumber).padStart(3, "0")}`;
       dom.problemText.innerHTML = problem.statement;
 
@@ -1355,18 +1524,97 @@
 
       typesetMath(dom.problemText);
       typesetMath(dom.solutionCard);
+      syncUrlToProblem(meta);
     }
 
-    function loadNewProblem() {
-      const selectedUnit = state.activeUnit === "all"
-        ? Rand.pick(ALL_UNITS)
-        : (ALL_UNITS.find(u => u.id === state.activeUnit) || Rand.pick(ALL_UNITS));
+    function generateSeededProblem({ generatorId, difficulty, seed }) {
+      const validDiff = DIFFICULTIES[difficulty] ? difficulty : "standard";
+      const seedNum = (seed >>> 0) || 1;
+      const unitObj = ALL_UNITS.find(u => u.id === generatorId);
 
-      const problem = selectedUnit.fn();
+      activeRng = createSeededRng(seedNum);
+      const selectedUnit = unitObj || Rand.pick(ALL_UNITS);
+      const problem = selectedUnit.fn(validDiff);
+      activeRng = Math.random;
+
+      return {
+        problem,
+        meta: {
+          generatorId: selectedUnit.id,
+          difficulty: validDiff,
+          seed: seedNum
+        }
+      };
+    }
+
+    function loadNewProblem(forcedSeed = null, forcedGenId = null) {
+      const genId = forcedGenId || (state.activeUnit === "all" ? null : state.activeUnit);
+      const seed = forcedSeed !== null ? forcedSeed : generateRandomSeed();
+      const { problem, meta } = generateSeededProblem({
+        generatorId: genId,
+        difficulty: state.difficulty,
+        seed
+      });
+
       state.problemIndex += 1;
       dom.statusNote.textContent = "";
-      renderProblem(problem, state.problemIndex);
+      renderProblem(problem, state.problemIndex, meta);
     }
+
+    async function copyShareLink() {
+      if (!state.currentMeta) return;
+      const shareUrl = buildShareUrl(state.currentMeta);
+      let copied = false;
+
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          copied = true;
+        } catch {
+          copied = false;
+        }
+      }
+
+      if (!copied) {
+        const tempInput = document.createElement("input");
+        tempInput.value = shareUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          copied = document.execCommand("copy");
+        } catch {
+          copied = false;
+        }
+        document.body.removeChild(tempInput);
+      }
+
+      if (copied) {
+        dom.btnShare.classList.add("copied");
+        dom.btnShare.classList.remove("secondary");
+        dom.iconShare.innerHTML = `<polyline points="20 6 9 17 4 12" />`;
+        dom.statusNote.textContent = "Copied seeded link.";
+        setTimeout(() => {
+          dom.btnShare.classList.remove("copied");
+          dom.btnShare.classList.add("secondary");
+          dom.iconShare.innerHTML = `
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          `;
+        }, 1600);
+      } else {
+        dom.statusNote.textContent = shareUrl;
+      }
+    }
+
+    dom.diffSelect.addEventListener("change", (e) => {
+      const chosen = e.target.value;
+      if (DIFFICULTIES[chosen]) {
+        state.difficulty = chosen;
+        loadNewProblem();
+      }
+    });
+
+    dom.btnShare.addEventListener("click", copyShareLink);
 
     dom.btnSave.addEventListener("click", () => {
       if (!state.currentProblem) return;
@@ -1384,7 +1632,8 @@
         unit: state.currentProblem.unit,
         statement: state.currentProblem.statement,
         steps: state.currentProblem.steps,
-        answer: state.currentProblem.answer
+        answer: state.currentProblem.answer,
+        meta: state.currentMeta ? { ...state.currentMeta } : null
       });
       persistSavedToStorage(state.savedProblems);
       updateSaveButtonState();
@@ -1410,7 +1659,18 @@
         const found = state.savedProblems.find(item => item.id === id);
         if (found) {
           dom.statusNote.textContent = "Opened saved problem.";
-          renderProblem(found, state.problemIndex);
+          if (found.meta && found.meta.seed) {
+            state.difficulty = found.meta.difficulty || state.difficulty;
+            dom.diffSelect.value = state.difficulty;
+            const rebuilt = generateSeededProblem(found.meta);
+            renderProblem(rebuilt.problem, state.problemIndex, rebuilt.meta);
+          } else {
+            renderProblem(found, state.problemIndex, state.currentMeta || {
+              generatorId: "sequences",
+              difficulty: state.difficulty,
+              seed: generateRandomSeed()
+            });
+          }
           setMenuOpen(false);
         }
       }
@@ -1442,20 +1702,61 @@
       }
     });
 
-    dom.btnNew.addEventListener("click", loadNewProblem);
+    dom.btnNew.addEventListener("click", () => loadNewProblem());
 
     dom.btnToggle.addEventListener("click", () => {
       setSolutionVisibility(!state.solutionVisible);
     });
 
+    function initFromUrlOrRandom() {
+      const params = new URLSearchParams(window.location.search);
+      const paramGen = params.get("gen");
+      const paramDiff = params.get("diff");
+      const paramSeed = parseSeedParam(params.get("seed"));
+
+      if (paramDiff && DIFFICULTIES[paramDiff]) {
+        state.difficulty = paramDiff;
+      }
+      dom.diffSelect.value = state.difficulty;
+
+      const matchedUnit = ALL_UNITS.find(u => u.id === paramGen);
+      if (matchedUnit && paramSeed !== null) {
+        state.activeUnit = matchedUnit.id;
+        highlightActiveUnit();
+        const { problem, meta } = generateSeededProblem({
+          generatorId: matchedUnit.id,
+          difficulty: state.difficulty,
+          seed: paramSeed
+        });
+        state.problemIndex += 1;
+        dom.statusNote.textContent = "Loaded from seeded link.";
+        renderProblem(problem, state.problemIndex, meta);
+      } else if (paramSeed !== null) {
+        highlightActiveUnit();
+        const { problem, meta } = generateSeededProblem({
+          generatorId: null,
+          difficulty: state.difficulty,
+          seed: paramSeed
+        });
+        state.problemIndex += 1;
+        dom.statusNote.textContent = "Loaded from seeded link.";
+        renderProblem(problem, state.problemIndex, meta);
+      } else {
+        if (matchedUnit) {
+          state.activeUnit = matchedUnit.id;
+        }
+        highlightActiveUnit();
+        loadNewProblem();
+      }
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
       populateMenuUnits();
-      highlightActiveUnit();
       renderSavedInMenu();
       const waitForKatex = setInterval(() => {
         if (typeof renderMathInElement === "function") {
           clearInterval(waitForKatex);
-          loadNewProblem();
+          initFromUrlOrRandom();
         }
       }, 30);
     });
