@@ -6,7 +6,7 @@
   <title>TRAPS — Baccalaureate Mathematics Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Syne:wght@800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Syne:wght@800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
@@ -27,7 +27,8 @@
       --success-bg: rgba(78, 201, 176, 0.12);
       --danger: #f16c6c;
       --danger-bg: rgba(241, 108, 108, 0.12);
-      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-ar-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", "JetBrains Mono", monospace;
     }
 
     * {
@@ -81,6 +82,41 @@
       text-transform: uppercase;
       color: var(--text-primary);
       user-select: none;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .lang-btn {
+      height: 48px;
+      padding: 0 0.85rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-family: var(--font-ar-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .lang-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-active);
+    }
+
+    .lang-btn.active {
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-color: var(--accent);
     }
 
     .hamburger-btn {
@@ -373,7 +409,7 @@
     .problem-statement {
       font-size: 1rem;
       color: var(--text-primary);
-      line-height: 1.8;
+      line-height: 1.85;
     }
 
     .problem-statement .katex-display {
@@ -501,14 +537,14 @@
       position: relative;
       padding-left: 2.2rem;
       font-size: 0.92rem;
-      line-height: 1.75;
+      line-height: 1.85;
     }
 
     .steps-list li::before {
       content: counter(step-counter);
       position: absolute;
       left: 0;
-      top: 0.2rem;
+      top: 0.25rem;
       width: 1.45rem;
       height: 1.45rem;
       border-radius: 50%;
@@ -537,8 +573,29 @@
       margin-right: 0.5rem;
     }
 
+    /* LTR Layout Stability & Mono-Styled Arabic Typography */
+    .ar-text {
+      font-family: var(--font-ar-mono);
+      direction: ltr;
+      unicode-bidi: isolate;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .problem-statement.ar-mode,
+    .steps-list.ar-mode li,
+    .final-answer-box.ar-mode,
+    .saved-menu-preview.ar-mode {
+      font-family: var(--font-ar-mono);
+      direction: ltr;
+      text-align: left;
+      letter-spacing: 0;
+    }
+
     .katex {
       font-size: 1.04em;
+      direction: ltr;
+      unicode-bidi: isolate;
     }
 
     @media (max-width: 600px) {
@@ -552,6 +609,11 @@
       .brand-logo {
         font-size: 1.65rem;
       }
+      .lang-btn {
+        height: 42px;
+        padding: 0 0.65rem;
+        font-size: 0.76rem;
+      }
       .hamburger-btn {
         width: 42px;
         height: 42px;
@@ -564,11 +626,17 @@
     <header>
       <span class="brand-logo">TRAPS</span>
 
-      <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
+      <div class="header-actions">
+        <button class="lang-btn" id="btn-lang-ar" type="button" title="Toggle Arabic Translation" aria-label="Toggle Arabic Translation" aria-pressed="false">
+          <span class="ar-text">عربي</span>
+        </button>
+
+        <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
 
       <nav class="menu-drawer" id="menu-drawer" aria-label="Books, Units and Saved Problems">
         <button class="menu-all-btn active" data-unit="all">All Books &amp; Units (Random)</button>
@@ -648,7 +716,7 @@
     </div>
 
     <section class="solution-card" id="solution-card">
-      <div class="solution-header">Step-by-Step Derivation</div>
+      <div class="solution-header" id="solution-header">Step-by-Step Derivation</div>
       <ol class="steps-list" id="solution-steps"></ol>
       <div class="final-answer-box" id="final-answer"></div>
     </section>
@@ -837,7 +905,7 @@
     };
 
     /* =========================================================================
-       2. BOOK 1: ANALYSIS GENERATORS (7 UNITS)
+       2. BOOK 1: ANALYSIS GENERATORS (7 UNITS, EN + AR)
        ========================================================================= */
 
     function genSequences() {
@@ -855,34 +923,56 @@
         const targetN = Rand.int(4, 7);
         const aPowN = Math.pow(a, targetN);
         const uN = k + v0 * aPowN;
+        const v0Sign = v0 > 0 ? ` + ${v0}` : ` - ${Math.abs(v0)}`;
 
         return {
           book: "Analysis",
+          bookAr: "التحليل",
           unit: "Sequences",
+          unitAr: "المتتاليات",
           statement: `Let $(u_n)_{n \\ge 0}$ be the sequence defined by $u_0 = ${u0}$ and for all $n \\ge 0$:
           $$u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$$
           Find the closed form of $u_n$ and compute $u_{${targetN}}$.`,
+          statementAr: `لتكن المتتالية $(u_n)_{n \\ge 0}$ المعرفة بـ $u_0 = ${u0}$ ومن أجل كل $n \\ge 0$:
+          $$u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$$
+          أوجد العبارة الصريحة لـ $u_n$ واحسب $u_{${targetN}}$.`,
           steps: [
             `Solve $L = ${MathFmt.coeff(a, "L", true)}${MathFmt.signedNum(b)}$ for the fixed point:
             $$(${oneMinusA})L = ${b} \\implies L = ${k}$$`,
             `Let $v_n = u_n - ${k}$. Then $v_{n+1} = ${a}v_n$ with $v_0 = ${v0}$, so $v_n = ${v0} \\cdot (${a})^n$.`,
-            `Thus $u_n = ${k}${v0 > 0 ? ` + ${v0}` : ` - ${Math.abs(v0)}`} \\cdot (${a})^n$, giving $u_{${targetN}} = ${uN}$.`
+            `Thus $u_n = ${k}${v0Sign} \\cdot (${a})^n$, giving $u_{${targetN}} = ${uN}$.`
           ],
-          answer: `u_n = ${k}${v0 > 0 ? ` + ${v0}` : ` - ${Math.abs(v0)}`} \\cdot (${a})^n, \\quad u_{${targetN}} = ${uN}`
+          stepsAr: [
+            `نحل المعادلة $L = ${MathFmt.coeff(a, "L", true)}${MathFmt.signedNum(b)}$ لإيجاد النقطة الصامدة:
+            $$(${oneMinusA})L = ${b} \\implies L = ${k}$$`,
+            `نضع $v_n = u_n - ${k}$ فنجد $v_{n+1} = ${a}v_n$ مع $v_0 = ${v0}$، ومنه $v_n = ${v0} \\cdot (${a})^n$.`,
+            `إذن $u_n = ${k}${v0Sign} \\cdot (${a})^n$، وعليه $u_{${targetN}} = ${uN}$.`
+          ],
+          answer: `u_n = ${k}${v0Sign} \\cdot (${a})^n, \\quad u_{${targetN}} = ${uN}`,
+          answerLabelAr: "الجواب النهائي"
         };
       } else {
         const m = Rand.int(3, 10);
         const sFrac = MathFmt.frac(m, m + 1);
         return {
           book: "Analysis",
+          bookAr: "التحليل",
           unit: "Sequences",
+          unitAr: "المتتاليات",
           statement: `For each integer $n \\ge 1$, let $u_n = \\dfrac{1}{n(n+1)}$ and let $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. Compute $S_{${m}}$ and find $\\displaystyle\\lim_{n \\to +\\infty} S_n$.`,
+          statementAr: `من أجل كل عدد صحيح $n \\ge 1$، ليكن $u_n = \\dfrac{1}{n(n+1)}$ وليكن $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. احسب $S_{${m}}$ وأوجد $\\displaystyle\\lim_{n \\to +\\infty} S_n$.`,
           steps: [
             `Decompose $u_k = \\dfrac{1}{k} - \\dfrac{1}{k+1}$.`,
             `Telescoping sum gives $S_n = 1 - \\dfrac{1}{n+1} = \\dfrac{n}{n+1}$.`,
             `At $n = ${m}$, $S_{${m}} = \\dfrac{${sFrac.n}}{${sFrac.d}}$, and as $n \\to +\\infty$, $S_n \\to 1$.`
           ],
-          answer: `S_{${m}} = \\frac{${sFrac.n}}{${sFrac.d}}, \\quad \\lim_{n \\to +\\infty} S_n = 1`
+          stepsAr: [
+            `نفكك الحد العام: $u_k = \\dfrac{1}{k} - \\dfrac{1}{k+1}$.`,
+            `بالتجميع التلسكوبي نجد $S_n = 1 - \\dfrac{1}{n+1} = \\dfrac{n}{n+1}$.`,
+            `عند $n = ${m}$ نجد $S_{${m}} = \\dfrac{${sFrac.n}}{${sFrac.d}}$، وعندما $n \\to +\\infty$ نجد $S_n \\to 1$.`
+          ],
+          answer: `S_{${m}} = \\frac{${sFrac.n}}{${sFrac.d}}, \\quad \\lim_{n \\to +\\infty} S_n = 1`,
+          answerLabelAr: "الجواب النهائي"
         };
       }
     }
@@ -908,14 +998,23 @@
 
         return {
           book: "Analysis",
+          bookAr: "التحليل",
           unit: "Limits",
+          unitAr: "النهايات",
           statement: `Let $f$ be defined on $\\mathbb{R} \\setminus \\{${r}\\}$ by $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$. Evaluate:
+          $$\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$$`,
+          statementAr: `لتكن $f$ المعرفة على $\\mathbb{R} \\setminus \\{${r}\\}$ بالصيغة $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$. احسب:
           $$\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$$`,
           steps: [
             `As $x \\to ${dirTex}$, $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}} \\to ${r}^{${approachDir}}$ because $\\dfrac{${k}}{${MathFmt.linear(c, d, "x")}} \\to 0^{${approachDir}}$.`,
             `Since $${r}$ is the vertical asymptote of $f$, setting $u = f(x) \\to ${r}^{${approachDir}}$ gives numerator $\\to ${numAtR}$ and denominator $\\to 0^{${approachDir}}$.`
           ],
-          answer: `\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big] = ${finalInf}`
+          stepsAr: [
+            `عندما $x \\to ${dirTex}$ يكون $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}} \\to ${r}^{${approachDir}}$ لأن $\\dfrac{${k}}{${MathFmt.linear(c, d, "x")}} \\to 0^{${approachDir}}$.`,
+            `بما أن $${r}$ مقارب شاقولي لـ $f$، فإن وضع $u = f(x) \\to ${r}^{${approachDir}}$ يجعل البسط $\\to ${numAtR}$ والمقام $\\to 0^{${approachDir}}$.`
+          ],
+          answer: `\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big] = ${finalInf}`,
+          answerLabelAr: "الجواب النهائي"
         };
       } else {
         const a = Rand.int(1, 5);
@@ -926,14 +1025,23 @@
         const denTex = MathFmt.linear(c, d, "x");
         return {
           book: "Analysis",
+          bookAr: "التحليل",
           unit: "Limits",
+          unitAr: "النهايات",
           statement: `Let $E(x)$ be the floor function and $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ on $[0, +\\infty[$. Compute $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+          statementAr: `لتكن $E(x)$ دالة الجزء الصحيح و $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ على $[0, +\\infty[$. احسب $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
           steps: [
             `Since $0 \\le x - E(x) < 1$ for all $x \\in \\mathbb{R}$, we have $${b} \\le ${numTex} < ${a + b}$.`,
             `Dividing by $${denTex} > 0$ for $x > 0$ squeezes the radicand between two functions tending to $0$ as $x \\to +\\infty$.`,
             `By the Squeeze Theorem and continuity of $\\sqrt{\\cdot}$ at $0$, the limit is $0$.`
           ],
-          answer: `\\lim_{x \\to +\\infty} f(x) = 0`
+          stepsAr: [
+            `بما أن $0 \\le x - E(x) < 1$ لكل $x \\in \\mathbb{R}$، فإن $${b} \\le ${numTex} < ${a + b}$.`,
+            `بقسمة المتراجحة على $${denTex} > 0$ من أجل $x > 0$ نحصر ما تحت الجذر بين دالتين تسعيان إلى $0$ عند $+\\infty$.`,
+            `بحسب مبرهنة الإحاطة واستمرار الجذر التربيعي عند $0$، النهاية تساوي $0$.`
+          ],
+          answer: `\\lim_{x \\to +\\infty} f(x) = 0`,
+          answerLabelAr: "الجواب النهائي"
         };
       }
     }
@@ -960,14 +1068,23 @@
 
       return {
         book: "Analysis",
+        bookAr: "التحليل",
         unit: "Differentiation",
+        unitAr: "الاشتقاق",
         statement: `Let $f$ be differentiable on $]-1, 1[$ with $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$, and define $g(x) = f(${innerFn})$ on $${interval.tex}$. Find $g'(x)$.`,
+        statementAr: `لتكن $f$ قابلة للاشتقاق على $]-1, 1[$ بحيث $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$، ونعرّف $g(x) = f(${innerFn})$ على المجال $${interval.tex}$. أوجد $g'(x)$.`,
         steps: [
           `By the chain rule, $g'(x) = (${innerDeriv}) \\cdot \\dfrac{${k}}{\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}}}$.`,
           `Since $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${absTex}$ and $${interval.cond}$ on $${interval.tex}$, we have $${absTex} = ${signedAbs}$.`,
           `Simplify: $g'(x) = \\dfrac{${k}(${innerDeriv})}{${signedAbs}} = ${finalConst}$.`
         ],
-        answer: `g'(x) = ${finalConst}`
+        stepsAr: [
+          `بحسب قاعدة السلسلة: $g'(x) = (${innerDeriv}) \\cdot \\dfrac{${k}}{\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}}}$.`,
+          `بما أن $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${absTex}$ و $${interval.cond}$ على $${interval.tex}$، فإن $${absTex} = ${signedAbs}$.`,
+          `بالتبسيط: $g'(x) = \\dfrac{${k}(${innerDeriv})}{${signedAbs}} = ${finalConst}$.`
+        ],
+        answer: `g'(x) = ${finalConst}`,
+        answerLabelAr: "الجواب النهائي"
       };
     }
 
@@ -979,27 +1096,45 @@
         const c = Rand.int(1, Math.max(1, 2 * a - 1));
         return {
           book: "Analysis",
+          bookAr: "التحليل",
           unit: "Monotonicity of a Sequence",
+          unitAr: "اطراد متتالية",
           statement: `Let $(u_n)_{n \\ge 1}$ be defined for all $n \\ge 1$ by:
           $$u_n = ${MathFmt.coeff(a, "n", true)}${MathFmt.signedNum(b)} + \\frac{${c}}{n}$$
           Study the monotonicity of $(u_n)_{n \\ge 1}$.`,
+          statementAr: `لتكن المتتالية $(u_n)_{n \\ge 1}$ المعرفة من أجل كل $n \\ge 1$ بـ:
+          $$u_n = ${MathFmt.coeff(a, "n", true)}${MathFmt.signedNum(b)} + \\frac{${c}}{n}$$
+          ادرس اطراد المتتالية $(u_n)_{n \\ge 1}$.`,
           steps: [
             `Compute $u_{n+1} - u_n = ${a} - ${c}\\left(\\dfrac{1}{n} - \\dfrac{1}{n+1}\\right) = \\dfrac{${a}n(n+1) - ${c}}{n(n+1)}$.`,
             `For $n \\ge 1$, $n(n+1) \\ge 2$ and ${a}n(n+1) - ${c} \\ge ${2 * a - c} > 0$, so $u_{n+1} - u_n > 0$ for all $n \\ge 1$.`
           ],
-          answer: `(u_n)_{n \\ge 1} \\text{ is strictly increasing}`
+          stepsAr: [
+            `نحسب الفرق: $u_{n+1} - u_n = ${a} - ${c}\\left(\\dfrac{1}{n} - \\dfrac{1}{n+1}\\right) = \\dfrac{${a}n(n+1) - ${c}}{n(n+1)}$.`,
+            `من أجل $n \\ge 1$، لدينا $n(n+1) \\ge 2$ و ${a}n(n+1) - ${c} \\ge ${2 * a - c} > 0$، إذن $u_{n+1} - u_n > 0$ لكل $n \\ge 1$.`
+          ],
+          answer: `(u_n)_{n \\ge 1} \\text{ is strictly increasing}`,
+          answerLabelAr: "الجواب النهائي"
         };
       } else {
         const a = Rand.int(2, 6);
         return {
           book: "Analysis",
+          bookAr: "التحليل",
           unit: "Monotonicity of a Sequence",
+          unitAr: "اطراد متتالية",
           statement: `Consider the positive sequence $(u_n)_{n \\ge 1}$ defined by $u_n = \\dfrac{${a}^n}{n!}$. Compute $\\dfrac{u_{n+1}}{u_n}$ and determine for which ranks $n$ the sequence is strictly decreasing.`,
+          statementAr: `لتكن المتتالية الموجبة $(u_n)_{n \\ge 1}$ المعرفة بـ $u_n = \\dfrac{${a}^n}{n!}$. احسب $\\dfrac{u_{n+1}}{u_n}$ وحدد من أجل أي رتب $n$ تكون المتتالية متناقصة تماماً.`,
           steps: [
             `Since $u_n > 0$, $\\dfrac{u_{n+1}}{u_n} = \\dfrac{${a}^{n+1}}{(n+1)!} \\cdot \\dfrac{n!}{${a}^n} = \\dfrac{${a}}{n+1}$.`,
             `We have $\\dfrac{u_{n+1}}{u_n} < 1 \\iff n + 1 > ${a} \\iff n \\ge ${a}$.`
           ],
-          answer: `\\frac{u_{n+1}}{u_n} = \\frac{${a}}{n+1}; \\text{ strictly decreasing for } n \\ge ${a}`
+          stepsAr: [
+            `بما أن $u_n > 0$، فإن $\\dfrac{u_{n+1}}{u_n} = \\dfrac{${a}^{n+1}}{(n+1)!} \\cdot \\dfrac{n!}{${a}^n} = \\dfrac{${a}}{n+1}$.`,
+            `لدينا $\\dfrac{u_{n+1}}{u_n} < 1 \\iff n + 1 > ${a} \\iff n \\ge ${a}$.`
+          ],
+          answer: `\\frac{u_{n+1}}{u_n} = \\frac{${a}}{n+1}; \\text{ strictly decreasing for } n \\ge ${a}`,
+          answerLabelAr: "الجواب النهائي"
         };
       }
     }
@@ -1015,28 +1150,46 @@
 
         return {
           book: "Analysis",
+          bookAr: "التحليل",
           unit: "Logarithmic Function",
+          unitAr: "التابع اللوغاريتمي",
           statement: `Solve in $\\mathbb{R}$ the logarithmic equation:
+          $$\\ln(${MathFmt.linear(1, a, "x")}) + \\ln(${MathFmt.linear(1, b, "x")}) = \\ln(${c})$$`,
+          statementAr: `حل في $\\mathbb{R}$ المعادلة اللوغاريتمية:
           $$\\ln(${MathFmt.linear(1, a, "x")}) + \\ln(${MathFmt.linear(1, b, "x")}) = \\ln(${c})$$`,
           steps: [
             `Domain requires $x > ${minDomain}$.`,
             `Using $\\ln A + \\ln B = \\ln(AB)$, we get $(${MathFmt.linear(1, a, "x")})(${MathFmt.linear(1, b, "x")}) = ${c}$.`,
             `Substituting $x = ${r1}$ gives $(${r1 + a})(${r1 + b}) = ${c}$ with $${r1} > ${minDomain}$.`
           ],
-          answer: `x = ${r1}`
+          stepsAr: [
+            `مجموعة التعريف تقتضي $x > ${minDomain}$.`,
+            `بتطبيق خاصية الجداء للوغاريتم نجد $(${MathFmt.linear(1, a, "x")})(${MathFmt.linear(1, b, "x")}) = ${c}$.`,
+            `بالتعويض بـ $x = ${r1}$ نجد $(${r1 + a})(${r1 + b}) = ${c}$ وهو مقبول لأن $${r1} > ${minDomain}$.`
+          ],
+          answer: `x = ${r1}`,
+          answerLabelAr: "الجواب النهائي"
         };
       } else {
         const k = Rand.nonZeroInt(-5, 5);
         const a = Rand.nonZeroInt(-4, 4);
         return {
           book: "Analysis",
+          bookAr: "التحليل",
           unit: "Logarithmic Function",
+          unitAr: "التابع اللوغاريتمي",
           statement: `Let $f(x) = ${MathFmt.coeff(k, "\\ln\\big(" + MathFmt.linear(1, a, "x") + "\\big)", true)}$ on $]${-a}, +\\infty[$. Compute $f'(x)$ and evaluate $\\displaystyle\\lim_{x \\to (${-a})^+} f(x)$.`,
+          statementAr: `ليكن $f(x) = ${MathFmt.coeff(k, "\\ln\\big(" + MathFmt.linear(1, a, "x") + "\\big)", true)}$ على المجال $]${-a}, +\\infty[$. احسب $f'(x)$ وأوجد $\\displaystyle\\lim_{x \\to (${-a})^+} f(x)$.`,
           steps: [
             `Differentiate using $(\\ln u)' = \\dfrac{u'}{u}$ to obtain $f'(x) = \\dfrac{${k}}{${MathFmt.linear(1, a, "x")}}$.`,
             `As $x \\to (${-a})^+$, $\\ln(${MathFmt.linear(1, a, "x")}) \\to -\\infty$, so $f(x) \\to ${k > 0 ? "-\\infty" : "+\\infty"}$.`
           ],
-          answer: `f'(x) = \\frac{${k}}{${MathFmt.linear(1, a, "x")}}, \\quad \\lim_{x \\to (${-a})^+} f(x) = ${k > 0 ? "-\\infty" : "+\\infty"}`
+          stepsAr: [
+            `نشتق باستخدام $(\\ln u)' = \\dfrac{u'}{u}$ فنحصل على $f'(x) = \\dfrac{${k}}{${MathFmt.linear(1, a, "x")}}$.`,
+            `عندما $x \\to (${-a})^+$ يكون $\\ln(${MathFmt.linear(1, a, "x")}) \\to -\\infty$، لذا $f(x) \\to ${k > 0 ? "-\\infty" : "+\\infty"}$.`
+          ],
+          answer: `f'(x) = \\frac{${k}}{${MathFmt.linear(1, a, "x")}}, \\quad \\lim_{x \\to (${-a})^+} f(x) = ${k > 0 ? "-\\infty" : "+\\infty"}`,
+          answerLabelAr: "الجواب النهائي"
         };
       }
     }
@@ -1050,16 +1203,27 @@
 
       return {
         book: "Analysis",
+        bookAr: "التحليل",
         unit: "Exponential Function",
+        unitAr: "التابع الأسي",
         statement: `Let $f$ be defined on $\\mathbb{R}$ by:
         $$f(x) = \\big(${MathFmt.linear(k, m, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$$
         Compute $f'(x)$ in factored form and determine $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+        statementAr: `لتكن $f$ المعرفة على $\\mathbb{R}$ بالصيغة:
+        $$f(x) = \\big(${MathFmt.linear(k, m, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$$
+        احسب $f'(x)$ بالصيغة المحللة وحدد $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
         steps: [
           `Apply the product rule: $f'(x) = ${k}e^{${MathFmt.coeff(a, "x", true)}} + ${a}\\big(${MathFmt.linear(k, m, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$.`,
           `Factor out $e^{${MathFmt.coeff(a, "x", true)}}$: $f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$.`,
           `As $x \\to +\\infty$, the limit is $${a < 0 ? "0" : (k > 0 ? "+\\infty" : "-\\infty")}$.`
         ],
-        answer: `f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}, \\quad \\lim_{x \\to +\\infty} f(x) = ${a < 0 ? "0" : (k > 0 ? "+\\infty" : "-\\infty")}`
+        stepsAr: [
+          `نطبق قاعدة اشتقاق الجداء: $f'(x) = ${k}e^{${MathFmt.coeff(a, "x", true)}} + ${a}\\big(${MathFmt.linear(k, m, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$.`,
+          `نخرج $e^{${MathFmt.coeff(a, "x", true)}}$ عاملاً مشتركاً: $f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$.`,
+          `عندما $x \\to +\\infty$ تكون النهاية $${a < 0 ? "0" : (k > 0 ? "+\\infty" : "-\\infty")}$.`
+        ],
+        answer: `f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}, \\quad \\lim_{x \\to +\\infty} f(x) = ${a < 0 ? "0" : (k > 0 ? "+\\infty" : "-\\infty")}`,
+        answerLabelAr: "الجواب النهائي"
       };
     }
 
@@ -1074,19 +1238,28 @@
 
       return {
         book: "Analysis",
+        bookAr: "التحليل",
         unit: "Integration",
+        unitAr: "التكامل",
         statement: `Evaluate the definite integral:
+        $$I = \\int_{0}^{${p}} \\left(${a}x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}\\right) dx$$`,
+        statementAr: `احسب التكامل المحدد:
         $$I = \\int_{0}^{${p}} \\left(${a}x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}\\right) dx$$`,
         steps: [
           `An antiderivative is $F(x) = ${MathFmt.coeff(c3, "x^3", true)}${MathFmt.coeff(c2, "x^2", false)}${MathFmt.coeff(c, "x", false)}$.`,
           `Evaluate $I = F(${p}) - F(0) = ${exactVal}$.`
         ],
-        answer: `I = ${exactVal}`
+        stepsAr: [
+          `أحد التوابع الأصلية هو $F(x) = ${MathFmt.coeff(c3, "x^3", true)}${MathFmt.coeff(c2, "x^2", false)}${MathFmt.coeff(c, "x", false)}$.`,
+          `نحسب $I = F(${p}) - F(0) = ${exactVal}$.`
+        ],
+        answer: `I = ${exactVal}`,
+        answerLabelAr: "الجواب النهائي"
       };
     }
 
     /* =========================================================================
-       3. BOOK 2: ALGEBRA AND VECTORS GENERATORS (5 UNITS)
+       3. BOOK 2: ALGEBRA AND VECTORS GENERATORS (5 UNITS, EN + AR)
        ========================================================================= */
 
     function genVector() {
@@ -1100,13 +1273,21 @@
 
       return {
         book: "Algebra and Vectors",
+        bookAr: "الجبر والأشعة",
         unit: "Vector",
+        unitAr: "الأشعة",
         statement: `In an orthonormal basis $(\\vec{i}, \\vec{j}, \\vec{k})$, let $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ and $\\vec{v}(${v[0]}, ${v[1]}, ${v[2]})$. Compute $\\vec{u} \\cdot \\vec{v}$ and $\\|\\vec{u} \\times \\vec{v}\\|$.`,
+        statementAr: `في معلم متجانس $(\\vec{i}, \\vec{j}, \\vec{k})$، ليكن $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ و $\\vec{v}(${v[0]}, ${v[1]}, ${v[2]})$. احسب الجداء السلمي $\\vec{u} \\cdot \\vec{v}$ وطويلة الجداء الشعاعي $\\|\\vec{u} \\times \\vec{v}\\|$.`,
         steps: [
           `Dot product: $\\vec{u} \\cdot \\vec{v} = (${u[0]})(${v[0]}) + (${u[1]})(${v[1]}) + (${u[2]})(${v[2]}) = ${dot}$.`,
           `Cross product: $\\vec{u} \\times \\vec{v} = (${cx}, ${cy}, ${cz})$, so $\\|\\vec{u} \\times \\vec{v}\\| = \\sqrt{${normSq}} = ${MathFmt.texSqrt(normSq)}$.`
         ],
-        answer: `\\vec{u} \\cdot \\vec{v} = ${dot}, \\quad \\|\\vec{u} \\times \\vec{v}\\| = ${MathFmt.texSqrt(normSq)}`
+        stepsAr: [
+          `الجداء السلمي: $\\vec{u} \\cdot \\vec{v} = (${u[0]})(${v[0]}) + (${u[1]})(${v[1]}) + (${u[2]})(${v[2]}) = ${dot}$.`,
+          `الجداء الشعاعي: $\\vec{u} \\times \\vec{v} = (${cx}, ${cy}, ${cz})$، إذن $\\|\\vec{u} \\times \\vec{v}\\| = \\sqrt{${normSq}} = ${MathFmt.texSqrt(normSq)}$.`
+        ],
+        answer: `\\vec{u} \\cdot \\vec{v} = ${dot}, \\quad \\|\\vec{u} \\times \\vec{v}\\| = ${MathFmt.texSqrt(normSq)}`,
+        answerLabelAr: "الجواب النهائي"
       };
     }
 
@@ -1139,15 +1320,25 @@
 
       return {
         book: "Algebra and Vectors",
+        bookAr: "الجبر والأشعة",
         unit: "Complex Numbers",
+        unitAr: "الأعداد العقدية",
         statement: `Find the principal argument $\\arg(Z) \\in ]-\\pi, \\pi]$ for:
+        $$Z = \\frac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}$$`,
+        statementAr: `أوجد الزاوية الرئيسية $\\arg(Z) \\in ]-\\pi, \\pi]$ للعدد العقدي:
         $$Z = \\frac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}$$`,
         steps: [
           `Use $\\arg\\!\\left(\\frac{u \\cdot v}{w}\\right) \\equiv \\arg(u) + \\arg(v) - \\arg(w) \\pmod{2\\pi}$.`,
           `Here $\\arg(${iLabel}) \\equiv ${MathFmt.texPi(iArg)}$, $\\arg(e^{i${alpha.tex}}) \\equiv ${MathFmt.texPi(alpha.f)}$, and ${denom.reason}.`,
           `Reducing into $]-\\pi, \\pi]$ gives $${MathFmt.texPi(norm)}$.`
         ],
-        answer: `\\arg(Z) = ${MathFmt.texPi(norm)}`
+        stepsAr: [
+          `نستخدم $\\arg\\!\\left(\\frac{u \\cdot v}{w}\\right) \\equiv \\arg(u) + \\arg(v) - \\arg(w) \\pmod{2\\pi}$.`,
+          `هنا $\\arg(${iLabel}) \\equiv ${MathFmt.texPi(iArg)}$ و $\\arg(e^{i${alpha.tex}}) \\equiv ${MathFmt.texPi(alpha.f)}$ و ${denom.reason}$.`,
+          `بإرجاع الزاوية إلى المجال $]-\\pi, \\pi]$ نجد $${MathFmt.texPi(norm)}$.`
+        ],
+        answer: `\\arg(Z) = ${MathFmt.texPi(norm)}`,
+        answerLabelAr: "الجواب النهائي"
       };
     }
 
@@ -1166,13 +1357,21 @@
 
       return {
         book: "Algebra and Vectors",
+        bookAr: "الجبر والأشعة",
         unit: "Applications of Complex Numbers in Geometry",
+        unitAr: "تطبيقات الأعداد العقدية في الهندسة",
         statement: `In the Argand plane, let $A$, $B$, and $C$ have affixes $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$, $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$, and $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$. Determine a measure of $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
+        statementAr: `في المستوي العقدي، لتكن النقاط $A$ و $B$ و $C$ ذات اللواحق $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$ و $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$ و $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$. أوجد قياس الزاوية $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
         steps: [
           `$\\widehat{(\\vec{AB}, \\vec{AC})} \\equiv \\arg\\!\\left(\\dfrac{z_C - z_A}{z_B - z_A}\\right) \\pmod{2\\pi}$.`,
           `Here $z_B - z_A = 2$ and $z_C - z_A = ${angleChoice.dx}${angleChoice.dy >= 0 ? ` + ${angleChoice.dy}i` : ` - ${Math.abs(angleChoice.dy)}i`}$, giving argument $${angleChoice.tex}$.`
         ],
-        answer: `\\widehat{(\\vec{AB}, \\vec{AC})} = ${angleChoice.tex} \\pmod{2\\pi}`
+        stepsAr: [
+          `$\\widehat{(\\vec{AB}, \\vec{AC})} \\equiv \\arg\\!\\left(\\dfrac{z_C - z_A}{z_B - z_A}\\right) \\pmod{2\\pi}$.`,
+          `هنا $z_B - z_A = 2$ و $z_C - z_A = ${angleChoice.dx}${angleChoice.dy >= 0 ? ` + ${angleChoice.dy}i` : ` - ${Math.abs(angleChoice.dy)}i`}$، والزاوية تساوي $${angleChoice.tex}$.`
+        ],
+        answer: `\\widehat{(\\vec{AB}, \\vec{AC})} = ${angleChoice.tex} \\pmod{2\\pi}`,
+        answerLabelAr: "الجواب النهائي"
       };
     }
 
@@ -1190,14 +1389,23 @@
 
         return {
           book: "Algebra and Vectors",
+          bookAr: "الجبر والأشعة",
           unit: "Counting Techniques",
+          unitAr: "طرائق العد",
           statement: `A committee of $${totalSize}$ members is selected simultaneously from $${men}$ men and $${women}$ women. How many committees contain exactly $${kMen}$ ${kMen === 1 ? "man" : "men"} and $${kWomen}$ ${kWomen === 1 ? "woman" : "women"}?`,
+          statementAr: `نختار لجنة مؤلفة من $${totalSize}$ أعضاء دفعة واحدة من بين $${men}$ رجال و $${women}$ نساء. بكم طريقة يمكن تشكيل لجنة تضم $${kMen}$ ${kMen === 1 ? "رجلاً" : "رجال"} و $${kWomen}$ ${kWomen === 1 ? "امرأة" : "نساء"} بالضبط؟`,
           steps: [
             `Since order does not matter in a committee, use combinations $\\binom{n}{r} = \\dfrac{n!}{r!(n-r)!}$.`,
             `Select $${kMen}$ ${kMen === 1 ? "man" : "men"} out of $${men}$ in $\\binom{${men}}{${kMen}} = ${cMen}$ ways, and $${kWomen}$ ${kWomen === 1 ? "woman" : "women"} out of $${women}$ in $\\binom{${women}}{${kWomen}} = ${cWomen}$ ways.`,
             `By the fundamental counting principle (multiplication rule), total committees $= ${cMen} \\times ${cWomen} = ${ans}$.`
           ],
-          answer: `${ans}`
+          stepsAr: [
+            `لأن الترتيب غير مهم في اللجنة نستخدم التوافيق $\\binom{n}{r} = \\dfrac{n!}{r!(n-r)!}$.`,
+            `نختار الرجال بـ $\\binom{${men}}{${kMen}} = ${cMen}$ طريقة، والنساء بـ $\\binom{${women}}{${kWomen}} = ${cWomen}$ طريقة.`,
+            `بحسب المبدأ الأساسي للعد، العدد الكلي للجان هو ${cMen} \\times ${cWomen} = ${ans}$.`
+          ],
+          answer: `${ans}`,
+          answerLabelAr: "الجواب النهائي"
         };
       } else {
         const n = Rand.int(5, 8);
@@ -1206,13 +1414,21 @@
 
         return {
           book: "Algebra and Vectors",
+          bookAr: "الجبر والأشعة",
           unit: "Counting Techniques",
+          unitAr: "طرائق العد",
           statement: `From a group of $${n}$ distinct candidates, how many ordered selections of $${k}$ distinct positions (for example: President, Vice-President, Secretary, Treasurer) can be formed without repetition?`,
+          statementAr: `من بين $${n}$ مرشحين مختلفين، بكم طريقة يمكن اختيار $${k}$ مناصب متمايزة ومرتبة (مثلاً: رئيس، نائب رئيس، أمين سر، أمين صندوق) دون تكرار؟`,
           steps: [
             `Because the $${k}$ positions are distinct and repetition is not allowed, use arrangements (permutations) $A_{n}^{k} = \\dfrac{n!}{(n-k)!}$.`,
             `Compute $A_{${n}}^{${k}} = ${n} \\times ${n - 1}${k >= 3 ? ` \\times ${n - 2}` : ""}${k >= 4 ? ` \\times ${n - 3}` : ""} = ${ans}$.`
           ],
-          answer: `${ans}`
+          stepsAr: [
+            `لأن المناصب متمايزة والترتيب مهم دون تكرار نستخدم التراتيب $A_{n}^{k} = \\dfrac{n!}{(n-k)!}$.`,
+            `نحسب $A_{${n}}^{${k}} = ${n} \\times ${n - 1}${k >= 3 ? ` \\times ${n - 2}` : ""}${k >= 4 ? ` \\times ${n - 3}` : ""} = ${ans}$.`
+          ],
+          answer: `${ans}`,
+          answerLabelAr: "الجواب النهائي"
         };
       }
     }
@@ -1225,18 +1441,26 @@
 
       return {
         book: "Algebra and Vectors",
+        bookAr: "الجبر والأشعة",
         unit: "Probability",
+        unitAr: "الاحتمالات",
         statement: `An urn contains $${r}$ red balls and $${b}$ blue balls. Two balls are drawn successively without replacement. Compute the probability that both drawn balls are red.`,
+        statementAr: `يحتوي صندوق على $${r}$ كرات حمراء و $${b}$ كرات زرقاء. نسحب كرتين على التتالي دون إعادة. احسب احتمال أن تكون الكرتان المسحوبتان حمراوين.`,
         steps: [
           `Total balls: $N = ${total}$.`,
           `$P(R_1 \\cap R_2) = \\dfrac{${r}}{${total}} \\cdot \\dfrac{${r - 1}}{${total - 1}} = \\dfrac{${r * (r - 1)}}{${total * (total - 1)}} = ${MathFmt.texFrac(prob)}$.`
         ],
-        answer: `P = ${MathFmt.texFrac(prob)}`
+        stepsAr: [
+          `العدد الكلي للكرات: $N = ${total}$.`,
+          `$P(R_1 \\cap R_2) = \\dfrac{${r}}{${total}} \\cdot \\dfrac{${r - 1}}{${total - 1}} = \\dfrac{${r * (r - 1)}}{${total * (total - 1)}} = ${MathFmt.texFrac(prob)}$.`
+        ],
+        answer: `P = ${MathFmt.texFrac(prob)}`,
+        answerLabelAr: "الجواب النهائي"
       };
     }
 
     /* =========================================================================
-       4. CURRICULUM, SEEDED URL ENCODING, SAVED LIST & STATE
+       4. CURRICULUM, SEEDED URL ENCODING, ARABIC TOGGLE & STATE
        ========================================================================= */
     const STORAGE_KEY = "traps_saved_problems_v1";
 
@@ -1294,6 +1518,7 @@
 
     const state = {
       activeUnit: "all",
+      arabicMode: false,
       problemIndex: 0,
       currentProblem: null,
       currentMeta: null,
@@ -1303,6 +1528,7 @@
     };
 
     const dom = {
+      btnLangAr: document.getElementById("btn-lang-ar"),
       btnMenu: document.getElementById("btn-menu"),
       menuDrawer: document.getElementById("menu-drawer"),
       menuAllBtn: document.querySelector(".menu-all-btn"),
@@ -1319,6 +1545,7 @@
       iconShare: document.getElementById("icon-share"),
       statusNote: document.getElementById("status-note"),
       solutionCard: document.getElementById("solution-card"),
+      solutionHeader: document.getElementById("solution-header"),
       solutionSteps: document.getElementById("solution-steps"),
       finalAnswer: document.getElementById("final-answer"),
       menuSavedCount: document.getElementById("menu-saved-count"),
@@ -1401,18 +1628,22 @@
         return;
       }
 
-      dom.savedMenuContainer.innerHTML = state.savedProblems.map((item, idx) => `
-        <div class="saved-menu-item" data-id="${encodeURIComponent(item.id)}">
-          <div class="saved-menu-top">
-            <span>#${idx + 1} &middot; ${item.unit}</span>
+      dom.savedMenuContainer.innerHTML = state.savedProblems.map((item, idx) => {
+        const previewText = state.arabicMode && item.statementAr ? item.statementAr : item.statement;
+        const unitLabel = state.arabicMode && item.unitAr ? item.unitAr : item.unit;
+        return `
+          <div class="saved-menu-item" data-id="${encodeURIComponent(item.id)}">
+            <div class="saved-menu-top">
+              <span>#${idx + 1} &middot; <span class="${state.arabicMode ? "ar-text" : ""}">${unitLabel}</span></span>
+            </div>
+            <div class="saved-menu-preview ${state.arabicMode ? "ar-mode" : ""}">${previewText}</div>
+            <div class="saved-menu-actions">
+              <button class="btn-mini open" type="button" data-action="open">Open</button>
+              <button class="btn-mini delete" type="button" data-action="delete">Delete</button>
+            </div>
           </div>
-          <div class="saved-menu-preview">${item.statement}</div>
-          <div class="saved-menu-actions">
-            <button class="btn-mini open" type="button" data-action="open">Open</button>
-            <button class="btn-mini delete" type="button" data-action="delete">Delete</button>
-          </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
 
       typesetMath(dom.savedMenuContainer);
     }
@@ -1441,25 +1672,51 @@
       }
     }
 
+    function applyProblemDisplay() {
+      const problem = state.currentProblem;
+      if (!problem) return;
+
+      const isAr = state.arabicMode;
+      const bookLabel = isAr && problem.bookAr ? problem.bookAr : problem.book;
+      const unitLabel = isAr && problem.unitAr ? problem.unitAr : problem.unit;
+      const statementContent = isAr && problem.statementAr ? problem.statementAr : problem.statement;
+      const stepsList = isAr && problem.stepsAr ? problem.stepsAr : problem.steps;
+      const answerLabel = isAr && problem.answerLabelAr ? problem.answerLabelAr : "Final Answer";
+
+      dom.problemBook.textContent = bookLabel;
+      dom.problemBook.classList.toggle("ar-text", isAr);
+
+      dom.problemUnit.textContent = unitLabel;
+      dom.problemUnit.classList.toggle("ar-text", isAr);
+
+      dom.problemText.innerHTML = statementContent;
+      dom.problemText.classList.toggle("ar-mode", isAr);
+
+      dom.solutionHeader.textContent = isAr ? "خطوات الحل" : "Step-by-Step Derivation";
+      dom.solutionHeader.classList.toggle("ar-text", isAr);
+
+      dom.solutionSteps.innerHTML = stepsList
+        .map(step => `<li>${step}</li>`)
+        .join("");
+      dom.solutionSteps.classList.toggle("ar-mode", isAr);
+
+      dom.finalAnswer.innerHTML = `<strong>${answerLabel}:</strong> $${problem.answer}$`;
+      dom.finalAnswer.classList.toggle("ar-mode", isAr);
+
+      typesetMath(dom.problemText);
+      typesetMath(dom.solutionCard);
+    }
+
     function renderProblem(problem, labelNumber, meta) {
       state.currentProblem = problem;
       state.currentMeta = meta;
       setSolutionVisibility(false);
       updateSaveButtonState();
 
-      dom.problemBook.textContent = problem.book;
-      dom.problemUnit.textContent = problem.unit;
       dom.problemSeed.textContent = `SEED:${encodeSeedBase36(meta.seed)}`;
       dom.problemId.textContent = `#${String(labelNumber).padStart(3, "0")}`;
-      dom.problemText.innerHTML = problem.statement;
 
-      dom.solutionSteps.innerHTML = problem.steps
-        .map(step => `<li>${step}</li>`)
-        .join("");
-      dom.finalAnswer.innerHTML = `<strong>Final Answer:</strong> $${problem.answer}$`;
-
-      typesetMath(dom.problemText);
-      typesetMath(dom.solutionCard);
+      applyProblemDisplay();
       syncUrlToProblem(meta);
     }
 
@@ -1494,6 +1751,15 @@
       dom.statusNote.textContent = "";
       renderProblem(problem, state.problemIndex, meta);
     }
+
+    dom.btnLangAr.addEventListener("click", () => {
+      state.arabicMode = !state.arabicMode;
+      dom.btnLangAr.classList.toggle("active", state.arabicMode);
+      dom.btnLangAr.setAttribute("aria-pressed", String(state.arabicMode));
+      applyProblemDisplay();
+      renderSavedInMenu();
+      dom.statusNote.textContent = state.arabicMode ? "Arabic translation active." : "English active.";
+    });
 
     async function copyShareLink() {
       if (!state.currentMeta) return;
@@ -1555,10 +1821,15 @@
       state.savedProblems.unshift({
         id: sig,
         book: state.currentProblem.book,
+        bookAr: state.currentProblem.bookAr,
         unit: state.currentProblem.unit,
+        unitAr: state.currentProblem.unitAr,
         statement: state.currentProblem.statement,
+        statementAr: state.currentProblem.statementAr,
         steps: state.currentProblem.steps,
+        stepsAr: state.currentProblem.stepsAr,
         answer: state.currentProblem.answer,
+        answerLabelAr: state.currentProblem.answerLabelAr,
         meta: state.currentMeta ? { ...state.currentMeta } : null
       });
       persistSavedToStorage(state.savedProblems);
