@@ -83,34 +83,6 @@
       user-select: none;
     }
 
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-    }
-
-    .diff-select {
-      height: 48px;
-      padding: 0 0.75rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      color: var(--text-primary);
-      font-size: 0.76rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .diff-select:hover,
-    .diff-select:focus {
-      background: var(--bg-elevated);
-      border-color: var(--border-active);
-      outline: none;
-    }
-
     .hamburger-btn {
       width: 48px;
       height: 48px;
@@ -369,10 +341,6 @@
       color: var(--success);
     }
 
-    .badge-diff {
-      color: var(--text-primary);
-    }
-
     .badge-unit {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -584,11 +552,6 @@
       .brand-logo {
         font-size: 1.65rem;
       }
-      .diff-select {
-        height: 42px;
-        padding: 0 0.55rem;
-        font-size: 0.7rem;
-      }
       .hamburger-btn {
         width: 42px;
         height: 42px;
@@ -601,19 +564,11 @@
     <header>
       <span class="brand-logo">TRAPS</span>
 
-      <div class="header-controls">
-        <select class="diff-select" id="difficulty-select" aria-label="Difficulty">
-          <option value="standard">STD</option>
-          <option value="bac">BAC</option>
-          <option value="olympiad">OLY</option>
-        </select>
-
-        <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
-      </div>
+      <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
 
       <nav class="menu-drawer" id="menu-drawer" aria-label="Books, Units and Saved Problems">
         <button class="menu-all-btn active" data-unit="all">All Books &amp; Units (Random)</button>
@@ -649,7 +604,6 @@
         <div class="meta-badges">
           <span class="badge badge-book" id="problem-book">Loading...</span>
           <span class="badge badge-unit" id="problem-unit">Loading...</span>
-          <span class="badge badge-diff" id="problem-diff">STD</span>
         </div>
         <div class="meta-right">
           <span class="seed-tag" id="problem-seed">SEED: --------</span>
@@ -704,6 +658,7 @@
     /* =========================================================================
        1. SEEDED PRNG (MULBERRY32) & EXACT ALGEBRAIC UTILITIES
        ========================================================================= */
+    const DIFFICULTY = "bac";
     let activeRng = Math.random;
 
     function createSeededRng(seedUint32) {
@@ -878,11 +833,6 @@
         let v = 0;
         while (v === 0) v = this.int(min, max);
         return v;
-      },
-      scaleRange(difficulty, baseMin, baseMax) {
-        if (difficulty === "standard") return [baseMin, baseMax];
-        if (difficulty === "bac") return [baseMin - 1, baseMax + 2];
-        return [baseMin - 2, baseMax + 4];
       }
     };
 
@@ -890,10 +840,10 @@
        2. BOOK 1: ANALYSIS GENERATORS (7 UNITS)
        ========================================================================= */
 
-    function genSequences(difficulty) {
+    function genSequences() {
       const mode = Rand.pick(["arithmetic-geometric", "telescoping"]);
       if (mode === "arithmetic-geometric") {
-        const a = Rand.pick(difficulty === "standard" ? [2, 3] : [2, 3, -2, -3]);
+        const a = Rand.pick([2, 3, -2, -3]);
         const oneMinusA = 1 - a;
         const k = Rand.nonZeroInt(-3, 3);
         const b = k * oneMinusA;
@@ -902,7 +852,7 @@
           u0 = k + Rand.nonZeroInt(-4, 4);
         }
         const v0 = u0 - k;
-        const targetN = difficulty === "olympiad" ? Rand.int(6, 9) : Rand.int(4, 7);
+        const targetN = Rand.int(4, 7);
         const aPowN = Math.pow(a, targetN);
         const uN = k + v0 * aPowN;
 
@@ -921,8 +871,7 @@
           answer: `u_n = ${k}${v0 > 0 ? ` + ${v0}` : ` - ${Math.abs(v0)}`} \\cdot (${a})^n, \\quad u_{${targetN}} = ${uN}`
         };
       } else {
-        const [mMin, mMax] = Rand.scaleRange(difficulty, 4, 8);
-        const m = Rand.int(Math.max(2, mMin), mMax);
+        const m = Rand.int(3, 10);
         const sFrac = MathFmt.frac(m, m + 1);
         return {
           book: "Analysis",
@@ -938,8 +887,8 @@
       }
     }
 
-    function genLimits(difficulty) {
-      const type = difficulty === "standard" ? "composite-trap" : Rand.pick(["composite-trap", "floor-trap"]);
+    function genLimits() {
+      const type = Rand.pick(["composite-trap", "floor-trap"]);
       if (type === "composite-trap") {
         const c = Rand.pick([1, 2, 3]);
         const r = Rand.nonZeroInt(-4, 4);
@@ -989,8 +938,8 @@
       }
     }
 
-    function genDifferentiation(difficulty) {
-      const k = Rand.nonZeroInt(difficulty === "olympiad" ? -7 : -5, difficulty === "olympiad" ? 7 : 5);
+    function genDifferentiation() {
+      const k = Rand.nonZeroInt(-5, 5);
       const innerIsCos = Rand.pick([true, false]);
       const innerFn = innerIsCos ? "\\cos x" : "\\sin x";
       const innerDeriv = innerIsCos ? "-\\sin x" : "\\cos x";
@@ -1022,7 +971,7 @@
       };
     }
 
-    function genMonotonicitySequence(difficulty) {
+    function genMonotonicitySequence() {
       const mode = Rand.pick(["difference", "ratio"]);
       if (mode === "difference") {
         const a = Rand.int(1, 3);
@@ -1041,7 +990,7 @@
           answer: `(u_n)_{n \\ge 1} \\text{ is strictly increasing}`
         };
       } else {
-        const a = Rand.int(difficulty === "olympiad" ? 4 : 2, difficulty === "olympiad" ? 8 : 6);
+        const a = Rand.int(2, 6);
         return {
           book: "Analysis",
           unit: "Monotonicity of a Sequence",
@@ -1055,10 +1004,10 @@
       }
     }
 
-    function genLogarithmic(difficulty) {
+    function genLogarithmic() {
       const mode = Rand.pick(["equation", "derivative-limit"]);
       if (mode === "equation") {
-        const r1 = Rand.int(2, difficulty === "olympiad" ? 9 : 6);
+        const r1 = Rand.int(2, 6);
         const a = Rand.int(1, 4);
         const b = Rand.int(1, 4);
         const c = (r1 + a) * (r1 + b);
@@ -1092,10 +1041,9 @@
       }
     }
 
-    function genExponential(difficulty) {
-      const bound = difficulty === "olympiad" ? 6 : 4;
-      const k = Rand.nonZeroInt(-bound, bound);
-      const a = Rand.nonZeroInt(-bound, bound);
+    function genExponential() {
+      const k = Rand.nonZeroInt(-4, 4);
+      const a = Rand.nonZeroInt(-4, 4);
       const m = Rand.nonZeroInt(-5, 5);
       const constPart = k + a * m;
       const xCoeff = a * k;
@@ -1115,8 +1063,8 @@
       };
     }
 
-    function genIntegration(difficulty) {
-      const p = Rand.int(1, difficulty === "olympiad" ? 5 : 4);
+    function genIntegration() {
+      const p = Rand.int(1, 4);
       const a = 3 * Rand.nonZeroInt(-2, 2);
       const b = 2 * Rand.nonZeroInt(-3, 3);
       const c = Rand.nonZeroInt(-5, 5);
@@ -1141,10 +1089,9 @@
        3. BOOK 2: ALGEBRA AND VECTORS GENERATORS (5 UNITS)
        ========================================================================= */
 
-    function genVector(difficulty) {
-      const range = difficulty === "olympiad" ? 6 : 4;
-      const u = [Rand.nonZeroInt(-range, range), Rand.nonZeroInt(-range, range), Rand.nonZeroInt(-range, range)];
-      const v = [Rand.nonZeroInt(-range, range), Rand.nonZeroInt(-range, range), Rand.nonZeroInt(-range, range)];
+    function genVector() {
+      const u = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
+      const v = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
       const dot = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
       const cx = u[1] * v[2] - u[2] * v[1];
       const cy = u[2] * v[0] - u[0] * v[2];
@@ -1229,11 +1176,11 @@
       };
     }
 
-    function genCountingTechniques(difficulty) {
+    function genCountingTechniques() {
       const mode = Rand.pick(["combinations", "arrangements"]);
       if (mode === "combinations") {
-        const men = Rand.int(4, difficulty === "olympiad" ? 10 : 7);
-        const women = Rand.int(3, difficulty === "olympiad" ? 9 : 6);
+        const men = Rand.int(4, 7);
+        const women = Rand.int(3, 6);
         const kMen = Rand.int(1, 3);
         const kWomen = Rand.int(1, 3);
         const totalSize = kMen + kWomen;
@@ -1253,7 +1200,7 @@
           answer: `${ans}`
         };
       } else {
-        const n = Rand.int(5, difficulty === "olympiad" ? 10 : 8);
+        const n = Rand.int(5, 8);
         const k = Rand.int(2, 4);
         const ans = MathFmt.perm(n, k);
 
@@ -1270,9 +1217,9 @@
       }
     }
 
-    function genProbability(difficulty) {
-      const r = Rand.int(3, difficulty === "olympiad" ? 9 : 6);
-      const b = Rand.int(2, difficulty === "olympiad" ? 8 : 5);
+    function genProbability() {
+      const r = Rand.int(3, 6);
+      const b = Rand.int(2, 5);
       const total = r + b;
       const prob = MathFmt.frac(r * (r - 1), total * (total - 1));
 
@@ -1292,12 +1239,6 @@
        4. CURRICULUM, SEEDED URL ENCODING, SAVED LIST & STATE
        ========================================================================= */
     const STORAGE_KEY = "traps_saved_problems_v1";
-
-    const DIFFICULTIES = {
-      standard: { code: "standard", badge: "STD" },
-      bac: { code: "bac", badge: "BAC" },
-      olympiad: { code: "olympiad", badge: "OLY" }
-    };
 
     const CURRICULUM = {
       analysis: {
@@ -1353,7 +1294,6 @@
 
     const state = {
       activeUnit: "all",
-      difficulty: "standard",
       problemIndex: 0,
       currentProblem: null,
       currentMeta: null,
@@ -1363,13 +1303,11 @@
     };
 
     const dom = {
-      diffSelect: document.getElementById("difficulty-select"),
       btnMenu: document.getElementById("btn-menu"),
       menuDrawer: document.getElementById("menu-drawer"),
       menuAllBtn: document.querySelector(".menu-all-btn"),
       problemBook: document.getElementById("problem-book"),
       problemUnit: document.getElementById("problem-unit"),
-      problemDiff: document.getElementById("problem-diff"),
       problemSeed: document.getElementById("problem-seed"),
       problemId: document.getElementById("problem-id"),
       problemText: document.getElementById("problem-text"),
@@ -1424,7 +1362,7 @@
     function buildShareUrl(meta) {
       const url = new URL(window.location.href);
       url.searchParams.set("gen", meta.generatorId);
-      url.searchParams.set("diff", meta.difficulty);
+      url.searchParams.set("diff", DIFFICULTY);
       url.searchParams.set("seed", encodeSeedBase36(meta.seed));
       return url.toString();
     }
@@ -1433,7 +1371,7 @@
       try {
         const url = new URL(window.location.href);
         url.searchParams.set("gen", meta.generatorId);
-        url.searchParams.set("diff", meta.difficulty);
+        url.searchParams.set("diff", DIFFICULTY);
         url.searchParams.set("seed", encodeSeedBase36(meta.seed));
         window.history.replaceState(null, "", url.toString());
       } catch {
@@ -1509,10 +1447,8 @@
       setSolutionVisibility(false);
       updateSaveButtonState();
 
-      const diffInfo = DIFFICULTIES[meta.difficulty] || DIFFICULTIES.standard;
       dom.problemBook.textContent = problem.book;
       dom.problemUnit.textContent = problem.unit;
-      dom.problemDiff.textContent = diffInfo.badge;
       dom.problemSeed.textContent = `SEED:${encodeSeedBase36(meta.seed)}`;
       dom.problemId.textContent = `#${String(labelNumber).padStart(3, "0")}`;
       dom.problemText.innerHTML = problem.statement;
@@ -1527,21 +1463,20 @@
       syncUrlToProblem(meta);
     }
 
-    function generateSeededProblem({ generatorId, difficulty, seed }) {
-      const validDiff = DIFFICULTIES[difficulty] ? difficulty : "standard";
+    function generateSeededProblem({ generatorId, seed }) {
       const seedNum = (seed >>> 0) || 1;
       const unitObj = ALL_UNITS.find(u => u.id === generatorId);
 
       activeRng = createSeededRng(seedNum);
       const selectedUnit = unitObj || Rand.pick(ALL_UNITS);
-      const problem = selectedUnit.fn(validDiff);
+      const problem = selectedUnit.fn();
       activeRng = Math.random;
 
       return {
         problem,
         meta: {
           generatorId: selectedUnit.id,
-          difficulty: validDiff,
+          difficulty: DIFFICULTY,
           seed: seedNum
         }
       };
@@ -1552,7 +1487,6 @@
       const seed = forcedSeed !== null ? forcedSeed : generateRandomSeed();
       const { problem, meta } = generateSeededProblem({
         generatorId: genId,
-        difficulty: state.difficulty,
         seed
       });
 
@@ -1606,14 +1540,6 @@
       }
     }
 
-    dom.diffSelect.addEventListener("change", (e) => {
-      const chosen = e.target.value;
-      if (DIFFICULTIES[chosen]) {
-        state.difficulty = chosen;
-        loadNewProblem();
-      }
-    });
-
     dom.btnShare.addEventListener("click", copyShareLink);
 
     dom.btnSave.addEventListener("click", () => {
@@ -1660,14 +1586,12 @@
         if (found) {
           dom.statusNote.textContent = "Opened saved problem.";
           if (found.meta && found.meta.seed) {
-            state.difficulty = found.meta.difficulty || state.difficulty;
-            dom.diffSelect.value = state.difficulty;
             const rebuilt = generateSeededProblem(found.meta);
             renderProblem(rebuilt.problem, state.problemIndex, rebuilt.meta);
           } else {
             renderProblem(found, state.problemIndex, state.currentMeta || {
               generatorId: "sequences",
-              difficulty: state.difficulty,
+              difficulty: DIFFICULTY,
               seed: generateRandomSeed()
             });
           }
@@ -1711,13 +1635,7 @@
     function initFromUrlOrRandom() {
       const params = new URLSearchParams(window.location.search);
       const paramGen = params.get("gen");
-      const paramDiff = params.get("diff");
       const paramSeed = parseSeedParam(params.get("seed"));
-
-      if (paramDiff && DIFFICULTIES[paramDiff]) {
-        state.difficulty = paramDiff;
-      }
-      dom.diffSelect.value = state.difficulty;
 
       const matchedUnit = ALL_UNITS.find(u => u.id === paramGen);
       if (matchedUnit && paramSeed !== null) {
@@ -1725,7 +1643,6 @@
         highlightActiveUnit();
         const { problem, meta } = generateSeededProblem({
           generatorId: matchedUnit.id,
-          difficulty: state.difficulty,
           seed: paramSeed
         });
         state.problemIndex += 1;
@@ -1735,7 +1652,6 @@
         highlightActiveUnit();
         const { problem, meta } = generateSeededProblem({
           generatorId: null,
-          difficulty: state.difficulty,
           seed: paramSeed
         });
         state.problemIndex += 1;
