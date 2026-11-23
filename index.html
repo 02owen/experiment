@@ -6,7 +6,7 @@
   <title>TRAPS — Baccalaureate Mathematics Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Syne:wght@800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
@@ -72,16 +72,34 @@
       position: relative;
     }
 
+    /* 3x5 Grid Pixel Typography matching the reference alphabet */
     .brand-logo {
-      display: inline-block;
-      font-family: "Syne", var(--font-mono);
-      font-weight: 800;
-      font-size: 1.95rem;
-      line-height: 1;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
       user-select: none;
+      line-height: 1;
+    }
+
+    .pixel-letter {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 1.5px;
+      width: 24px;
+      height: 40px;
+    }
+
+    .pixel-cell {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border-radius: 1px;
+    }
+
+    .pixel-cell.on {
+      background: var(--text-primary);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
     }
 
     .header-actions {
@@ -609,8 +627,9 @@
       .problem-body, .solution-card {
         padding: 1.2rem;
       }
-      .brand-logo {
-        font-size: 1.65rem;
+      .pixel-letter {
+        width: 20px;
+        height: 34px;
       }
       .hamburger-btn {
         width: 42px;
@@ -622,7 +641,52 @@
 <body>
   <div class="container">
     <header>
-      <span class="brand-logo">TRAPS</span>
+      <div class="brand-logo" aria-label="TRAPS" role="img">
+        <!-- T: top bar 3x1 + center column -->
+        <div class="pixel-letter" aria-hidden="true">
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
+          <span class="pixel-cell"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
+          <span class="pixel-cell"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
+          <span class="pixel-cell"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
+        </div>
+
+        <!-- R: matching R pixel glyph from the image -->
+        <div class="pixel-letter" aria-hidden="true">
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
+        </div>
+
+        <!-- A: matching A pixel glyph from the image -->
+        <div class="pixel-letter" aria-hidden="true">
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
+        </div>
+
+        <!-- P: matching P pixel glyph from the image -->
+        <div class="pixel-letter" aria-hidden="true">
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell"></span>
+        </div>
+
+        <!-- S: matching S pixel glyph from the image -->
+        <div class="pixel-letter" aria-hidden="true">
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
+          <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
+        </div>
+      </div>
 
       <div class="header-actions">
         <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
