@@ -90,35 +90,6 @@
       gap: 0.55rem;
     }
 
-    .lang-btn {
-      height: 48px;
-      padding: 0 0.85rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      color: var(--text-primary);
-      font-family: var(--font-ar-mono);
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s ease;
-      white-space: nowrap;
-    }
-
-    .lang-btn:hover {
-      background: var(--bg-elevated);
-      border-color: var(--border-active);
-    }
-
-    .lang-btn.active {
-      background: var(--accent-bg);
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
     .hamburger-btn {
       width: 48px;
       height: 48px;
@@ -166,6 +137,38 @@
 
     .menu-drawer.open {
       display: block;
+    }
+
+    .menu-lang-btn {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.55rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 0.45rem;
+      transition: all 0.15s ease;
+    }
+
+    .menu-lang-btn:hover {
+      border-color: var(--border-active);
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
+
+    .menu-lang-badge {
+      font-size: 0.72rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent);
     }
 
     .menu-all-btn {
@@ -609,11 +612,6 @@
       .brand-logo {
         font-size: 1.65rem;
       }
-      .lang-btn {
-        height: 42px;
-        padding: 0 0.65rem;
-        font-size: 0.76rem;
-      }
       .hamburger-btn {
         width: 42px;
         height: 42px;
@@ -627,10 +625,6 @@
       <span class="brand-logo">TRAPS</span>
 
       <div class="header-actions">
-        <button class="lang-btn" id="btn-lang-ar" type="button" title="Toggle Arabic Translation" aria-label="Toggle Arabic Translation" aria-pressed="false">
-          <span class="ar-text">عربي</span>
-        </button>
-
         <button class="hamburger-btn" id="btn-menu" aria-label="Toggle Curriculum Menu" aria-expanded="false">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -639,6 +633,11 @@
       </div>
 
       <nav class="menu-drawer" id="menu-drawer" aria-label="Books, Units and Saved Problems">
+        <button class="menu-lang-btn" id="btn-lang-toggle" type="button" aria-label="Switch Language">
+          <span id="lang-btn-label" class="ar-text">التبديل إلى العربية</span>
+          <span class="menu-lang-badge" id="lang-btn-badge">EN → AR</span>
+        </button>
+
         <button class="menu-all-btn active" data-unit="all">All Books &amp; Units (Random)</button>
 
         <div class="book-section" data-book="analysis">
@@ -1460,9 +1459,10 @@
     }
 
     /* =========================================================================
-       4. CURRICULUM, SEEDED URL ENCODING, ARABIC TOGGLE & STATE
+       4. CURRICULUM, SEEDED URL ENCODING, PERSISTENT ARABIC TOGGLE & STATE
        ========================================================================= */
     const STORAGE_KEY = "traps_saved_problems_v1";
+    const LANG_STORAGE_KEY = "traps_lang_pref_v1";
 
     const CURRICULUM = {
       analysis: {
@@ -1512,13 +1512,29 @@
       }
     }
 
+    function loadLangPrefFromStorage() {
+      try {
+        return localStorage.getItem(LANG_STORAGE_KEY) === "ar";
+      } catch {
+        return false;
+      }
+    }
+
+    function persistLangPrefToStorage(isAr) {
+      try {
+        localStorage.setItem(LANG_STORAGE_KEY, isAr ? "ar" : "en");
+      } catch {
+        // Ignore storage errors
+      }
+    }
+
     function getProblemSignature(problem) {
       return `${problem.book}::${problem.unit}::${problem.statement}`.replace(/\s+/g, " ").trim();
     }
 
     const state = {
       activeUnit: "all",
-      arabicMode: false,
+      arabicMode: loadLangPrefFromStorage(),
       problemIndex: 0,
       currentProblem: null,
       currentMeta: null,
@@ -1528,7 +1544,9 @@
     };
 
     const dom = {
-      btnLangAr: document.getElementById("btn-lang-ar"),
+      btnLangToggle: document.getElementById("btn-lang-toggle"),
+      langBtnLabel: document.getElementById("lang-btn-label"),
+      langBtnBadge: document.getElementById("lang-btn-badge"),
       btnMenu: document.getElementById("btn-menu"),
       menuDrawer: document.getElementById("menu-drawer"),
       menuAllBtn: document.querySelector(".menu-all-btn"),
@@ -1551,6 +1569,22 @@
       menuSavedCount: document.getElementById("menu-saved-count"),
       savedMenuContainer: document.getElementById("saved-menu-container")
     };
+
+    function updateLangToggleUI() {
+      const isAr = state.arabicMode;
+      document.documentElement.lang = isAr ? "ar" : "en";
+      if (isAr) {
+        dom.langBtnLabel.textContent = "Switch to English";
+        dom.langBtnLabel.classList.remove("ar-text");
+        dom.langBtnBadge.textContent = "AR → EN";
+        dom.btnLangToggle.setAttribute("aria-label", "Switch to English");
+      } else {
+        dom.langBtnLabel.textContent = "التبديل إلى العربية";
+        dom.langBtnLabel.classList.add("ar-text");
+        dom.langBtnBadge.textContent = "EN → AR";
+        dom.btnLangToggle.setAttribute("aria-label", "Switch to Arabic");
+      }
+    }
 
     function populateMenuUnits() {
       Object.entries(CURRICULUM).forEach(([bookKey, bookData]) => {
@@ -1752,10 +1786,10 @@
       renderProblem(problem, state.problemIndex, meta);
     }
 
-    dom.btnLangAr.addEventListener("click", () => {
+    dom.btnLangToggle.addEventListener("click", () => {
       state.arabicMode = !state.arabicMode;
-      dom.btnLangAr.classList.toggle("active", state.arabicMode);
-      dom.btnLangAr.setAttribute("aria-pressed", String(state.arabicMode));
+      persistLangPrefToStorage(state.arabicMode);
+      updateLangToggleUI();
       applyProblemDisplay();
       renderSavedInMenu();
       dom.statusNote.textContent = state.arabicMode ? "Arabic translation active." : "English active.";
@@ -1938,6 +1972,7 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
+      updateLangToggleUI();
       populateMenuUnits();
       renderSavedInMenu();
       const waitForKatex = setInterval(() => {
