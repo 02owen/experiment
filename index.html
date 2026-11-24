@@ -642,7 +642,6 @@
   <div class="container">
     <header>
       <div class="brand-logo" aria-label="TRAPS" role="img">
-        <!-- T: top bar 3x1 + center column -->
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
@@ -651,7 +650,6 @@
           <span class="pixel-cell"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
         </div>
 
-        <!-- R: matching R pixel glyph from the image -->
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
@@ -660,7 +658,6 @@
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
         </div>
 
-        <!-- A: matching A pixel glyph from the image -->
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
@@ -669,7 +666,6 @@
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
         </div>
 
-        <!-- P: matching P pixel glyph from the image -->
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
@@ -678,7 +674,6 @@
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell"></span>
         </div>
 
-        <!-- S: matching S pixel glyph from the image -->
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell"></span>
@@ -862,6 +857,10 @@
         return this.frac(f1.n * f2.d - f2.n * f1.d, f1.d * f2.d);
       },
 
+      mulFrac(f1, f2) {
+        return this.frac(f1.n * f2.n, f1.d * f2.d);
+      },
+
       texFrac(f) {
         if (f.n === 0) return "0";
         const sign = f.n < 0 ? "-" : "";
@@ -968,89 +967,163 @@
     };
 
     /* =========================================================================
-       2. BOOK 1: ANALYSIS GENERATORS (7 UNITS, EN + AR)
+       2. BOOK 1: ANALYSIS GENERATORS (7 UNITS × 5 TRAP TEMPLATES EACH, EN + AR)
        ========================================================================= */
 
     function genSequences() {
-      const mode = Rand.pick(["arithmetic-geometric", "telescoping"]);
-      if (mode === "arithmetic-geometric") {
-        const a = Rand.pick([2, 3, -2, -3]);
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Affine sequence with a < 0 (oscillating signs + false fixed-point trap)
+        const a = Rand.pick([-2, -3]);
         const oneMinusA = 1 - a;
         const k = Rand.nonZeroInt(-3, 3);
         const b = k * oneMinusA;
         let u0 = k;
-        while (u0 === k) {
-          u0 = k + Rand.nonZeroInt(-4, 4);
-        }
+        while (u0 === k) u0 = k + Rand.nonZeroInt(-4, 4);
         const v0 = u0 - k;
-        const targetN = Rand.int(4, 7);
-        const aPowN = Math.pow(a, targetN);
-        const uN = k + v0 * aPowN;
+        const targetN = Rand.int(4, 6);
+        const uN = k + v0 * Math.pow(a, targetN);
         const v0Sign = v0 > 0 ? ` + ${v0}` : ` - ${Math.abs(v0)}`;
 
         return {
-          book: "Analysis",
-          bookAr: "التحليل",
-          unit: "Sequences",
-          unitAr: "المتتاليات",
-          statement: `Let $(u_n)_{n \\ge 0}$ be the sequence defined by $u_0 = ${u0}$ and for all $n \\ge 0$:
-          $$u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$$
-          Find the closed form of $u_n$ and compute $u_{${targetN}}$.`,
-          statementAr: `لتكن المتتالية $(u_n)_{n \\ge 0}$ المعرفة بـ $u_0 = ${u0}$ ومن أجل كل $n \\ge 0$:
-          $$u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$$
-          أوجد العبارة الصريحة لـ $u_n$ واحسب $u_{${targetN}}$.`,
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `Let $(u_n)_{n \\ge 0}$ be defined by $u_0 = ${u0}$ and $u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$. Find the closed form of $u_n$ and compute $u_{${targetN}}$ (watch the alternating sign on $(-1)^n$).`,
+          statementAr: `لتكن $(u_n)_{n \\ge 0}$ المعرفة بـ $u_0 = ${u0}$ و $u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$. أوجد العبارة الصريحة لـ $u_n$ واحسب $u_{${targetN}}$ (انتبه لتناوب الإشارة مع الأس الزوجي/الفردي).`,
           steps: [
-            `Solve $L = ${MathFmt.coeff(a, "L", true)}${MathFmt.signedNum(b)}$ for the fixed point:
-            $$(${oneMinusA})L = ${b} \\implies L = ${k}$$`,
-            `Let $v_n = u_n - ${k}$. Then $v_{n+1} = ${a}v_n$ with $v_0 = ${v0}$, so $v_n = ${v0} \\cdot (${a})^n$.`,
-            `Thus $u_n = ${k}${v0Sign} \\cdot (${a})^n$, giving $u_{${targetN}} = ${uN}$.`
+            `Fixed point: $\\ell = ${MathFmt.coeff(a, "\\ell", true)}${MathFmt.signedNum(b)} \\implies ${oneMinusA}\\ell = ${b} \\implies \\ell = ${k}$.`,
+            `Set $v_n = u_n - ${k}$; then $v_{n+1} = ${a}v_n$ and $v_0 = ${v0}$, so $v_n = ${v0}(${a})^n$.`,
+            `Hence $u_n = ${k}${v0Sign}(${a})^n$ and $u_{${targetN}} = ${uN}$.`
           ],
           stepsAr: [
-            `نحل المعادلة $L = ${MathFmt.coeff(a, "L", true)}${MathFmt.signedNum(b)}$ لإيجاد النقطة الصامدة:
-            $$(${oneMinusA})L = ${b} \\implies L = ${k}$$`,
-            `نضع $v_n = u_n - ${k}$ فنجد $v_{n+1} = ${a}v_n$ مع $v_0 = ${v0}$، ومنه $v_n = ${v0} \\cdot (${a})^n$.`,
-            `إذن $u_n = ${k}${v0Sign} \\cdot (${a})^n$، وعليه $u_{${targetN}} = ${uN}$.`
+            `النقطة الصامدة: $\\ell = ${MathFmt.coeff(a, "\\ell", true)}${MathFmt.signedNum(b)} \\implies ${oneMinusA}\\ell = ${b} \\implies \\ell = ${k}$.`,
+            `نضع $v_n = u_n - ${k}$ فنجد $v_{n+1} = ${a}v_n$ مع $v_0 = ${v0}$، ومنه $v_n = ${v0}(${a})^n$.`,
+            `إذن $u_n = ${k}${v0Sign}(${a})^n$ وعليه $u_{${targetN}} = ${uN}$.`
           ],
-          answer: `u_n = ${k}${v0Sign} \\cdot (${a})^n, \\quad u_{${targetN}} = ${uN}`,
+          answer: `u_n = ${k}${v0Sign}(${a})^n, \\quad u_{${targetN}} = ${uN}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 1) {
+        // Trap 2: Telescoping sum starting at k = 1 with off-by-one term trap
+        const m = Rand.int(4, 12);
+        const sFrac = MathFmt.frac(m, m + 1);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `For $n \\ge 1$, let $u_n = \\dfrac{1}{n(n+1)}$ and $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. Compute $S_{${m}}$ and $\\displaystyle\\lim_{n \\to +\\infty} S_n$ (careful not to drop the last term $\\frac{1}{n+1}$).`,
+          statementAr: `من أجل $n \\ge 1$، ليكن $u_n = \\dfrac{1}{n(n+1)}$ و $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. احسب $S_{${m}}$ و $\\displaystyle\\lim_{n \\to +\\infty} S_n$ (انتبه لعدم إسقاط الحد الأخير $\\frac{1}{n+1}$).`,
+          steps: [
+            `Partial fractions: $\\dfrac{1}{k(k+1)} = \\dfrac{1}{k} - \\dfrac{1}{k+1}$.`,
+            `All intermediate terms cancel: $S_n = \\left(1 - \\frac{1}{2}\\right) + \\left(\\frac{1}{2} - \\frac{1}{3}\\right) + \\cdots + \\left(\\frac{1}{n} - \\frac{1}{n+1}\\right) = 1 - \\frac{1}{n+1} = \\frac{n}{n+1}$.`,
+            `At $n = ${m}$, $S_{${m}} = \\dfrac{${sFrac.n}}{${sFrac.d}}$; as $n \\to +\\infty$, $S_n \\to 1$.`
+          ],
+          stepsAr: [
+            `نحلل إلى كسور بسيطة: $\\dfrac{1}{k(k+1)} = \\dfrac{1}{k} - \\dfrac{1}{k+1}$.`,
+            `تختزل الحدود الوسطى: $S_n = 1 - \\dfrac{1}{n+1} = \\dfrac{n}{n+1}$.`,
+            `عند $n = ${m}$ نجد $S_{${m}} = \\dfrac{${sFrac.n}}{${sFrac.d}}$، وعند $+\\infty$ نجد $1$.`
+          ],
+          answer: `S_{${m}} = \\frac{${sFrac.n}}{${sFrac.d}}, \\quad \\lim_{n \\to +\\infty} S_n = 1`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Reciprocal transformation v_n = 1/(u_n - c) — Syrian Bac staple
+        const c = Rand.nonZeroInt(-3, 3);
+        const d = Rand.nonZeroInt(-3, 3);
+        // u_{n+1} - c = d(u_n - c)/(1 + ...) -> make v_{n+1} = q v_n + r cleanly
+        // Suppose u_{n+1} = c + 1 / (a/(u_n - c) + b) ? Better: v_n = 1/(u_n - c), v_{n+1} = k v_n
+        const k = Rand.pick([2, 3, 4]);
+        let v0 = Rand.nonZeroInt(-3, 3);
+        // u_0 = c + 1/v0; choose v0 = 1 or -1 or 1/2 so u0 is clean integer
+        v0 = Rand.pick([-1, 1]);
+        const u0 = c + v0;
+        // v_{n+1} = k v_n => 1/(u_{n+1}-c) = k/(u_n-c) => u_{n+1} - c = (u_n - c)/k
+        // Let's make v_{n+1} = k v_n -> u_{n+1} = c + (u_n - c)/k
+        const targetN = Rand.int(2, 4);
+        const vN = v0 * Math.pow(k, targetN);
+        const uNFrac = MathFmt.addFrac({ n: c, d: 1 }, { n: 1, d: vN });
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `Let $u_0 = ${u0}$ and $u_{n+1} = ${c} + \\dfrac{${MathFmt.linear(1, -c, "u_n")}}{${k}}$ (equivalently $\\dfrac{1}{u_{n+1} - ${c}} = ${k}\\left(\\dfrac{1}{u_n - ${c}}\\right)$). Setting $v_n = \\dfrac{1}{u_n - ${c}}$, find $v_n$, $u_n$, and $u_{${targetN}}$.`,
+          statementAr: `لتكن $u_0 = ${u0}$ و $u_{n+1} = ${c} + \\dfrac{u_n - (${c})}{${k}}$ (أي $\\dfrac{1}{u_{n+1} - (${c})} = ${k}\\left(\\dfrac{1}{u_n - (${c})}\\right)$). بوضع $v_n = \\dfrac{1}{u_n - (${c})}$، أوجد $v_n$ و $u_n$ واحسب $u_{${targetN}}$.`,
+          steps: [
+            `Here $v_0 = \\dfrac{1}{${u0} - (${c})} = ${v0}$ and $v_{n+1} = ${k}v_n$, so $v_n = ${v0} \\cdot ${k}^n$.`,
+            `Invert to get $u_n - (${c}) = \\dfrac{1}{v_n} = \\dfrac{1}{${v0} \\cdot ${k}^n}$, so $u_n = ${c} + \\dfrac{1}{${v0} \\cdot ${k}^n}$.`,
+            `At $n = ${targetN}$, $u_{${targetN}} = ${MathFmt.texFrac(uNFrac)}$.`
+          ],
+          stepsAr: [
+            `هنا $v_0 = \\dfrac{1}{${u0} - (${c})} = ${v0}$ و $v_{n+1} = ${k}v_n$، إذن $v_n = ${v0} \\cdot ${k}^n$.`,
+            `بالمقلوب: $u_n - (${c}) = \\dfrac{1}{${v0} \\cdot ${k}^n}$، أي $u_n = ${c} + \\dfrac{1}{${v0} \\cdot ${k}^n}$.`,
+            `عند $n = ${targetN}$ نجد $u_{${targetN}} = ${MathFmt.texFrac(uNFrac)}$.`
+          ],
+          answer: `u_n = ${c} + \\frac{1}{${v0} \\cdot ${k}^n}, \\quad u_{${targetN}} = ${MathFmt.texFrac(uNFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: Geometric sum with index count trap (n+1 terms vs n terms)
+        const q = Rand.pick([2, 3, -2]);
+        const u0 = Rand.nonZeroInt(-3, 4);
+        const n = Rand.int(3, 5);
+        // Sum_{k=0}^{n} u0 * q^k = u0 * (q^(n+1) - 1) / (q - 1)
+        const num = u0 * (Math.pow(q, n + 1) - 1);
+        const den = q - 1;
+        const sFrac = MathFmt.frac(num, den);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `Let $(u_n)_{n \\ge 0}$ be geometric with $u_0 = ${u0}$ and ratio $q = ${q}$. Compute $T_{${n}} = \\displaystyle\\sum_{k=0}^{${n}} u_k$ (watch the number of terms: $${n + 1}$ terms, not $${n}$).`,
+          statementAr: `لتكن $(u_n)_{n \\ge 0}$ هندسية حدها الأول $u_0 = ${u0}$ وأساسها $q = ${q}$. احسب $T_{${n}} = \\displaystyle\\sum_{k=0}^{${n}} u_k$ (انتبه لعدد الحدود: $${n + 1}$ حداً وليس $${n}$).`,
+          steps: [
+            `There are ${n + 1} terms from $k = 0$ to $k = ${n}$.`,
+            `Sum formula: $T_{${n}} = u_0 \\dfrac{q^{${n + 1}} - 1}{q - 1} = ${u0} \\cdot \\dfrac{(${q})^{${n + 1}} - 1}{${q} - 1} = ${MathFmt.texFrac(sFrac)}$.`
+          ],
+          stepsAr: [
+            `عدد الحدود من $k = 0$ إلى $k = ${n}$ هو ${n + 1}$ حداً.`,
+            `قانون المجموع: $T_{${n}} = u_0 \\dfrac{q^{${n + 1}} - 1}{q - 1} = ${MathFmt.texFrac(sFrac)}$.`
+          ],
+          answer: `T_{${n}} = ${MathFmt.texFrac(sFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        const m = Rand.int(3, 10);
-        const sFrac = MathFmt.frac(m, m + 1);
+        // Trap 5: Adjacent sequences (u_n and v_n) where u_n - v_n is geometric -> limit trap
+        const a = Rand.pick([0.5, 0.25]);
+        const aFrac = a === 0.5 ? MathFmt.frac(1, 2) : MathFmt.frac(1, 4);
+        const diff0 = Rand.nonZeroInt(-4, 4);
+        const baseConst = Rand.nonZeroInt(-3, 4);
+        // Suppose w_n = u_n - v_n has w_0 = diff0, w_{n+1} = aFrac * w_n, and u_n + v_n -> 2*baseConst
+        const wTarget = MathFmt.mulFrac({ n: diff0, d: 1 }, MathFmt.frac(Math.pow(aFrac.n, 3), Math.pow(aFrac.d, 3)));
+
         return {
-          book: "Analysis",
-          bookAr: "التحليل",
-          unit: "Sequences",
-          unitAr: "المتتاليات",
-          statement: `For each integer $n \\ge 1$, let $u_n = \\dfrac{1}{n(n+1)}$ and let $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. Compute $S_{${m}}$ and find $\\displaystyle\\lim_{n \\to +\\infty} S_n$.`,
-          statementAr: `من أجل كل عدد صحيح $n \\ge 1$، ليكن $u_n = \\dfrac{1}{n(n+1)}$ وليكن $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. احسب $S_{${m}}$ وأوجد $\\displaystyle\\lim_{n \\to +\\infty} S_n$.`,
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `Two sequences $(u_n)$ and $(v_n)$ satisfy $u_0 - v_0 = ${diff0}$ and $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ for all $n \\ge 0$. Find $u_3 - v_3$ and $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
+          statementAr: `متتاليتان $(u_n)$ و $(v_n)$ تحققان $u_0 - v_0 = ${diff0}$ و $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ لكل $n \\ge 0$. أوجد $u_3 - v_3$ و $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
           steps: [
-            `Decompose $u_k = \\dfrac{1}{k} - \\dfrac{1}{k+1}$.`,
-            `Telescoping sum gives $S_n = 1 - \\dfrac{1}{n+1} = \\dfrac{n}{n+1}$.`,
-            `At $n = ${m}$, $S_{${m}} = \\dfrac{${sFrac.n}}{${sFrac.d}}$, and as $n \\to +\\infty$, $S_n \\to 1$.`
+            `Let $w_n = u_n - v_n$; then $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
+            `At $n = 3$, $w_3 = ${MathFmt.texFrac(wTarget)}$; since $\\left|${MathFmt.texFrac(aFrac)}\\right| < 1$, $\\displaystyle\\lim_{n \\to +\\infty} w_n = 0$.`
           ],
           stepsAr: [
-            `نفكك الحد العام: $u_k = \\dfrac{1}{k} - \\dfrac{1}{k+1}$.`,
-            `بالتجميع التلسكوبي نجد $S_n = 1 - \\dfrac{1}{n+1} = \\dfrac{n}{n+1}$.`,
-            `عند $n = ${m}$ نجد $S_{${m}} = \\dfrac{${sFrac.n}}{${sFrac.d}}$، وعندما $n \\to +\\infty$ نجد $S_n \\to 1$.`
+            `نضع $w_n = u_n - v_n$ فنجد $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
+            `عند $n = 3$ نجد $w_3 = ${MathFmt.texFrac(wTarget)}$، وبما أن الأساس بالقيمة المطلقة أصغر من $1$ فإن النهاية عند $+\\infty$ هي $0$.`
           ],
-          answer: `S_{${m}} = \\frac{${sFrac.n}}{${sFrac.d}}, \\quad \\lim_{n \\to +\\infty} S_n = 1`,
+          answer: `u_3 - v_3 = ${MathFmt.texFrac(wTarget)}, \\quad \\lim_{n \\to +\\infty} (u_n - v_n) = 0`,
           answerLabelAr: "الجواب النهائي"
         };
       }
     }
 
     function genLimits() {
-      const type = Rand.pick(["composite-trap", "floor-trap"]);
-      if (type === "composite-trap") {
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Composite limit f[f(x)] with one-sided approach to vertical asymptote
         const c = Rand.pick([1, 2, 3]);
         const r = Rand.nonZeroInt(-4, 4);
         const a = c * r;
         const d = -c * r;
         let b = a * r;
-        while (b === a * r || a * r + b === 0) {
-          b = a * r + Rand.nonZeroInt(-6, 6);
-        }
+        while (b === a * r || a * r + b === 0) b = a * r + Rand.nonZeroInt(-6, 6);
         const dirSign = Rand.pick([-1, 1]);
         const dirTex = dirSign === -1 ? "-\\infty" : "+\\infty";
         const k = b - a * r;
@@ -1060,26 +1133,23 @@
         const finalInf = (numAtR * denomSign > 0) ? "+\\infty" : "-\\infty";
 
         return {
-          book: "Analysis",
-          bookAr: "التحليل",
-          unit: "Limits",
-          unitAr: "النهايات",
-          statement: `Let $f$ be defined on $\\mathbb{R} \\setminus \\{${r}\\}$ by $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$. Evaluate:
-          $$\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$$`,
-          statementAr: `لتكن $f$ المعرفة على $\\mathbb{R} \\setminus \\{${r}\\}$ بالصيغة $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$. احسب:
-          $$\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$$`,
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Let $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ on $\\mathbb{R} \\setminus \\{${r}\\}$. Evaluate $\\displaystyle\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$ (track whether $f(x)$ approaches $${r}^+$$ or $${r}^-$$).`,
+          statementAr: `لتكن $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ على $\\mathbb{R} \\setminus \\{${r}\\}$. احسب $\\displaystyle\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$ (دقق في اتجاه اقتراب $f(x)$ نحو $${r}$$ من اليمين أو اليسار).`,
           steps: [
-            `As $x \\to ${dirTex}$, $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}} \\to ${r}^{${approachDir}}$ because $\\dfrac{${k}}{${MathFmt.linear(c, d, "x")}} \\to 0^{${approachDir}}$.`,
-            `Since $${r}$ is the vertical asymptote of $f$, setting $u = f(x) \\to ${r}^{${approachDir}}$ gives numerator $\\to ${numAtR}$ and denominator $\\to 0^{${approachDir}}$.`
+            `Rewrite $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}}$; as $x \\to ${dirTex}$, $f(x) \\to ${r}^{${approachDir}}$.`,
+            `Evaluating $f(u)$ as $u \\to ${r}^{${approachDir}}$ yields $${finalInf}$.`
           ],
           stepsAr: [
-            `عندما $x \\to ${dirTex}$ يكون $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}} \\to ${r}^{${approachDir}}$ لأن $\\dfrac{${k}}{${MathFmt.linear(c, d, "x")}} \\to 0^{${approachDir}}$.`,
-            `بما أن $${r}$ مقارب شاقولي لـ $f$، فإن وضع $u = f(x) \\to ${r}^{${approachDir}}$ يجعل البسط $\\to ${numAtR}$ والمقام $\\to 0^{${approachDir}}$.`
+            `نكتب $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}}$، وعند $x \\to ${dirTex}$ نجد $f(x) \\to ${r}^{${approachDir}}$.`,
+            `بحساب نهاية $f(u)$ عندما $u \\to ${r}^{${approachDir}}$ نحصل على $${finalInf}$.`
           ],
           answer: `\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big] = ${finalInf}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
+      } else if (idx === 1) {
+        // Trap 2: Floor function squeeze limit at +infinity
         const a = Rand.int(1, 5);
         const b = Rand.int(1, 6);
         const c = Rand.int(1, 4);
@@ -1087,360 +1157,1113 @@
         const numTex = MathFmt.linear(a, b, "(x - E(x))");
         const denTex = MathFmt.linear(c, d, "x");
         return {
-          book: "Analysis",
-          bookAr: "التحليل",
-          unit: "Limits",
-          unitAr: "النهايات",
-          statement: `Let $E(x)$ be the floor function and $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ on $[0, +\\infty[$. Compute $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
-          statementAr: `لتكن $E(x)$ دالة الجزء الصحيح و $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ على $[0, +\\infty[$. احسب $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Let $E(x)$ be the floor function and $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ on $[0, +\\infty[$. Compute $\\displaystyle\\lim_{x \\to +\\infty} f(x)$ (do not assume $\\lim_{x\\to+\\infty} E(x)/x$ exists directly without bounding $x - E(x)$).`,
+          statementAr: `لتكن $E(x)$ دالة الجزء الصحيح و $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ على $[0, +\\infty[$. احسب $\\displaystyle\\lim_{x \\to +\\infty} f(x)$ باستخدام حصر $0 \\le x - E(x) < 1$.`,
           steps: [
-            `Since $0 \\le x - E(x) < 1$ for all $x \\in \\mathbb{R}$, we have $${b} \\le ${numTex} < ${a + b}$.`,
-            `Dividing by $${denTex} > 0$ for $x > 0$ squeezes the radicand between two functions tending to $0$ as $x \\to +\\infty$.`,
-            `By the Squeeze Theorem and continuity of $\\sqrt{\\cdot}$ at $0$, the limit is $0$.`
+            `Since $0 \\le x - E(x) < 1$, we have $${b} \\le ${numTex} < ${a + b}$.`,
+            `Squeezing between $\\sqrt{\\frac{${b}}{${denTex}}}$ and $\\sqrt{\\frac{${a + b}}{${denTex}}}$ as $x \\to +\\infty$ gives $0$.`
           ],
           stepsAr: [
-            `بما أن $0 \\le x - E(x) < 1$ لكل $x \\in \\mathbb{R}$، فإن $${b} \\le ${numTex} < ${a + b}$.`,
-            `بقسمة المتراجحة على $${denTex} > 0$ من أجل $x > 0$ نحصر ما تحت الجذر بين دالتين تسعيان إلى $0$ عند $+\\infty$.`,
-            `بحسب مبرهنة الإحاطة واستمرار الجذر التربيعي عند $0$، النهاية تساوي $0$.`
+            `بما أن $0 \\le x - E(x) < 1$ فإن $${b} \\le ${numTex} < ${a + b}$.`,
+            `بالإحاطة عند $+\\infty$ نجد النهاية تساوي $0$.`
           ],
           answer: `\\lim_{x \\to +\\infty} f(x) = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Indeterminate form sqrt(ax^2 + bx + c) + dx as x -> -infinity (sign trap!)
+        const k = Rand.pick([1, 2, 3]);
+        const b = Rand.nonZeroInt(-4, 4);
+        // sqrt(k^2 x^2 + b x + 1) + k x as x -> -infinity:
+        // Let u = -x -> +infinity: sqrt(k^2 u^2 - b u + 1) - k u -> -b / (2k)
+        const kSq = k * k;
+        const limFrac = MathFmt.frac(-b, 2 * k);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$ (watch the sign when factoring $x^2$ under the square root as $x \\to -\\infty$!).`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$ (انتبه لإشارة إخراج $x^2$ من تحت الجذر عند $-\\infty$!).`,
+          steps: [
+            `For $x < 0$, $\\sqrt{x^2} = -x$, so $\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}$ is $\\infty - \\infty$.`,
+            `Multiplying and dividing by the conjugate gives $\\dfrac{${b}x + 1}{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}} \\to \\dfrac{${b}}{-${k} - ${k}} = ${MathFmt.texFrac(limFrac)}$.`
+          ],
+          stepsAr: [
+            `من أجل $x < 0$ لدينا $\\sqrt{x^2} = -x$، وهي حالة عدم تعيين $\\infty - \\infty$.`,
+            `بالضرب بالمرافق وقسمة البسط والمقام على $-x$ نجد النهاية $${MathFmt.texFrac(limFrac)}$.`
+          ],
+          answer: `\\lim_{x \\to -\\infty} = ${MathFmt.texFrac(limFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: sin(ax) / sin(bx) as x -> 0
+        const a = Rand.nonZeroInt(-5, 5);
+        const b = Rand.nonZeroInt(-5, 5);
+        const limFrac = MathFmt.frac(a, b);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sin(${MathFmt.coeff(a, "x", true)})}{\\sin(${MathFmt.coeff(b, "x", true)})}$ using $\\displaystyle\\lim_{t \\to 0} \\dfrac{\\sin t}{t} = 1$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sin(${MathFmt.coeff(a, "x", true)})}{\\sin(${MathFmt.coeff(b, "x", true)})}$ بالاعتماد على $\\displaystyle\\lim_{t \\to 0} \\dfrac{\\sin t}{t} = 1$.`,
+          steps: [
+            `Write $\\dfrac{\\sin(${a}x)}{${a}x} \\cdot \\dfrac{${b}x}{\\sin(${b}x)} \\cdot \\dfrac{${a}}{${b}}$.`,
+            `As $x \\to 0$, the first two factors tend to $1$, giving $\\dfrac{${a}}{${b}} = ${MathFmt.texFrac(limFrac)}$.`
+          ],
+          stepsAr: [
+            `نكتب العبارة على الشكل $\\dfrac{\\sin(${a}x)}{${a}x} \\cdot \\dfrac{${b}x}{\\sin(${b}x)} \\cdot \\dfrac{${a}}{${b}}$.`,
+            `عند $x \\to 0$ نجد النهاية $${MathFmt.texFrac(limFrac)}$.`
+          ],
+          answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(limFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Oblique asymptote remainder sign trap at +infinity vs -infinity
+        const m = Rand.nonZeroInt(-3, 3);
+        const p = Rand.nonZeroInt(-4, 4);
+        const a0 = Rand.nonZeroInt(-4, 4);
+        // f(x) = mx + p + a0 / (x - r)
+        const r = Rand.nonZeroInt(-3, 3);
+        const remSign = a0 > 0 ? "0^+" : "0^-";
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Let $f(x) = ${MathFmt.linear(m, p, "x")} + \\dfrac{${a0}}{x - (${r})}$ for $x \\neq ${r}$. Find the oblique asymptote $\\Delta$ as $x \\to +\\infty$ and determine the relative position of $\\mathcal{C}_f$ and $\\Delta$ for $x > ${r}$.`,
+          statementAr: `لتكن $f(x) = ${MathFmt.linear(m, p, "x")} + \\dfrac{${a0}}{x - (${r})}$ لـ $x \\neq ${r}$. أوجد المقارب المائل $\\Delta$ عند $+\\infty$ وحدد الوضع النسبي لـ $\\mathcal{C}_f$ و $\\Delta$ عندما $x > ${r}$ (الفرق يؤول إلى $${remSign}$$).`,
+          steps: [
+            `Since $\\displaystyle\\lim_{x \\to +\\infty} \\dfrac{${a0}}{x - (${r})} = 0$, the line $(d): y = ${MathFmt.linear(m, p, "x")}$ is an oblique asymptote.`,
+            `For $x > ${r}$, $f(x) - y = \\dfrac{${a0}}{x - (${r})}$ has sign ${a0 > 0 ? "positive (above)" : "negative (below)"} and tends to $${remSign}$.`
+          ],
+          stepsAr: [
+            `بما أن نهاية الفرق عند $+\\infty$ تساوي $0$، فالمستقيم $y = ${MathFmt.linear(m, p, "x")}$ مقارب مائل.`,
+            `عندما $x > ${r}$ إشارة الفرق ثابتة فتقع الخط البياني ${a0 > 0 ? "فوق" : "تحت"} المقارب، والفرق يؤول إلى $${remSign}$.`
+          ],
+          answer: `y = ${MathFmt.linear(m, p, "x")}; \\; f(x)-y \\to ${remSign}`,
           answerLabelAr: "الجواب النهائي"
         };
       }
     }
 
     function genDifferentiation() {
-      const k = Rand.nonZeroInt(-5, 5);
-      const innerIsCos = Rand.pick([true, false]);
-      const innerFn = innerIsCos ? "\\cos x" : "\\sin x";
-      const innerDeriv = innerIsCos ? "-\\sin x" : "\\cos x";
-      const interval = innerIsCos
-        ? Rand.pick([
-            { tex: "]-\\pi, 0[", sign: -1, cond: "\\sin x < 0" },
-            { tex: "]0, \\pi[", sign: 1, cond: "\\sin x > 0" }
-          ])
-        : Rand.pick([
-            { tex: "\\left]-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right[", sign: 1, cond: "\\cos x > 0" },
-            { tex: "\\left]\\frac{\\pi}{2}, \\frac{3\\pi}{2}\\right[", sign: -1, cond: "\\cos x < 0" }
-          ]);
-      const finalConst = innerIsCos ? (-k * interval.sign) : (k * interval.sign);
-      const absTex = innerIsCos ? "|\\sin x|" : "|\\cos x|";
-      const signedAbs = interval.sign === 1
-        ? (innerIsCos ? "\\sin x" : "\\cos x")
-        : (innerIsCos ? "-\\sin x" : "-\\cos x");
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: f(cos x) or f(sin x) with sqrt(1 - u^2) sign trap on interval
+        const k = Rand.nonZeroInt(-5, 5);
+        const innerIsCos = Rand.pick([true, false]);
+        const innerFn = innerIsCos ? "\\cos x" : "\\sin x";
+        const innerDeriv = innerIsCos ? "-\\sin x" : "\\cos x";
+        const interval = innerIsCos
+          ? Rand.pick([{ tex: "]-\\pi, 0[", sign: -1, cond: "\\sin x < 0" }, { tex: "]0, \\pi[", sign: 1, cond: "\\sin x > 0" }])
+          : Rand.pick([{ tex: "\\left]-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right[", sign: 1, cond: "\\cos x > 0" }, { tex: "\\left]\\frac{\\pi}{2}, \\frac{3\\pi}{2}\\right[", sign: -1, cond: "\\cos x < 0" }]);
+        const finalConst = innerIsCos ? (-k * interval.sign) : (k * interval.sign);
+        const absTex = innerIsCos ? "|\\sin x|" : "|\\cos x|";
+        const signedAbs = interval.sign === 1 ? (innerIsCos ? "\\sin x" : "\\cos x") : (innerIsCos ? "-\\sin x" : "-\\cos x");
 
-      return {
-        book: "Analysis",
-        bookAr: "التحليل",
-        unit: "Differentiation",
-        unitAr: "الاشتقاق",
-        statement: `Let $f$ be differentiable on $]-1, 1[$ with $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$, and define $g(x) = f(${innerFn})$ on $${interval.tex}$. Find $g'(x)$.`,
-        statementAr: `لتكن $f$ قابلة للاشتقاق على $]-1, 1[$ بحيث $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$، ونعرّف $g(x) = f(${innerFn})$ على المجال $${interval.tex}$. أوجد $g'(x)$.`,
-        steps: [
-          `By the chain rule, $g'(x) = (${innerDeriv}) \\cdot \\dfrac{${k}}{\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}}}$.`,
-          `Since $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${absTex}$ and $${interval.cond}$ on $${interval.tex}$, we have $${absTex} = ${signedAbs}$.`,
-          `Simplify: $g'(x) = \\dfrac{${k}(${innerDeriv})}{${signedAbs}} = ${finalConst}$.`
-        ],
-        stepsAr: [
-          `بحسب قاعدة السلسلة: $g'(x) = (${innerDeriv}) \\cdot \\dfrac{${k}}{\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}}}$.`,
-          `بما أن $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${absTex}$ و $${interval.cond}$ على $${interval.tex}$، فإن $${absTex} = ${signedAbs}$.`,
-          `بالتبسيط: $g'(x) = \\dfrac{${k}(${innerDeriv})}{${signedAbs}} = ${finalConst}$.`
-        ],
-        answer: `g'(x) = ${finalConst}`,
-        answerLabelAr: "الجواب النهائي"
-      };
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Given $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$ on $]-1, 1[$ and $g(x) = f(${innerFn})$ on $${interval.tex}$, compute $g'(x)$ (watch $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${absTex}$ on $${interval.tex}$).`,
+          statementAr: `إذا كان $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$ على $]-1, 1[$ و $g(x) = f(${innerFn})$ على $${interval.tex}$، احسب $g'(x)$ (انتبه أن $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${absTex}$ على المجال).`,
+          steps: [
+            `Chain rule: $g'(x) = (${innerDeriv}) \\cdot \\dfrac{${k}}{${absTex}}$.`,
+            `On $${interval.tex}$, $${cond}$, so $${absTex} = ${signedAbs}$ and $g'(x) = ${finalConst}$.`
+          ],
+          stepsAr: [
+            `قاعدة السلسلة: $g'(x) = (${innerDeriv}) \\cdot \\dfrac{${k}}{${absTex}}$.`,
+            `على المجال $${interval.tex}$ يتحقق $${cond}$، لذا ${absTex} = ${signedAbs}$ ومنه $g'(x) = ${finalConst}$.`
+          ],
+          answer: `g'(x) = ${finalConst}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 1) {
+        // Trap 2: Non-differentiability at a corner/cusp due to |u(x)|
+        const a = Rand.nonZeroInt(-4, 4);
+        const b = Rand.nonZeroInt(-4, 4);
+        // x0 = -b/a -> let's use a = 1 so x0 = -b is clean integer
+        const x0 = Rand.nonZeroInt(-4, 4);
+        const slope = Rand.nonZeroInt(-4, 4);
+        // f(x) = slope * |x - x0| + c
+        const c = Rand.nonZeroInt(-3, 3);
+        const leftDeriv = -slope;
+        const rightDeriv = slope;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = ${slope}|x - (${x0})|${MathFmt.signedNum(c)}$. Study left and right differentiability at $x_0 = ${x0}$ (common trap: assuming continuity at $x_0$ implies differentiability).`,
+          statementAr: `لتكن $f(x) = ${slope}|x - (${x0})|${MathFmt.signedNum(c)}$. ادرس قابلية الاشتقاق من اليمين ومن اليسار عند $x_0 = ${x0}$ (فخ شائع: الاستمرار عند $x_0$ لا يعني حتماً قابلية الاشتقاق).`,
+          steps: [
+            `For $x > ${x0}$, $f(x) = ${slope}(x - (${x0}))${MathFmt.signedNum(c)}$, so $f'_d(${x0}) = ${rightDeriv}$.`,
+            `For $x < ${x0}$, $f(x) = -${slope}(x - (${x0}))${MathFmt.signedNum(c)}$, so $f'_g(${x0}) = ${leftDeriv}$. Since $f'_d(${x0}) \\neq f'_g(${x0})$, $f$ is not differentiable at $${x0}$.`
+          ],
+          stepsAr: [
+            `من أجل $x > ${x0}$ يكون المشتق من اليمين ${rightDeriv}$.`,
+            `من أجل $x < ${x0}$ يكون المشتق من اليسار ${leftDeriv}$، وبما أنهما غير متساويين فالدالة غير قابلة للاشتقاق عند $${x0}$.`
+          ],
+          answer: `f'_d(${x0}) = ${rightDeriv}, \\; f'_g(${x0}) = ${leftDeriv} \\implies \\text{not differentiable at } ${x0}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Derivative of (u/v) with sign distribution trap on numerator
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-4, 4);
+        const c = Rand.pick([1, 2]);
+        const d = Rand.nonZeroInt(-3, 3);
+        // f(x) = (ax + b) / (cx + d) -> f'(x) = (ad - bc) / (cx + d)^2
+        const det = a * d - b * c;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Differentiate $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ on $\\mathbb{R} \\setminus \\left\\{${MathFmt.texFrac(MathFmt.frac(-d, c))}\\right\\}$ (watch the minus sign in $u'v - uv'$).`,
+          statementAr: `اشتق التابع $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ على $\\mathbb{R} \\setminus \\left\\{${MathFmt.texFrac(MathFmt.frac(-d, c))}\\right\\}$ (انتبه لإشارة الطرح في $u'v - uv'$).`,
+          steps: [
+            `Apply $\\left(\\frac{u}{v}\\right)' = \\dfrac{u'v - uv'}{v^2}$ with $u' = ${a}$ and $v' = ${c}$.`,
+            `Numerator: ${a}(${MathFmt.linear(c, d, "x")}) - ${c}(${MathFmt.linear(a, b, "x")}) = ${det}$. Thus $f'(x) = \\dfrac{${det}}{(${MathFmt.linear(c, d, "x")})^2}$.`
+          ],
+          stepsAr: [
+            `نطبق قاعدة مشتق الكسر مع $u' = ${a}$ و $v' = ${c}$.`,
+            `بسط المشتق يساوي ${a}(${MathFmt.linear(c, d, "x")}) - ${c}(${MathFmt.linear(a, b, "x")}) = ${det}$، وعليه $f'(x) = \\dfrac{${det}}{(${MathFmt.linear(c, d, "x")})^2}$.`
+          ],
+          answer: `f'(x) = \\frac{${det}}{(${MathFmt.linear(c, d, "x")})^2}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: Tangent line equation at x0 when f'(x0) = 0 (horizontal tangent trap)
+        const x0 = Rand.nonZeroInt(-3, 3);
+        const k = Rand.pick([1, 2, 3]);
+        const y0 = Rand.nonZeroInt(-4, 4);
+        // f(x) = k(x - x0)^2 + y0 -> f'(x0) = 0, tangent is y = y0
+        const bCoeff = -2 * k * x0;
+        const cCoeff = k * x0 * x0 + y0;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = ${k}x^2${MathFmt.coeff(bCoeff, "x", false)}${MathFmt.signedNum(cCoeff)}$. Write the equation of the tangent to $\\mathcal{C}_f$ at $x_0 = ${x0}$ (trap: plugging $f'(x_0)=0$ into point-slope and getting confused with $x = ${x0}$).`,
+          statementAr: `ليكن $f(x) = ${k}x^2${MathFmt.coeff(bCoeff, "x", false)}${MathFmt.signedNum(cCoeff)}$. اكتب معادلة المماس لـ $\\mathcal{C}_f$ عند $x_0 = ${x0}$ (انتبه: المماس أفقي موازٍ لمحور الفواصل وليس شاقولياً).`,
+          steps: [
+            `Compute $f(${x0}) = ${y0}$ and $f'(x) = ${2 * k}x${MathFmt.signedNum(bCoeff)}$, so $f'(${x0}) = 0$.`,
+            `Tangent equation: $y = f'(${x0})(x - ${x0}) + f(${x0}) \\implies y = ${y0}$.`
+          ],
+          stepsAr: [
+            `نحسب $f(${x0}) = ${y0}$ و $f'(${x0}) = 0$.`,
+            `معادلة المماس هي $y = ${y0}$.`
+          ],
+          answer: `y = ${y0}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Derivative of cos(ax + b) / sin(ax + b) frequency factor trap
+        const a = Rand.nonZeroInt(-4, 4);
+        const b = Rand.nonZeroInt(-3, 3);
+        const useCos = Rand.pick([true, false]);
+        const fnTex = useCos ? `\\cos(${MathFmt.linear(a, b, "x")})` : `\\sin(${MathFmt.linear(a, b, "x")})`;
+        const derivTex = useCos
+          ? `${-a}\\sin(${MathFmt.linear(a, b, "x")})`
+          : `${a}\\cos(${MathFmt.linear(a, b, "x")})`;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Find $f'(x)$ for $f(x) = ${fnTex}$ (common trap: forgetting to multiply by the inner derivative $${a}$, or inverting the sign of $\\cos$).`,
+          statementAr: `أوجد $f'(x)$ للتابع $f(x) = ${fnTex}$ (انتبه لضرب مشتق المضمون $${a}$ ولإشارة مشتق الجيب التمام).`,
+          steps: [
+            `Using $(\\cos u)' = -u'\\sin u$ or $(\\sin u)' = u'\\cos u$ with $u(x) = ${MathFmt.linear(a, b, "x")}$ and $u'(x) = ${a}$:`,
+            `We get $f'(x) = ${derivTex}$.`
+          ],
+          stepsAr: [
+            `بتطبيق قاعدة اشتقاق التوابع المثلثية مع $u'(x) = ${a}$:`,
+            `نجد $f'(x) = ${derivTex}$.`
+          ],
+          answer: `f'(x) = ${derivTex}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
     }
 
     function genMonotonicitySequence() {
-      const mode = Rand.pick(["difference", "ratio"]);
-      if (mode === "difference") {
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: u_n = an + b + c/n (difference + positive integer check)
         const a = Rand.int(1, 3);
         const b = Rand.nonZeroInt(-5, 5);
         const c = Rand.int(1, Math.max(1, 2 * a - 1));
         return {
-          book: "Analysis",
-          bookAr: "التحليل",
-          unit: "Monotonicity of a Sequence",
-          unitAr: "اطراد متتالية",
-          statement: `Let $(u_n)_{n \\ge 1}$ be defined for all $n \\ge 1$ by:
-          $$u_n = ${MathFmt.coeff(a, "n", true)}${MathFmt.signedNum(b)} + \\frac{${c}}{n}$$
-          Study the monotonicity of $(u_n)_{n \\ge 1}$.`,
-          statementAr: `لتكن المتتالية $(u_n)_{n \\ge 1}$ المعرفة من أجل كل $n \\ge 1$ بـ:
-          $$u_n = ${MathFmt.coeff(a, "n", true)}${MathFmt.signedNum(b)} + \\frac{${c}}{n}$$
-          ادرس اطراد المتتالية $(u_n)_{n \\ge 1}$.`,
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
+          statement: `For $n \\ge 1$, let $u_n = ${MathFmt.coeff(a, "n", true)}${MathFmt.signedNum(b)} + \\dfrac{${c}}{n}$. Study its monotonicity by computing $u_{n+1} - u_n$.`,
+          statementAr: `من أجل $n \\ge 1$، ليكن $u_n = ${MathFmt.coeff(a, "n", true)}${MathFmt.signedNum(b)} + \\dfrac{${c}}{n}$. ادرس اطرادها بحساب $u_{n+1} - u_n$.`,
           steps: [
-            `Compute $u_{n+1} - u_n = ${a} - ${c}\\left(\\dfrac{1}{n} - \\dfrac{1}{n+1}\\right) = \\dfrac{${a}n(n+1) - ${c}}{n(n+1)}$.`,
-            `For $n \\ge 1$, $n(n+1) \\ge 2$ and ${a}n(n+1) - ${c} \\ge ${2 * a - c} > 0$, so $u_{n+1} - u_n > 0$ for all $n \\ge 1$.`
+            `$u_{n+1} - u_n = ${a} - ${c}\\left(\\dfrac{1}{n} - \\dfrac{1}{n+1}\\right) = ${a} - \\dfrac{${c}}{n(n+1)}$.`,
+            `Since $n \\ge 1$, $n(n+1) \\ge 2$, so $\\dfrac{${c}}{n(n+1)} \\le \\dfrac{${c}}{2} < ${a}$, hence $u_{n+1} - u_n > 0$.`
           ],
           stepsAr: [
-            `نحسب الفرق: $u_{n+1} - u_n = ${a} - ${c}\\left(\\dfrac{1}{n} - \\dfrac{1}{n+1}\\right) = \\dfrac{${a}n(n+1) - ${c}}{n(n+1)}$.`,
-            `من أجل $n \\ge 1$، لدينا $n(n+1) \\ge 2$ و ${a}n(n+1) - ${c} \\ge ${2 * a - c} > 0$، إذن $u_{n+1} - u_n > 0$ لكل $n \\ge 1$.`
+            `نحسب الفرق: $u_{n+1} - u_n = ${a} - \\dfrac{${c}}{n(n+1)}$.`,
+            `بما أن $n \\ge 1$ فإن $\\dfrac{${c}}{n(n+1)} < ${a}$، إذن $u_{n+1} - u_n > 0$ والمتتالية متزايدة تماماً.`
           ],
           answer: `(u_n)_{n \\ge 1} \\text{ is strictly increasing}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
+      } else if (idx === 1) {
+        // Trap 2: u_n = a^n / n! ratio test threshold trap
         const a = Rand.int(2, 6);
         return {
-          book: "Analysis",
-          bookAr: "التحليل",
-          unit: "Monotonicity of a Sequence",
-          unitAr: "اطراد متتالية",
-          statement: `Consider the positive sequence $(u_n)_{n \\ge 1}$ defined by $u_n = \\dfrac{${a}^n}{n!}$. Compute $\\dfrac{u_{n+1}}{u_n}$ and determine for which ranks $n$ the sequence is strictly decreasing.`,
-          statementAr: `لتكن المتتالية الموجبة $(u_n)_{n \\ge 1}$ المعرفة بـ $u_n = \\dfrac{${a}^n}{n!}$. احسب $\\dfrac{u_{n+1}}{u_n}$ وحدد من أجل أي رتب $n$ تكون المتتالية متناقصة تماماً.`,
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
+          statement: `Let $u_n = \\dfrac{${a}^n}{n!}$ for $n \\ge 1$. Compute $\\dfrac{u_{n+1}}{u_n}$ and find the exact rank $n$ from which $(u_n)$ is strictly decreasing.`,
+          statementAr: `لتكن $u_n = \\dfrac{${a}^n}{n!}$ لـ $n \\ge 1$. احسب $\\dfrac{u_{n+1}}{u_n}$ وحدد من أي رتبة $n$ تصبح المتتالية متناقصة تماماً.`,
           steps: [
-            `Since $u_n > 0$, $\\dfrac{u_{n+1}}{u_n} = \\dfrac{${a}^{n+1}}{(n+1)!} \\cdot \\dfrac{n!}{${a}^n} = \\dfrac{${a}}{n+1}$.`,
-            `We have $\\dfrac{u_{n+1}}{u_n} < 1 \\iff n + 1 > ${a} \\iff n \\ge ${a}$.`
+            `$\\dfrac{u_{n+1}}{u_n} = \\dfrac{${a}^{n+1}}{(n+1)!} \\cdot \\dfrac{n!}{${a}^n} = \\dfrac{${a}}{n+1}$.`,
+            `$\\dfrac{u_{n+1}}{u_n} < 1 \\iff n + 1 > ${a} \\iff n \\ge ${a}$.`
           ],
           stepsAr: [
-            `بما أن $u_n > 0$، فإن $\\dfrac{u_{n+1}}{u_n} = \\dfrac{${a}^{n+1}}{(n+1)!} \\cdot \\dfrac{n!}{${a}^n} = \\dfrac{${a}}{n+1}$.`,
-            `لدينا $\\dfrac{u_{n+1}}{u_n} < 1 \\iff n + 1 > ${a} \\iff n \\ge ${a}$.`
+            `نحسب النسبة: $\\dfrac{u_{n+1}}{u_n} = \\dfrac{${a}}{n+1}$.`,
+            `تكون أصغر من $1$ عندما $n + 1 > ${a}$ أي من أجل $n \\ge ${a}$.`
           ],
           answer: `\\frac{u_{n+1}}{u_n} = \\frac{${a}}{n+1}; \\text{ strictly decreasing for } n \\ge ${a}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Alternating sequence (-1)^n / n is NOT monotonic!
+        const k = Rand.int(1, 5);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
+          statement: `Consider $u_n = \\dfrac{(-1)^n}{n + ${k}}$ for $n \\ge 1$. Is $(u_n)_{n \\ge 1}$ monotonic? Justify using $u_1$, $u_2$, and $u_3$ (trap: assuming $\\lim u_n = 0$ means the sequence is monotonic).`,
+          statementAr: `لتكن $u_n = \\dfrac{(-1)^n}{n + ${k}}$ لـ $n \\ge 1$. هل المتتالية رتيبة (مطردة)؟ علل بحساب $u_1$ و $u_2$ و $u_3$ (انتبه: ميل النهاية نحو الصفر لا يعني الاطراد).`,
+          steps: [
+            `Compute $u_1 = -\\dfrac{1}{${1 + k}} < 0$, $u_2 = +\\dfrac{1}{${2 + k}} > 0$, and $u_3 = -\\dfrac{1}{${3 + k}} < 0$.`,
+            `Since $u_2 - u_1 > 0$ while $u_3 - u_2 < 0$, the sign of $u_{n+1} - u_n$ alternates, so $(u_n)$ is not monotonic.`
+          ],
+          stepsAr: [
+            `نلاحظ أن $u_1 < 0$ ثم $u_2 > 0$ ثم $u_3 < 0$.`,
+            `الفرق يغيّر إشارته، فالمتتالية غير مطردة رغم أن نهايتها تساوي $0$.`
+          ],
+          answer: `\\text{Not monotonic (alternating signs)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: Rational sequence u_n = (an + b) / (n + c) with c > 0 -> monotone via derivative of f(x)
+        const a = Rand.int(1, 3);
+        const c = Rand.int(2, 5);
+        const b = Rand.nonZeroInt(-4, 4);
+        // f(x) = (ax + b)/(x + c) -> f'(x) = (ac - b)/(x + c)^2
+        const num = a * c - b;
+        const trend = num > 0 ? "strictly increasing" : (num < 0 ? "strictly decreasing" : "constant");
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
+          statement: `Let $u_n = ${MathFmt.rational(a, b, 1, c, "n")}$ for $n \\ge 1$. Using $f(x) = ${MathFmt.rational(a, b, 1, c, "x")}$ on $[1, +\\infty[$, determine the monotonicity of $(u_n)_{n \\ge 1}$.`,
+          statementAr: `لتكن $u_n = ${MathFmt.rational(a, b, 1, c, "n")}$ لـ $n \\ge 1$. بالاستعانة بالتابع $f(x) = ${MathFmt.rational(a, b, 1, c, "x")}$ على $[1, +\\infty[$، حدد اطراد $(u_n)$.`,
+          steps: [
+            `Differentiate $f(x)$: $f'(x) = \\dfrac{${a}(${c}) - (${b})}{(x + ${c})^2} = \\dfrac{${num}}{(x + ${c})^2}$.`,
+            `Since $u_n = f(n)$ and $x + ${c} > 0$ for $n \\ge 1$, $(u_n)_{n \\ge 1}$ is ${trend}.`
+          ],
+          stepsAr: [
+            `مشتق الدالة المرافقة: $f'(x) = \\dfrac{${num}}{(x + ${c})^2}$.`,
+            `بما أن $u_n = f(n)$، فإن المتتالية ${num > 0 ? "متزايدة تماماً" : (num < 0 ? "متناقصة تماماً" : "ثابتة")}.`
+          ],
+          answer: `(u_n)_{n \\ge 1} \\text{ is ${trend}}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Quadratic sequence u_n = n^2 - 2kn + c where minimum occurs at rank n0
+        const k = Rand.int(3, 6);
+        const c = Rand.nonZeroInt(-5, 5);
+        // u_{n+1} - u_n = (n+1)^2 - n^2 - 2k(n+1 - n) = 2n + 1 - 2k
+        // > 0 iff 2n > 2k - 1 => n >= k
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
+          statement: `For $n \\ge 1$, let $u_n = n^2${MathFmt.coeff(-2 * k, "n", false)}${MathFmt.signedNum(c)}$. Compute $u_{n+1} - u_n$ and find for which $n \\ge 1$ the sequence becomes strictly increasing.`,
+          statementAr: `من أجل $n \\ge 1$، ليكن $u_n = n^2${MathFmt.coeff(-2 * k, "n", false)}${MathFmt.signedNum(c)}$. احسب $u_{n+1} - u_n$ وحدد من أجل أي $n$ تصبح المتتالية متزايدة تماماً.`,
+          steps: [
+            `$u_{n+1} - u_n = (2n + 1) - ${2 * k} = 2n - ${2 * k - 1}$.`,
+            `$u_{n+1} - u_n > 0 \\iff n > ${k - 0.5} \\iff n \\ge ${k}$.`
+          ],
+          stepsAr: [
+            `نحسب الفرق: $u_{n+1} - u_n = 2n - ${2 * k - 1}$.`,
+            `يكون موجباً تماماً عندما $n \\ge ${k}$.`
+          ],
+          answer: `u_{n+1} - u_n = 2n - ${2 * k - 1}; \\text{ strictly increasing for } n \\ge ${k}`,
           answerLabelAr: "الجواب النهائي"
         };
       }
     }
 
     function genLogarithmic() {
-      const mode = Rand.pick(["equation", "derivative-limit"]);
-      if (mode === "equation") {
-        const r1 = Rand.int(2, 6);
-        const a = Rand.int(1, 4);
-        const b = Rand.int(1, 4);
-        const c = (r1 + a) * (r1 + b);
-        const minDomain = Math.max(-a, -b);
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Log equation domain trap (extraneous root where one log argument <= 0)
+        const a = Rand.int(2, 5);
+        const b = Rand.int(2, 5);
+        // (x + a)(x + b) = (a + b)x + ab; suppose equation is ln(x+a) + ln(x+b) = ln((r1+a)(r1+b)) with r1 > 0
+        const r1 = Rand.int(2, 5);
+        const prod = (r1 + a) * (r1 + b);
+        const minDom = Math.max(-a, -b);
 
         return {
-          book: "Analysis",
-          bookAr: "التحليل",
-          unit: "Logarithmic Function",
-          unitAr: "التابع اللوغاريتمي",
-          statement: `Solve in $\\mathbb{R}$ the logarithmic equation:
-          $$\\ln(${MathFmt.linear(1, a, "x")}) + \\ln(${MathFmt.linear(1, b, "x")}) = \\ln(${c})$$`,
-          statementAr: `حل في $\\mathbb{R}$ المعادلة اللوغاريتمية:
-          $$\\ln(${MathFmt.linear(1, a, "x")}) + \\ln(${MathFmt.linear(1, b, "x")}) = \\ln(${c})$$`,
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
+          statement: `Solve in $\\mathbb{R}$: $\\ln(x + ${a}) + \\ln(x + ${b}) = \\ln(${prod})$ (always check domain $x > ${minDom}$ before accepting roots).`,
+          statementAr: `حل في $\\mathbb{R}$ المعادلة: $\\ln(x + ${a}) + \\ln(x + ${b}) = \\ln(${prod})$ (تحقق دائماً من مجموعة التعريف $x > ${minDom}$).`,
           steps: [
-            `Domain requires $x > ${minDomain}$.`,
-            `Using $\\ln A + \\ln B = \\ln(AB)$, we get $(${MathFmt.linear(1, a, "x")})(${MathFmt.linear(1, b, "x")}) = ${c}$.`,
-            `Substituting $x = ${r1}$ gives $(${r1 + a})(${r1 + b}) = ${c}$ with $${r1} > ${minDomain}$.`
+            `Domain $D_f = ]${minDom}, +\\infty[$. Using $\\ln(AB) = \\ln A + \\ln B$, $(x + ${a})(x + ${b}) = ${prod}$.`,
+            `Checking $x = ${r1}$ gives $(${r1 + a})(${r1 + b}) = ${prod}$ with $${r1} \\in D_f$.`
           ],
           stepsAr: [
-            `مجموعة التعريف تقتضي $x > ${minDomain}$.`,
-            `بتطبيق خاصية الجداء للوغاريتم نجد $(${MathFmt.linear(1, a, "x")})(${MathFmt.linear(1, b, "x")}) = ${c}$.`,
-            `بالتعويض بـ $x = ${r1}$ نجد $(${r1 + a})(${r1 + b}) = ${c}$ وهو مقبول لأن $${r1} > ${minDomain}$.`
+            `مجموعة التعريف هي $]${minDom}, +\\infty[$، وبفك الجداء نحقق الحل عند $x = ${r1}$.`,
+            `بما أن $${r1} > ${minDom}$ فهو حل مقبول.`
           ],
           answer: `x = ${r1}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const k = Rand.nonZeroInt(-5, 5);
+      } else if (idx === 1) {
+        // Trap 2: Derivative of ln(|ax + b|) on both branches
         const a = Rand.nonZeroInt(-4, 4);
+        const b = Rand.nonZeroInt(-4, 4);
+        const rootFrac = MathFmt.texFrac(MathFmt.frac(-b, a));
+
         return {
-          book: "Analysis",
-          bookAr: "التحليل",
-          unit: "Logarithmic Function",
-          unitAr: "التابع اللوغاريتمي",
-          statement: `Let $f(x) = ${MathFmt.coeff(k, "\\ln\\big(" + MathFmt.linear(1, a, "x") + "\\big)", true)}$ on $]${-a}, +\\infty[$. Compute $f'(x)$ and evaluate $\\displaystyle\\lim_{x \\to (${-a})^+} f(x)$.`,
-          statementAr: `ليكن $f(x) = ${MathFmt.coeff(k, "\\ln\\big(" + MathFmt.linear(1, a, "x") + "\\big)", true)}$ على المجال $]${-a}, +\\infty[$. احسب $f'(x)$ وأوجد $\\displaystyle\\lim_{x \\to (${-a})^+} f(x)$.`,
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
+          statement: `Let $f(x) = \\ln\\big|${MathFmt.linear(a, b, "x")}\\big|$ on $\\mathbb{R} \\setminus \\left\\{${rootFrac}\\right\\}$. Find $f'(x)$ (trap: forgetting that $\\frac{d}{dx}\\ln|u(x)| = \\frac{u'(x)}{u(x)}$ holds for both $u > 0$ and $u < 0$).`,
+          statementAr: `لتكن $f(x) = \\ln\\big|${MathFmt.linear(a, b, "x")}\\big|$ على $\\mathbb{R} \\setminus \\left\\{${rootFrac}\\right\\}$. أوجد $f'(x)$ (مشتق $\\ln|u|$ هو $\\frac{u'}{u}$ في الحالتين).`,
           steps: [
-            `Differentiate using $(\\ln u)' = \\dfrac{u'}{u}$ to obtain $f'(x) = \\dfrac{${k}}{${MathFmt.linear(1, a, "x")}}$.`,
-            `As $x \\to (${-a})^+$, $\\ln(${MathFmt.linear(1, a, "x")}) \\to -\\infty$, so $f(x) \\to ${k > 0 ? "-\\infty" : "+\\infty"}$.`
+            `For $u(x) > 0$, $\\ln u(x)$ has derivative $\\dfrac{${a}}{${MathFmt.linear(a, b, "x")}}$.`,
+            `For $u(x) < 0$, $\\ln(-u(x))$ has derivative $\\dfrac{-${a}}{-(${MathFmt.linear(a, b, "x")})} = \\dfrac{${a}}{${MathFmt.linear(a, b, "x")}}$.`
           ],
           stepsAr: [
-            `نشتق باستخدام $(\\ln u)' = \\dfrac{u'}{u}$ فنحصل على $f'(x) = \\dfrac{${k}}{${MathFmt.linear(1, a, "x")}}$.`,
-            `عندما $x \\to (${-a})^+$ يكون $\\ln(${MathFmt.linear(1, a, "x")}) \\to -\\infty$، لذا $f(x) \\to ${k > 0 ? "-\\infty" : "+\\infty"}$.`
+            `عندما يكون المضمون موجباً المشتق هو $\\dfrac{${a}}{${MathFmt.linear(a, b, "x")}}$.`,
+            `وعندما يكون سالباً فإن $(\\ln(-u))' = \\dfrac{-u'}{-u} = \\dfrac{u'}{u}$ أيضاً.`
           ],
-          answer: `f'(x) = \\frac{${k}}{${MathFmt.linear(1, a, "x")}}, \\quad \\lim_{x \\to (${-a})^+} f(x) = ${k > 0 ? "-\\infty" : "+\\infty"}`,
+          answer: `f'(x) = \\frac{${a}}{${MathFmt.linear(a, b, "x")}}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Limit x * ln(x) as x -> 0+ (0 * (-infinity) indeterminate form)
+        const k = Rand.nonZeroInt(-4, 4);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to 0^+} ${MathFmt.coeff(k, "x \\ln x", true)}$ using the classical limit $\\displaystyle\\lim_{x \\to 0^+} x \\ln x = 0$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0^+} ${MathFmt.coeff(k, "x \\ln x", true)}$ بالاعتماد على النهاية الشهيرة $\\displaystyle\\lim_{x \\to 0^+} x \\ln x = 0$.`,
+          steps: [
+            `Direct substitution gives $0 \\cdot (-\\infty)$, an indeterminate form.`,
+            `By $\\displaystyle\\lim_{x \\to 0^+} x \\ln x = 0$, multiplying by $${k}$ yields $0$.`
+          ],
+          stepsAr: [
+            `التعويض المباشر يعطي حالة عدم تعيين $0 \\cdot (-\\infty)$.`,
+            `بحسب النهاية الشهيرة $\\displaystyle\\lim_{x \\to 0^+} x \\ln x = 0$ نجد الناتج $0$.`
+          ],
+          answer: `\\lim_{x \\to 0^+} = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: ln(1 + ax) / bx as x -> 0
+        const a = Rand.nonZeroInt(-5, 5);
+        const b = Rand.nonZeroInt(-5, 5);
+        const limFrac = MathFmt.frac(a, b);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
+          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(b, "x", true)}}$ using $\\displaystyle\\lim_{t \\to 0} \\dfrac{\\ln(1 + t)}{t} = 1$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(b, "x", true)}}$ بالاعتماد على $\\displaystyle\\lim_{t \\to 0} \\dfrac{\\ln(1 + t)}{t} = 1$.`,
+          steps: [
+            `Rewrite as $\\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(a, "x", true)}} \\cdot \\dfrac{${a}}{${b}}$.`,
+            `As $x \\to 0$, the fraction tends to $1$, giving $\\dfrac{${a}}{${b}} = ${MathFmt.texFrac(limFrac)}$.`
+          ],
+          stepsAr: [
+            `نكتب العبارة على الشكل $\\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(a, "x", true)}} \\cdot \\dfrac{${a}}{${b}}$.`,
+            `عند $x \\to 0$ نجد النهاية $${MathFmt.texFrac(limFrac)}$.`
+          ],
+          answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(limFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Logarithmic inequality with strictly decreasing branch when argument has negative x coeff
+        // ln(k - x) > ln(m) on ]-infinity, k[ -> k - x > m => x < k - m
+        const m = Rand.int(1, 4);
+        const diff = Rand.int(2, 5);
+        const k = m + diff;
+        const solBound = k - m;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
+          statement: `Solve $\\ln(${k} - x) > \\ln(${m})$ on $]-\\infty, ${k}[$ (trap: $\\ln$ is increasing, so ${k} - x > ${m}$, which flips the inequality for $x$).`,
+          statementAr: `حل المتراجحة $\\ln(${k} - x) > \\ln(${m})$ على المجال $]-\\infty, ${k}[$ (انتبه لعكس إشارة المتراجحة عند عزل $x$).`,
+          steps: [
+            `Domain: $x < ${k}$. Since $\\ln$ is strictly increasing on $]0, +\\infty[$, ${k} - x > ${m}$.`,
+            `Subtracting ${k} and multiplying by $-1$ gives $x < ${solBound}$, which lies inside $]-\\infty, ${k}[$.`
+          ],
+          stepsAr: [
+            `مجموعة التعريف هي $] -\\infty, ${k}[$ وبما أن اللوغاريتم متزايد تماماً فإن ${k} - x > ${m}$.`,
+            `بحل المتراجحة نجد $x < ${solBound}$.`
+          ],
+          answer: `x < ${solBound}`,
           answerLabelAr: "الجواب النهائي"
         };
       }
     }
 
     function genExponential() {
-      const k = Rand.nonZeroInt(-4, 4);
-      const a = Rand.nonZeroInt(-4, 4);
-      const m = Rand.nonZeroInt(-5, 5);
-      const constPart = k + a * m;
-      const xCoeff = a * k;
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Product rule + factoring e^(ax) with negative coefficient
+        const k = Rand.nonZeroInt(-4, 4);
+        const a = Rand.nonZeroInt(-3, -1);
+        const m = Rand.nonZeroInt(-5, 5);
+        const constPart = k + a * m;
+        const xCoeff = a * k;
 
-      return {
-        book: "Analysis",
-        bookAr: "التحليل",
-        unit: "Exponential Function",
-        unitAr: "التابع الأسي",
-        statement: `Let $f$ be defined on $\\mathbb{R}$ by:
-        $$f(x) = \\big(${MathFmt.linear(k, m, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$$
-        Compute $f'(x)$ in factored form and determine $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
-        statementAr: `لتكن $f$ المعرفة على $\\mathbb{R}$ بالصيغة:
-        $$f(x) = \\big(${MathFmt.linear(k, m, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$$
-        احسب $f'(x)$ بالصيغة المحللة وحدد $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
-        steps: [
-          `Apply the product rule: $f'(x) = ${k}e^{${MathFmt.coeff(a, "x", true)}} + ${a}\\big(${MathFmt.linear(k, m, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$.`,
-          `Factor out $e^{${MathFmt.coeff(a, "x", true)}}$: $f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$.`,
-          `As $x \\to +\\infty$, the limit is $${a < 0 ? "0" : (k > 0 ? "+\\infty" : "-\\infty")}$.`
-        ],
-        stepsAr: [
-          `نطبق قاعدة اشتقاق الجداء: $f'(x) = ${k}e^{${MathFmt.coeff(a, "x", true)}} + ${a}\\big(${MathFmt.linear(k, m, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$.`,
-          `نخرج $e^{${MathFmt.coeff(a, "x", true)}}$ عاملاً مشتركاً: $f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}$.`,
-          `عندما $x \\to +\\infty$ تكون النهاية $${a < 0 ? "0" : (k > 0 ? "+\\infty" : "-\\infty")}$.`
-        ],
-        answer: `f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${MathFmt.coeff(a, "x", true)}}, \\quad \\lim_{x \\to +\\infty} f(x) = ${a < 0 ? "0" : (k > 0 ? "+\\infty" : "-\\infty")}`,
-        answerLabelAr: "الجواب النهائي"
-      };
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Exponential Function", unitAr: "التابع الأسي",
+          statement: `Let $f(x) = \\big(${MathFmt.linear(k, m, "x")}\\big)e^{${a}x}$. Find $f'(x)$ in factored form and evaluate $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+          statementAr: `لتكن $f(x) = \\big(${MathFmt.linear(k, m, "x")}\\big)e^{${a}x}$. أوجد $f'(x)$ بالصيغة المحللة واحسب $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+          steps: [
+            `Product rule: $f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${a}x}$.`,
+            `Since $${a} < 0$, $\\displaystyle\\lim_{x \\to +\\infty} f(x) = 0$.`
+          ],
+          stepsAr: [
+            `باشتقاق الجداء وإخراج العامل المشترك نجد $f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${a}x}$.`,
+            `بما أن الأس السالب يهيمن عند $+\\infty$ فإن النهاية تساوي $0$.`
+          ],
+          answer: `f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${a}x}, \\quad \\lim_{x \\to +\\infty} f(x) = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 1) {
+        // Trap 2: (e^(ax) - 1) / (bx) as x -> 0
+        const a = Rand.nonZeroInt(-5, 5);
+        const b = Rand.nonZeroInt(-5, 5);
+        const limFrac = MathFmt.frac(a, b);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Exponential Function", unitAr: "التابع الأسي",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(b, "x", true)}}$ using $\\displaystyle\\lim_{t \\to 0} \\dfrac{e^t - 1}{t} = 1$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(b, "x", true)}}$ بالاعتماد على $\\displaystyle\\lim_{t \\to 0} \\dfrac{e^t - 1}{t} = 1$.`,
+          steps: [
+            `Rewrite as $\\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(a, "x", true)}} \\cdot \\dfrac{${a}}{${b}}$.`,
+            `As $x \\to 0$, the limit equals $\\dfrac{${a}}{${b}} = ${MathFmt.texFrac(limFrac)}$.`
+          ],
+          stepsAr: [
+            `نكتب العبارة على الشكل $\\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(a, "x", true)}} \\cdot \\dfrac{${a}}{${b}}$.`,
+            `عند $x \\to 0$ نجد النهاية $${MathFmt.texFrac(limFrac)}$.`
+          ],
+          answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(limFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Exponential equation with e^(2x) - (e^a + e^b)e^x + e^(a+b) = 0 -> roots e^a and e^b
+        const a = Rand.int(1, 3);
+        const b = Rand.int(2, 4);
+        const s = Math.exp(a) + Math.exp(b);
+        const p = Math.exp(a + b);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Exponential Function", unitAr: "التابع الأسي",
+          statement: `Solve in $\\mathbb{R}$: $e^{2x} - (e^{${a}} + e^{${b}})e^x + e^{${a + b}} = 0$ using the substitution $X = e^x > 0$.`,
+          statementAr: `حل في $\\mathbb{R}$ المعادلة: $e^{2x} - (e^{${a}} + e^{${b}})e^x + e^{${a + b}} = 0$ بوضع $X = e^x > 0$.`,
+          steps: [
+            `Substitute $X = e^x > 0$: $X^2 - (e^{${a}} + e^{${b}})X + e^{${a + b}} = 0$, which factors as $(X - e^{${a}})(X - e^{${b}}) = 0$.`,
+            `Since $e^x$ is strictly increasing, $X = e^{${a}} \\implies x = ${a}$ and $X = e^{${b}} \\implies x = ${b}$.`
+          ],
+          stepsAr: [
+            `بوضع $X = e^x > 0$ تتحلل المعادلة إلى $(X - e^{${a}})(X - e^{${b}}) = 0$.`,
+            `وبما أن الدالة الأسية متباينة فإن الحلين هما $x = ${a}$ و $x = ${b}$.`
+          ],
+          answer: `S = \\{${a}, ${b}\\}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: x * e^(ax) as x -> -infinity (when a > 0, x -> -infinity gives x * e^(ax) -> 0!)
+        const a = Rand.int(1, 4);
+        const k = Rand.nonZeroInt(-4, 4);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Exponential Function", unitAr: "التابع الأسي",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} ${MathFmt.coeff(k, "x e^{" + (a === 1 ? "" : a) + "x}", true)}$ (trap: when $a > 0$ and $x \\to -\\infty$, $e^{ax} \\to 0$ dominates $x$!).`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} ${MathFmt.coeff(k, "x e^{" + (a === 1 ? "" : a) + "x}", true)}$ (انتبه: عند $-\\infty$ و $a > 0$ يغلب الأس السالب فتكون النهاية $0$).`,
+          steps: [
+            `Let $t = ${a}x \\to -\\infty$; then ${k}x e^{${a === 1 ? "" : a}x} = \\dfrac{${k}}{${a}} t e^t$.`,
+            `By $\\displaystyle\\lim_{t \\to -\\infty} t e^t = 0$, the limit is $0$.`
+          ],
+          stepsAr: [
+            `بوضع $t = ${a}x \\to -\\infty$ تصبح العبارة $\\dfrac{${k}}{${a}} t e^t$.`,
+            `وبما أن $\\displaystyle\\lim_{t \\to -\\infty} t e^t = 0$ فإن النهاية هي $0$.`
+          ],
+          answer: `\\lim_{x \\to -\\infty} = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Derivative of e^(u(x)) when u(x) is quadratic
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-4, 4);
+        const c = Rand.nonZeroInt(-4, 4);
+        const uTex = `${MathFmt.coeff(a, "x^2", true)}${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}`;
+        const uPrimeTex = `${2 * a}x${MathFmt.signedNum(b)}`;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Exponential Function", unitAr: "التابع الأسي",
+          statement: `Differentiate $f(x) = e^{${uTex}}$ on $\\mathbb{R}$ (trap: forgetting that $(e^u)' = u' e^u$, not $e^u$ alone).`,
+          statementAr: `اشتق التابع $f(x) = e^{${uTex}}$ على $\\mathbb{R}$ (انتبه لضرب مشتق الأس $u'(x)$).`,
+          steps: [
+            `Here $u(x) = ${uTex}$ and $u'(x) = ${uPrimeTex}$.`,
+            `Thus $f'(x) = (${uPrimeTex})e^{${uTex}}$.`
+          ],
+          stepsAr: [
+            `مشتق الأس هو $u'(x) = ${uPrimeTex}$.`,
+            `إذن $f'(x) = (${uPrimeTex})e^{${uTex}}$.`
+          ],
+          answer: `f'(x) = (${uPrimeTex})e^{${uTex}}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
     }
 
     function genIntegration() {
-      const p = Rand.int(1, 4);
-      const a = 3 * Rand.nonZeroInt(-2, 2);
-      const b = 2 * Rand.nonZeroInt(-3, 3);
-      const c = Rand.nonZeroInt(-5, 5);
-      const c3 = a / 3;
-      const c2 = b / 2;
-      const exactVal = c3 * Math.pow(p, 3) + c2 * Math.pow(p, 2) + c * p;
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Polynomial definite integral with clean antiderivative
+        const p = Rand.int(1, 4);
+        const a = 3 * Rand.nonZeroInt(-2, 2);
+        const b = 2 * Rand.nonZeroInt(-3, 3);
+        const c = Rand.nonZeroInt(-5, 5);
+        const c3 = a / 3;
+        const c2 = b / 2;
+        const exactVal = c3 * Math.pow(p, 3) + c2 * Math.pow(p, 2) + c * p;
 
-      return {
-        book: "Analysis",
-        bookAr: "التحليل",
-        unit: "Integration",
-        unitAr: "التكامل",
-        statement: `Evaluate the definite integral:
-        $$I = \\int_{0}^{${p}} \\left(${a}x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}\\right) dx$$`,
-        statementAr: `احسب التكامل المحدد:
-        $$I = \\int_{0}^{${p}} \\left(${a}x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}\\right) dx$$`,
-        steps: [
-          `An antiderivative is $F(x) = ${MathFmt.coeff(c3, "x^3", true)}${MathFmt.coeff(c2, "x^2", false)}${MathFmt.coeff(c, "x", false)}$.`,
-          `Evaluate $I = F(${p}) - F(0) = ${exactVal}$.`
-        ],
-        stepsAr: [
-          `أحد التوابع الأصلية هو $F(x) = ${MathFmt.coeff(c3, "x^3", true)}${MathFmt.coeff(c2, "x^2", false)}${MathFmt.coeff(c, "x", false)}$.`,
-          `نحسب $I = F(${p}) - F(0) = ${exactVal}$.`
-        ],
-        answer: `I = ${exactVal}`,
-        answerLabelAr: "الجواب النهائي"
-      };
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Integration", unitAr: "التكامل",
+          statement: `Evaluate $I = \\displaystyle\\int_{0}^{${p}} \\left(${a}x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}\\right) dx$.`,
+          statementAr: `احسب التكامل المحدد $I = \\displaystyle\\int_{0}^{${p}} \\left(${a}x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}\\right) dx$.`,
+          steps: [
+            `Antiderivative: $F(x) = ${MathFmt.coeff(c3, "x^3", true)}${MathFmt.coeff(c2, "x^2", false)}${MathFmt.coeff(c, "x", false)}$.`,
+            `$I = F(${p}) - F(0) = ${exactVal}$.`
+          ],
+          stepsAr: [
+            `التابع الأصلي: $F(x) = ${MathFmt.coeff(c3, "x^3", true)}${MathFmt.coeff(c2, "x^2", false)}${MathFmt.coeff(c, "x", false)}$.`,
+            `الناتج $I = F(${p}) - F(0) = ${exactVal}$.`
+          ],
+          answer: `I = ${exactVal}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 1) {
+        // Trap 2: Odd function over symmetric interval [-a, a] -> integral is 0 even when integrand looks complex!
+        const a = Rand.int(2, 6);
+        const k = Rand.nonZeroInt(-5, 5);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Integration", unitAr: "التكامل",
+          statement: `Compute $J = \\displaystyle\\int_{-${a}}^{${a}} ${MathFmt.coeff(k, "x^3 e^{x^2}", true)}\\, dx$ (trap: expanding or integrating by parts instead of checking parity on $[-${a}, ${a}]$).`,
+          statementAr: `احسب $J = \\displaystyle\\int_{-${a}}^{${a}} ${MathFmt.coeff(k, "x^3 e^{x^2}", true)}\\, dx$ (انتبه لزوجية التابع على مجال متناظر $[-${a}, ${a}]$).`,
+          steps: [
+            `Let $g(x) = ${MathFmt.coeff(k, "x^3 e^{x^2}", true)}$; then $g(-x) = -g(x)$, so $g$ is odd on $[-${a}, ${a}]$.`,
+            `The integral of an odd function over a symmetric interval $[-a, a]$ is $0$.`
+          ],
+          stepsAr: [
+            `التابع فردي لأن $g(-x) = -g(x)$ والمجال متناظر حول الصفر.`,
+            `إذن قيمة التكامل تساوي $0$ مباشرة.`
+          ],
+          answer: `J = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Integrating u'(x) / u(x) -> ln|u(x)|
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-3, 3);
+        // integral from 1 to 2 of a / (x + b), where x + b > 0 on [1, 2]
+        const safeB = Math.max(1, b);
+        const val1 = Math.log(1 + safeB);
+        const val2 = Math.log(2 + safeB);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Integration", unitAr: "التكامل",
+          statement: `Evaluate $I = \\displaystyle\\int_{1}^{2} \\dfrac{${a}}{x + ${safeB}}\\, dx$ in exact form.`,
+          statementAr: `احسب التكامل $I = \\displaystyle\\int_{1}^{2} \\dfrac{${a}}{x + ${safeB}}\\, dx$ بصورته الدقيقة.`,
+          steps: [
+            `Antiderivative on $[1, 2]$ is $F(x) = ${a}\\ln(x + ${safeB})$.`,
+            `$I = ${a}\\big(\\ln(${2 + safeB}) - \\ln(${1 + safeB})\\big) = ${a}\\ln\\!\\left(\\dfrac{${2 + safeB}}{${1 + safeB}}\\right)$.`
+          ],
+          stepsAr: [
+            `التابع الأصلي هو $F(x) = ${a}\\ln(x + ${safeB})$.`,
+            `بالتعويض نجد $I = ${a}\\ln\\!\\left(\\dfrac{${2 + safeB}}{${1 + safeB}}\\right)$.`
+          ],
+          answer: `I = ${a}\\ln\\!\\left(\\frac{${2 + safeB}}{${1 + safeB}}\\right)`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: Area between two curves where intersection lies inside [0, 2] -> splitting integral at intersection!
+        // y1 = x^2 and y2 = x on [0, 2]: intersect at x = 0 and x = 1.
+        // Area = int_0^1 (x - x^2) dx + int_1^2 (x^2 - x) dx = 1/6 + (8/3 - 2 - (1/3 - 1/2)) = 1/6 + 5/6 = 1!
+        const k = Rand.pick([1, 2, 3]);
+        // Scale by k: y1 = k x^2, y2 = k x on [0, 2] -> area = k
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Integration", unitAr: "التكامل",
+          statement: `Find the geometric area between the curves $y = ${k}x^2$ and $y = ${k}x$ on $[0, 2]$ (trap: computing $\\int_0^2 (${k}x - ${k}x^2)\\,dx$ without splitting at the crossing point $x = 1$, where $|${k}x - ${k}x^2|$ changes sign!).`,
+          statementAr: `احسب المساحة الهندسية المحصورة بين المنحنيين $y = ${k}x^2$ و $y = ${k}x$ على $[0, 2]$ (انتبه لتقاطعهما عند $x = 1$ وتغير إشارة الفرق $|${k}x - ${k}x^2|$).`,
+          steps: [
+            `Curves cross at $x = 0$ and $x = 1$; on $[0, 1]$, ${k}x \\ge ${k}x^2$, and on $[1, 2]$, ${k}x^2 \\ge ${k}x$.`,
+            `Area $= \\displaystyle\\int_0^1 ${k}(x - x^2)\\,dx + \\displaystyle\\int_1^2 ${k}(x^2 - x)\\,dx = \\dfrac{${k}}{6} + \\dfrac{5${k}}{6} = ${k}$.`
+          ],
+          stepsAr: [
+            `يتقاطعان عند $x = 1$ فيتبدل الوضع النسبي على $[1, 2]$.`,
+            `المساحة تساوي $\\dfrac{${k}}{6} + \\dfrac{5${k}}{6} = ${k}$ وحدة مساحة.`
+          ],
+          answer: `\\text{Area} = ${k}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Exponential integral int_0^a e^(kx) dx
+        const k = Rand.nonZeroInt(-3, 3);
+        const a = Rand.int(1, 2);
+        // int_0^a e^(kx) dx = (e^(ka) - 1) / k
+        const ka = k * a;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Integration", unitAr: "التكامل",
+          statement: `Evaluate $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$ (trap: forgetting to divide by the coefficient $${k}$ of $x$ in the exponent).`,
+          statementAr: `احسب التكامل $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$ (انتبه للقسمة على أمثال $x$ وهو $${k}$).`,
+          steps: [
+            `An antiderivative of $e^{${MathFmt.coeff(k, "x", true)}}$ is $\\dfrac{1}{${k}} e^{${MathFmt.coeff(k, "x", true)}}$.`,
+            `Evaluating from $0$ to $${a}$ gives $I = \\dfrac{e^{${ka === 1 ? "" : (ka === -1 ? "-" : ka)}} - 1}{${k}}$.`
+          ],
+          stepsAr: [
+            `التابع الأصلي هو $\\dfrac{1}{${k}} e^{${MathFmt.coeff(k, "x", true)}}$.`,
+            `بالتعويض بين $0$ و $${a}$ نجد $I = \\dfrac{e^{${ka === 1 ? "" : (ka === -1 ? "-" : ka)}} - 1}{${k}}$.`
+          ],
+          answer: `I = \\frac{e^{${ka === 1 ? "" : (ka === -1 ? "-" : ka)}} - 1}{${k}}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
     }
 
     /* =========================================================================
-       3. BOOK 2: ALGEBRA AND VECTORS GENERATORS (5 UNITS, EN + AR)
+       3. BOOK 2: ALGEBRA AND VECTORS GENERATORS (5 UNITS × 5 TRAP TEMPLATES EACH, EN + AR)
        ========================================================================= */
 
     function genVector() {
-      const u = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
-      const v = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
-      const dot = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
-      const cx = u[1] * v[2] - u[2] * v[1];
-      const cy = u[2] * v[0] - u[0] * v[2];
-      const cz = u[0] * v[1] - u[1] * v[0];
-      const normSq = cx * cx + cy * cy + cz * cz;
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Dot product & cross product norm
+        const u = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
+        const v = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
+        const dot = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+        const cx = u[1] * v[2] - u[2] * v[1];
+        const cy = u[2] * v[0] - u[0] * v[2];
+        const cz = u[0] * v[1] - u[1] * v[0];
+        const normSq = cx * cx + cy * cy + cz * cz;
 
-      return {
-        book: "Algebra and Vectors",
-        bookAr: "الجبر والأشعة",
-        unit: "Vector",
-        unitAr: "الأشعة",
-        statement: `In an orthonormal basis $(\\vec{i}, \\vec{j}, \\vec{k})$, let $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ and $\\vec{v}(${v[0]}, ${v[1]}, ${v[2]})$. Compute $\\vec{u} \\cdot \\vec{v}$ and $\\|\\vec{u} \\times \\vec{v}\\|$.`,
-        statementAr: `في معلم متجانس $(\\vec{i}, \\vec{j}, \\vec{k})$، ليكن $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ و $\\vec{v}(${v[0]}, ${v[1]}, ${v[2]})$. احسب الجداء السلمي $\\vec{u} \\cdot \\vec{v}$ وطويلة الجداء الشعاعي $\\|\\vec{u} \\times \\vec{v}\\|$.`,
-        steps: [
-          `Dot product: $\\vec{u} \\cdot \\vec{v} = (${u[0]})(${v[0]}) + (${u[1]})(${v[1]}) + (${u[2]})(${v[2]}) = ${dot}$.`,
-          `Cross product: $\\vec{u} \\times \\vec{v} = (${cx}, ${cy}, ${cz})$, so $\\|\\vec{u} \\times \\vec{v}\\| = \\sqrt{${normSq}} = ${MathFmt.texSqrt(normSq)}$.`
-        ],
-        stepsAr: [
-          `الجداء السلمي: $\\vec{u} \\cdot \\vec{v} = (${u[0]})(${v[0]}) + (${u[1]})(${v[1]}) + (${u[2]})(${v[2]}) = ${dot}$.`,
-          `الجداء الشعاعي: $\\vec{u} \\times \\vec{v} = (${cx}, ${cy}, ${cz})$، إذن $\\|\\vec{u} \\times \\vec{v}\\| = \\sqrt{${normSq}} = ${MathFmt.texSqrt(normSq)}$.`
-        ],
-        answer: `\\vec{u} \\cdot \\vec{v} = ${dot}, \\quad \\|\\vec{u} \\times \\vec{v}\\| = ${MathFmt.texSqrt(normSq)}`,
-        answerLabelAr: "الجواب النهائي"
-      };
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Vector", unitAr: "الأشعة",
+          statement: `In an orthonormal basis $(\\vec{i}, \\vec{j}, \\vec{k})$, let $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ and $\\vec{v}(${v[0]}, ${v[1]}, ${v[2]})$. Compute $\\vec{u} \\cdot \\vec{v}$ and $\\|\\vec{u} \\times \\vec{v}\\|$.`,
+          statementAr: `في معلم متجانس $(\\vec{i}, \\vec{j}, \\vec{k})$، ليكن $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ و $\\vec{v}(${v[0]}, ${v[1]}, ${v[2]})$. احسب $\\vec{u} \\cdot \\vec{v}$ و $\\|\\vec{u} \\times \\vec{v}\\|$.`,
+          steps: [
+            `Dot product: $\\vec{u} \\cdot \\vec{v} = ${dot}$.`,
+            `Cross product: $\\vec{u} \\times \\vec{v} = (${cx}, ${cy}, ${cz})$, so $\\|\\vec{u} \\times \\vec{v}\\| = ${MathFmt.texSqrt(normSq)}$.`
+          ],
+          stepsAr: [
+            `الجداء السلمي يساوي ${dot}.`,
+            `الجداء الشعاعي هو $(${cx}, ${cy}, ${cz})$ وطويلته ${MathFmt.texSqrt(normSq)}$.`
+          ],
+          answer: `\\vec{u} \\cdot \\vec{v} = ${dot}, \\quad \\|\\vec{u} \\times \\vec{v}\\| = ${MathFmt.texSqrt(normSq)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 1) {
+        // Trap 2: Middle component sign in cross product (y-component is u_z v_x - u_x v_z!)
+        const ux = Rand.nonZeroInt(-3, 3);
+        const uz = Rand.nonZeroInt(-3, 3);
+        const vx = Rand.nonZeroInt(-3, 3);
+        const vz = Rand.nonZeroInt(-3, 3);
+        // u = (ux, 0, uz), v = (vx, 0, vz) -> u x v = (0, uz*vx - ux*vz, 0)
+        const cy = uz * vx - ux * vz;
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Vector", unitAr: "الأشعة",
+          statement: `Let $\\vec{u}(${ux}, 0, ${uz})$ and $\\vec{v}(${vx}, 0, ${vz})$. Compute $\\vec{u} \\times \\vec{v}$ (trap: reversing the $y$-component to $u_x v_z - u_z v_x$ instead of $u_z v_x - u_x v_z$).`,
+          statementAr: `ليكن $\\vec{u}(${ux}, 0, ${uz})$ و $\\vec{v}(${vx}, 0, ${vz})$. احسب $\\vec{u} \\times \\vec{v}$ (انتبه لإشارة المركبة الثانية في الجداء الشعاعي).`,
+          steps: [
+            `$x$-component: $0 \\cdot ${vz} - ${uz} \\cdot 0 = 0$; $z$-component: ${ux} \\cdot 0 - 0 \\cdot ${vx} = 0$.`,
+            `$y$-component: $u_z v_x - u_x v_z = (${uz})(${vx}) - (${ux})(${vz}) = ${cy}$, so $\\vec{u} \\times \\vec{v} = (0, ${cy}, 0)$.`
+          ],
+          stepsAr: [
+            `المركبتان الأولى والثالثة معدومتان، والثانية هي $u_z v_x - u_x v_z = ${cy}$.`,
+            `إذن $\\vec{u} \\times \\vec{v} = (0, ${cy}, 0)$.`
+          ],
+          answer: `\\vec{u} \\times \\vec{v} = (0, ${cy}, 0)`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Scalar triple product [u, v, w] = (u x v) . w for coplanarity / volume
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-3, 3);
+        const c = Rand.nonZeroInt(-3, 3);
+        // u = (1, 0, 0), v = (0, 1, 0), w = (a, b, c) -> (u x v) = (0, 0, 1) -> dot w = c
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Vector", unitAr: "الأشعة",
+          statement: `Given $\\vec{u}(1, 0, 0)$, $\\vec{v}(0, 1, 0)$, and $\\vec{w}(${a}, ${b}, ${c})$, compute $(\\vec{u} \\times \\vec{v}) \\cdot \\vec{w}$ and state whether $\\vec{u}, \\vec{v}, \\vec{w}$ are coplanar.`,
+          statementAr: `لتكن $\\vec{u}(1, 0, 0)$ و $\\vec{v}(0, 1, 0)$ و $\\vec{w}(${a}, ${b}, ${c})$. احسب $(\\vec{u} \\times \\vec{v}) \\cdot \\vec{w}$ وهل الأشعة مستوية؟`,
+          steps: [
+            `Here $\\vec{u} \\times \\vec{v} = \\vec{k} = (0, 0, 1)$, so $(\\vec{u} \\times \\vec{v}) \\cdot \\vec{w} = ${c}$.`,
+            `The vectors are coplanar if and only if this mixed product equals $0$ (${c === 0 ? "coplanar here" : "not coplanar here since " + c + " \\neq 0"}).`
+          ],
+          stepsAr: [
+            `نجد $\\vec{u} \\times \\vec{v} = (0, 0, 1)$ ومنه الجداء المختلط يساوي ${c}.`,
+            `تكون الأشعة مستوية إذا وفقط إذا كان الجداء المختلط معدوماً (${c === 0 ? "وهنا هي مستوية" : "وهنا ليست مستوية لأن الناتج غير معدوم"}).`
+          ],
+          answer: `(\\vec{u} \\times \\vec{v}) \\cdot \\vec{w} = ${c}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: Distance from point A to plane ax + by + cz + d = 0 (forgetting |numerator| or sqrt(a^2+b^2+c^2))
+        const x0 = Rand.nonZeroInt(-3, 3);
+        const y0 = Rand.nonZeroInt(-3, 3);
+        const z0 = Rand.nonZeroInt(-3, 3);
+        // Plane: 2x - 2y + z + d = 0 -> norm of normal is sqrt(4 + 4 + 1) = 3!
+        const d = Rand.nonZeroInt(-5, 5);
+        const rawNum = 2 * x0 - 2 * y0 + z0 + d;
+        const absNum = Math.abs(rawNum);
+        const distFrac = MathFmt.frac(absNum, 3);
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Vector", unitAr: "الأشعة",
+          statement: `Compute the distance $d(A, \\mathcal{P})$ from $A(${x0}, ${y0}, ${z0})$ to the plane $(\\mathcal{P}): 2x - 2y + z${MathFmt.signedNum(d)} = 0$ (trap: forgetting absolute value in the numerator or squaring/forgetting the norm of $\\vec{n}(2, -2, 1)$).`,
+          statementAr: `احسب بعد النقطة $A(${x0}, ${y0}, ${z0})$ عن المستوي $(\\mathcal{P}): 2x - 2y + z${MathFmt.signedNum(d)} = 0$ (انتبه للقيمة المطلقة في البسط وطويلة الناظم).`,
+          steps: [
+            `Normal vector $\\vec{n}(2, -2, 1)$ has norm $\\|\\vec{n}\\| = \\sqrt{2^2 + (-2)^2 + 1^2} = 3$.`,
+            `$d(A, \\mathcal{P}) = \\dfrac{|2(${x0}) - 2(${y0}) + (${z0})${MathFmt.signedNum(d)}|}{3} = \\dfrac{${absNum}}{3} = ${MathFmt.texFrac(distFrac)}$.`
+          ],
+          stepsAr: [
+            `طويلة الناظم $\\vec{n}(2, -2, 1)$ تساوي $\\sqrt{4 + 4 + 1} = 3$.`,
+            `البعد يساوي $\\dfrac{|${rawNum}|}{3} = ${MathFmt.texFrac(distFrac)}$.`
+          ],
+          answer: `d(A, \\mathcal{P}) = ${MathFmt.texFrac(distFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Dot product with opposite/scaled vector
+        const u = [Rand.nonZeroInt(-3, 3), Rand.nonZeroInt(-3, 3), Rand.nonZeroInt(-3, 3)];
+        const k = Rand.pick([-2, 2, 3]);
+        const v = [k * u[0], k * u[1], k * u[2]];
+        const normSq = u[0] * u[0] + u[1] * u[1] + u[2] * u[2];
+        const dotVal = k * normSq;
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Vector", unitAr: "الأشعة",
+          statement: `Let $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ and $\\vec{v} = ${k}\\vec{u}$. Compute $\\vec{u} \\cdot \\vec{v}$ in terms of $\\|\\vec{u}\\|^2$.`,
+          statementAr: `ليكن $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ و $\\vec{v} = ${k}\\vec{u}$. احسب الجداء السلمي $\\vec{u} \\cdot \\vec{v}$.`,
+          steps: [
+            `Here $\\|\\vec{u}\\|^2 = ${u[0]}^2 + ${u[1]}^2 + ${u[2]}^2 = ${normSq}$.`,
+            `$\\vec{u} \\cdot \\vec{v} = ${k}(\\vec{u} \\cdot \\vec{u}) = ${k} \\times ${normSq} = ${dotVal}$.`
+          ],
+          stepsAr: [
+            `مربع طويلة $\\vec{u}$ هو ${normSq}.`,
+            `إذن $\\vec{u} \\cdot (${k}\\vec{u}) = ${k} \\times ${normSq} = ${dotVal}$.`
+          ],
+          answer: `\\vec{u} \\cdot \\vec{v} = ${dotVal}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
     }
 
     function genComplexNumbers() {
-      const m = Rand.pick([1, 2, 3]);
-      const iLabel = m === 1 ? "i" : (m === 2 ? "-1" : "-i");
-      const iArg = MathFmt.frac(m, 2);
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Principal argument in ]-pi, pi] of product/quotient with negative real factor
+        const m = Rand.pick([1, 2, 3]);
+        const iLabel = m === 1 ? "i" : (m === 2 ? "-1" : "-i");
+        const iArg = MathFmt.frac(m, 2);
+        const alphas = [
+          { tex: "\\frac{\\pi}{6}", f: MathFmt.frac(1, 6) },
+          { tex: "\\frac{\\pi}{4}", f: MathFmt.frac(1, 4) },
+          { tex: "\\frac{\\pi}{3}", f: MathFmt.frac(1, 3) },
+          { tex: "-\\frac{\\pi}{3}", f: MathFmt.frac(-1, 3) },
+          { tex: "\\frac{2\\pi}{3}", f: MathFmt.frac(2, 3) }
+        ];
+        const alpha = Rand.pick(alphas);
+        const denoms = [
+          { tex: "1 - \\sqrt{3}", arg: MathFmt.frac(1, 1), reason: "$1 - \\sqrt{3} < 0 \\implies \\arg(1 - \\sqrt{3}) \\equiv \\pi \\pmod{2\\pi}$" },
+          { tex: "1 + i\\sqrt{3}", arg: MathFmt.frac(1, 3), reason: "$1 + i\\sqrt{3} = 2e^{i\\pi/3}$" },
+          { tex: "-1 + i\\sqrt{3}", arg: MathFmt.frac(2, 3), reason: "$-1 + i\\sqrt{3} = 2e^{i2\\pi/3}$" },
+          { tex: "\\sqrt{3} + i", arg: MathFmt.frac(1, 6), reason: "$\\sqrt{3} + i = 2e^{i\\pi/6}$" }
+        ];
+        const denom = Rand.pick(denoms);
+        let rawArg = MathFmt.subFrac(MathFmt.addFrac(iArg, alpha.f), denom.arg);
+        let norm = { n: rawArg.n, d: rawArg.d };
+        while (norm.n > norm.d) norm = MathFmt.subFrac(norm, MathFmt.frac(2, 1));
+        while (norm.n <= -norm.d) norm = MathFmt.addFrac(norm, MathFmt.frac(2, 1));
 
-      const alphas = [
-        { tex: "\\frac{\\pi}{6}", f: MathFmt.frac(1, 6) },
-        { tex: "\\frac{\\pi}{4}", f: MathFmt.frac(1, 4) },
-        { tex: "\\frac{\\pi}{3}", f: MathFmt.frac(1, 3) },
-        { tex: "-\\frac{\\pi}{3}", f: MathFmt.frac(-1, 3) },
-        { tex: "\\frac{2\\pi}{3}", f: MathFmt.frac(2, 3) }
-      ];
-      const alpha = Rand.pick(alphas);
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `Find the principal argument $\\arg(Z) \\in ]-\\pi, \\pi]$ for $Z = \\dfrac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}$.`,
+          statementAr: `أوجد الزاوية الرئيسية $\\arg(Z) \\in ]-\\pi, \\pi]$ للعدد العقدي $Z = \\dfrac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}$.`,
+          steps: [
+            `Using $\\arg\\!\\left(\\frac{uv}{w}\\right) \\equiv \\arg u + \\arg v - \\arg w \\pmod{2\\pi}$ with ${denom.reason}.`,
+            `Normalizing into $]-\\pi, \\pi]$ yields $${MathFmt.texPi(norm)}$.`
+          ],
+          stepsAr: [
+            `نجمع زوايا البسط ونطرح زاوية المقام مع ${denom.reason}.`,
+            `بإرجاع الناتج إلى المجال $]-\\pi, \\pi]$ نجد $${MathFmt.texPi(norm)}$.`
+          ],
+          answer: `\\arg(Z) = ${MathFmt.texPi(norm)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 1) {
+        // Trap 2: Modulus & exponential form when real/imag part has negative sign (-a - ia -> module is a*sqrt(2), arg is -3pi/4)
+        const a = Rand.int(1, 4);
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `Write $z = -${a} - ${a}i$ in exponential form $r e^{i\\theta}$ with $\\theta \\in ]-\\pi, \\pi]$ (trap: placing $\\theta = \\frac{\\pi}{4}$ instead of the third quadrant $-\frac{3\\pi}{4}$).`,
+          statementAr: `اكتب العدد العقدي $z = -${a} - ${a}i$ بالشكل الأسي $r e^{i\\theta}$ بحيث $\\theta \\in ]-\\pi, \\pi]$ (انتبه للربع الثالث).`,
+          steps: [
+            `Modulus: $|z| = \\sqrt{(-${a})^2 + (-${a})^2} = ${a}\\sqrt{2}$.`,
+            `Since $\\cos\\theta = -\\frac{\\sqrt{2}}{2}$ and $\\sin\\theta = -\\frac{\\sqrt{2}}{2}$, $\\theta = -\\dfrac{3\\pi}{4}$.`
+          ],
+          stepsAr: [
+            `الطويلة هي $|z| = ${a}\\sqrt{2}$.`,
+            `العدد في الربع الثالث والزاوية الرئيسية هي $-\\dfrac{3\\pi}{4}$.`
+          ],
+          answer: `z = ${a}\\sqrt{2} e^{-i\\frac{3\\pi}{4}}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Conjugate and modulus properties: |z|^2 = z * z_bar, conjugate of quotient/sum
+        const x = Rand.nonZeroInt(-4, 4);
+        const y = Rand.nonZeroInt(-4, 4);
+        const normSq = x * x + y * y;
+        const zTex = `${x}${y >= 0 ? ` + ${y}i` : ` - ${Math.abs(y)}i`}`;
+        const zBarTex = `${x}${y >= 0 ? ` - ${y}i` : ` + ${Math.abs(y)}i`}`;
 
-      const denoms = [
-        { tex: "1 - \\sqrt{3}", arg: MathFmt.frac(1, 1), reason: "$1 - \\sqrt{3} < 0 \\implies \\arg(1 - \\sqrt{3}) \\equiv \\pi \\pmod{2\\pi}$" },
-        { tex: "1 + i\\sqrt{3}", arg: MathFmt.frac(1, 3), reason: "$1 + i\\sqrt{3} = 2e^{i\\pi/3} \\implies \\arg(1 + i\\sqrt{3}) \\equiv \\frac{\\pi}{3} \\pmod{2\\pi}$" },
-        { tex: "-1 + i\\sqrt{3}", arg: MathFmt.frac(2, 3), reason: "$-1 + i\\sqrt{3} = 2e^{i2\\pi/3} \\implies \\arg(-1 + i\\sqrt{3}) \\equiv \\frac{2\\pi}{3} \\pmod{2\\pi}$" },
-        { tex: "\\sqrt{3} + i", arg: MathFmt.frac(1, 6), reason: "$\\sqrt{3} + i = 2e^{i\\pi/6} \\implies \\arg(\\sqrt{3} + i) \\equiv \\frac{\\pi}{6} \\pmod{2\\pi}$" }
-      ];
-      const denom = Rand.pick(denoms);
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `For $z = ${zTex}$, compute $\\overline{z}$ and $z \\cdot \\overline{z}$ (trap: thinking $z \\cdot \\overline{z} = x^2 - y^2$ instead of $x^2 + y^2$).`,
+          statementAr: `من أجل $z = ${zTex}$، احسب المرافق $\\overline{z}$ والجداء $z \\cdot \\overline{z}$ (انتبه أن الجداء يساوي $x^2 + y^2$).`,
+          steps: [
+            `Conjugate flips the sign of the imaginary part: $\\overline{z} = ${zBarTex}$.`,
+            `Product: $z \\cdot \\overline{z} = |z|^2 = (${x})^2 + (${y})^2 = ${normSq}$.`
+          ],
+          stepsAr: [
+            `المرافق هو $\\overline{z} = ${zBarTex}$.`,
+            `الجداء هو $z \\cdot \\overline{z} = ${x}^2 + ${y}^2 = ${normSq}$.`
+          ],
+          answer: `\\overline{z} = ${zBarTex}, \\quad z \\cdot \\overline{z} = ${normSq}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: De Moivre's theorem (e^(i theta))^n = e^(i n theta) — watch modulus r^n!
+        const r = Rand.pick([2, 3]);
+        const n = Rand.pick([3, 4]);
+        // theta = pi/6 -> n*theta = pi/2 or 2pi/3
+        const thetaFrac = MathFmt.frac(1, 6);
+        const nTheta = MathFmt.frac(n, 6);
+        const rPowN = Math.pow(r, n);
 
-      let rawArg = MathFmt.subFrac(MathFmt.addFrac(iArg, alpha.f), denom.arg);
-      let norm = { n: rawArg.n, d: rawArg.d };
-      while (norm.n > norm.d) norm = MathFmt.subFrac(norm, MathFmt.frac(2, 1));
-      while (norm.n <= -norm.d) norm = MathFmt.addFrac(norm, MathFmt.frac(2, 1));
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `Let $z = ${r} e^{i\\frac{\\pi}{6}}$. Compute $z^{${n}}$ in exponential form (trap: forgetting to raise the modulus to the ${n}-th power: $${r}^{${n}} = ${rPowN}$).`,
+          statementAr: `ليكن $z = ${r} e^{i\\frac{\\pi}{6}}$. احسب $z^{${n}}$ بالشكل الأسي (انتبه لرفع الطويلة إلى الأس ${n}$).`,
+          steps: [
+            `By De Moivre's formula, $(r e^{i\\theta})^n = r^n e^{in\\theta}$.`,
+            `Here $r^{${n}} = ${rPowN}$ and ${n} \\cdot \\frac{\\pi}{6} = ${MathFmt.texPi(nTheta)}$, so $z^{${n}} = ${rPowN} e^{i${MathFmt.texPi(nTheta)}}$.`
+          ],
+          stepsAr: [
+            `بحسب دستور موافر نرفع الطويلة للأس ${n}$ ونضرب الزاوية بـ ${n}.`,
+            `نجد $z^{${n}} = ${rPowN} e^{i${MathFmt.texPi(nTheta)}}$.`
+          ],
+          answer: `z^{${n}} = ${rPowN} e^{i${MathFmt.texPi(nTheta)}}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Quadratic equation with real coefficients and negative discriminant -> complex conjugate roots
+        const k = Rand.int(1, 3);
+        const b = Rand.nonZeroInt(-3, 3);
+        // (z - (k + bi))(z - (k - bi)) = z^2 - 2kz + (k^2 + b^2)
+        const s2 = -2 * k;
+        const pConst = k * k + b * b;
+        const bSign = b > 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`;
+        const bConjSign = b > 0 ? ` - ${b}i` : ` + ${Math.abs(b)}i`;
 
-      return {
-        book: "Algebra and Vectors",
-        bookAr: "الجبر والأشعة",
-        unit: "Complex Numbers",
-        unitAr: "الأعداد العقدية",
-        statement: `Find the principal argument $\\arg(Z) \\in ]-\\pi, \\pi]$ for:
-        $$Z = \\frac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}$$`,
-        statementAr: `أوجد الزاوية الرئيسية $\\arg(Z) \\in ]-\\pi, \\pi]$ للعدد العقدي:
-        $$Z = \\frac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}$$`,
-        steps: [
-          `Use $\\arg\\!\\left(\\frac{u \\cdot v}{w}\\right) \\equiv \\arg(u) + \\arg(v) - \\arg(w) \\pmod{2\\pi}$.`,
-          `Here $\\arg(${iLabel}) \\equiv ${MathFmt.texPi(iArg)}$, $\\arg(e^{i${alpha.tex}}) \\equiv ${MathFmt.texPi(alpha.f)}$, and ${denom.reason}.`,
-          `Reducing into $]-\\pi, \\pi]$ gives $${MathFmt.texPi(norm)}$.`
-        ],
-        stepsAr: [
-          `نستخدم $\\arg\\!\\left(\\frac{u \\cdot v}{w}\\right) \\equiv \\arg(u) + \\arg(v) - \\arg(w) \\pmod{2\\pi}$.`,
-          `هنا $\\arg(${iLabel}) \\equiv ${MathFmt.texPi(iArg)}$ و $\\arg(e^{i${alpha.tex}}) \\equiv ${MathFmt.texPi(alpha.f)}$ و ${denom.reason}$.`,
-          `بإرجاع الزاوية إلى المجال $]-\\pi, \\pi]$ نجد $${MathFmt.texPi(norm)}$.`
-        ],
-        answer: `\\arg(Z) = ${MathFmt.texPi(norm)}`,
-        answerLabelAr: "الجواب النهائي"
-      };
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `Solve in $\\mathbb{C}$: $z^2${MathFmt.coeff(s2, "z", false)} + ${pConst} = 0$ (trap: $\\Delta = ${s2 * s2 - 4 * pConst} < 0$, so roots are non-real conjugates).`,
+          statementAr: `حل في $\\mathbb{C}$ المعادلة: $z^2${MathFmt.coeff(s2, "z", false)} + ${pConst} = 0$ (المميز سالب لذا الجذران عقديان مترافقان).`,
+          steps: [
+            `Discriminant $\\Delta = (${s2})^2 - 4(1)(${pConst}) = ${s2 * s2 - 4 * pConst} < 0$.`,
+            `Roots are $z_1 = ${k}${bSign}$ and $z_2 = ${k}${bConjSign}$.`
+          ],
+          stepsAr: [
+            `المميز $\\Delta = ${s2 * s2 - 4 * pConst} < 0$.`,
+            `الجذران هما $z_1 = ${k}${bSign}$ و $z_2 = ${k}${bConjSign}$.`
+          ],
+          answer: `z_1 = ${k}${bSign}, \\quad z_2 = ${k}${bConjSign}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
     }
 
     function genComplexGeometry() {
-      const ax = Rand.nonZeroInt(-3, 3);
-      const ay = Rand.nonZeroInt(-3, 3);
-      const bx = ax + 2;
-      const by = ay;
-      const angleChoice = Rand.pick([
-        { tex: "\\frac{\\pi}{2}", dx: 0, dy: 2 },
-        { tex: "\\frac{\\pi}{4}", dx: 2, dy: 2 },
-        { tex: "-\\frac{\\pi}{2}", dx: 0, dy: -2 }
-      ]);
-      const cx = ax + angleChoice.dx;
-      const cy = ay + angleChoice.dy;
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Angle (AB, AC) = arg((z_C - z_A)/(z_B - z_A))
+        const ax = Rand.nonZeroInt(-3, 3);
+        const ay = Rand.nonZeroInt(-3, 3);
+        const bx = ax + 2;
+        const by = ay;
+        const angleChoice = Rand.pick([
+          { tex: "\\frac{\\pi}{2}", dx: 0, dy: 2 },
+          { tex: "\\frac{\\pi}{4}", dx: 2, dy: 2 },
+          { tex: "-\\frac{\\pi}{2}", dx: 0, dy: -2 }
+        ]);
+        const cx = ax + angleChoice.dx;
+        const cy = ay + angleChoice.dy;
 
-      return {
-        book: "Algebra and Vectors",
-        bookAr: "الجبر والأشعة",
-        unit: "Applications of Complex Numbers in Geometry",
-        unitAr: "تطبيقات الأعداد العقدية في الهندسة",
-        statement: `In the Argand plane, let $A$, $B$, and $C$ have affixes $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$, $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$, and $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$. Determine a measure of $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
-        statementAr: `في المستوي العقدي، لتكن النقاط $A$ و $B$ و $C$ ذات اللواحق $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$ و $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$ و $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$. أوجد قياس الزاوية $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
-        steps: [
-          `$\\widehat{(\\vec{AB}, \\vec{AC})} \\equiv \\arg\\!\\left(\\dfrac{z_C - z_A}{z_B - z_A}\\right) \\pmod{2\\pi}$.`,
-          `Here $z_B - z_A = 2$ and $z_C - z_A = ${angleChoice.dx}${angleChoice.dy >= 0 ? ` + ${angleChoice.dy}i` : ` - ${Math.abs(angleChoice.dy)}i`}$, giving argument $${angleChoice.tex}$.`
-        ],
-        stepsAr: [
-          `$\\widehat{(\\vec{AB}, \\vec{AC})} \\equiv \\arg\\!\\left(\\dfrac{z_C - z_A}{z_B - z_A}\\right) \\pmod{2\\pi}$.`,
-          `هنا $z_B - z_A = 2$ و $z_C - z_A = ${angleChoice.dx}${angleChoice.dy >= 0 ? ` + ${angleChoice.dy}i` : ` - ${Math.abs(angleChoice.dy)}i`}$، والزاوية تساوي $${angleChoice.tex}$.`
-        ],
-        answer: `\\widehat{(\\vec{AB}, \\vec{AC})} = ${angleChoice.tex} \\pmod{2\\pi}`,
-        answerLabelAr: "الجواب النهائي"
-      };
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
+          statement: `Let $A$, $B$, and $C$ have affixes $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$, $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$, and $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$. Find $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
+          statementAr: `لتكن $A$ و $B$ و $C$ ذات اللواحق $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$ و $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$ و $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$. أوجد قياس الزاوية $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
+          steps: [
+            `Compute $\\dfrac{z_C - z_A}{z_B - z_A} = \\dfrac{${angleChoice.dx}${angleChoice.dy >= 0 ? ` + ${angleChoice.dy}i` : ` - ${Math.abs(angleChoice.dy)}i`}}{2}$.`,
+            `Its argument is $${angleChoice.tex} \\pmod{2\\pi}$.`
+          ],
+          stepsAr: [
+            `نحسب النسبة $\\dfrac{z_C - z_A}{z_B - z_A}$.`,
+            `زاويتها تساوي $${angleChoice.tex} \\pmod{2\\pi}$.`
+          ],
+          answer: `\\widehat{(\\vec{AB}, \\vec{AC})} = ${angleChoice.tex} \\pmod{2\\pi}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 1) {
+        // Trap 2: Distance AB = |z_B - z_A| -> perpendicular bisector / circle locus
+        const ax = Rand.nonZeroInt(-3, 3);
+        const ay = Rand.nonZeroInt(-3, 3);
+        const dx = 3;
+        const dy = 4; // 3-4-5 triangle!
+        const bx = ax + dx;
+        const by = ay + dy;
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
+          statement: `Given $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$ and $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$, compute the length $AB = |z_B - z_A|$ and the affix of midpoint $I$ of $[AB]$.`,
+          statementAr: `لتكن $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$ و $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$. احسب الطول $AB = |z_B - z_A|$ ولاحقة منتصف $[AB]$.`,
+          steps: [
+            `$z_B - z_A = 3 + 4i \\implies AB = |3 + 4i| = \\sqrt{3^2 + 4^2} = 5$.`,
+            `Midpoint affix: $z_I = \\dfrac{z_A + z_B}{2} = ${ax + 1.5}${ay + 2 >= 0 ? ` + ${ay + 2}i` : ` - ${Math.abs(ay + 2)}i`}$.`
+          ],
+          stepsAr: [
+            `الطول هو $|z_B - z_A| = |3 + 4i| = 5$.`,
+            `لاحقة المنتصف هي $z_I = \\dfrac{z_A + z_B}{2} = ${ax + 1.5}${ay + 2 >= 0 ? ` + ${ay + 2}i` : ` - ${Math.abs(ay + 2)}i`}$.`
+          ],
+          answer: `AB = 5, \\quad z_I = ${ax + 1.5}${ay + 2 >= 0 ? ` + ${ay + 2}i` : ` - ${Math.abs(ay + 2)}i`}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: Locus |z - z_A| = |z - z_B| is the perpendicular bisector of [AB], NOT a circle!
+        const a = Rand.nonZeroInt(-4, 4);
+        const b = Rand.nonZeroInt(-4, 4);
+        // |z - a| = |z - ib| -> distances to A(a, 0) and B(0, b) are equal
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
+          statement: `Identify the geometric locus of points $M(z)$ in the Argand plane satisfying $|z - (${a})| = |z - (${b}i)|$ (trap: confusing $|z - z_A| = |z - z_B|$ with a circle instead of a line).`,
+          statementAr: `حدد المحل الهندسي للنقاط $M(z)$ التي تحقق $|z - (${a})| = |z - (${b}i)|$ (انتبه: تساوي البعدين يعطي محور قطعة مستقيمة لا دائرة).`,
+          steps: [
+            `Let $A(${a}, 0)$ and $B(0, ${b})$; the equality $MA = MB$ characterizes points equidistant from $A$ and $B$.`,
+            `Thus the locus is the perpendicular bisector of segment $[AB]$.`
+          ],
+          stepsAr: [
+            `المساواة تعني $MA = MB$ حيث $A(${a}, 0)$ و $B(0, ${b})$.`,
+            `المحل الهندسي هو محور القطعة المستقيمة $[AB]$.`
+          ],
+          answer: `\\text{Perpendicular bisector of } [AB]`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: Translation z' = z + b vs Rotation around origin z' = e^(i alpha) z
+        const alpha = Rand.pick(["\\frac{\\pi}{2}", "-\\frac{\\pi}{2}", "\\pi"]);
+        const factorTex = alpha === "\\frac{\\pi}{2}" ? "i" : (alpha === "-\\frac{\\pi}{2}" ? "-i" : "-1");
+        const z0x = Rand.nonZeroInt(-3, 3);
+        const z0y = Rand.nonZeroInt(-3, 3);
+        // Multiply (z0x + z0y i) by factorTex
+        let rx = z0x, ry = z0y;
+        if (factorTex === "i") { rx = -z0y; ry = z0x; }
+        else if (factorTex === "-i") { rx = z0y; ry = -z0x; }
+        else { rx = -z0x; ry = -z0y; }
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
+          statement: `Under a rotation of center $O$ and angle $${alpha}$, find the affix $z'$ of the image of $M$ with affix $z = ${z0x}${z0y >= 0 ? ` + ${z0y}i` : ` - ${Math.abs(z0y)}i`}$.`,
+          statementAr: `بدوران مركزه $O$ وزاويته $${alpha}$، أوجد لاحقة صورة النقطة ذات اللاحقة $z = ${z0x}${z0y >= 0 ? ` + ${z0y}i` : ` - ${Math.abs(z0y)}i`}$.`,
+          steps: [
+            `Rotation around $O$ by angle $${alpha}$ acts via $z' = e^{i(${alpha})}z = (${factorTex})z$.`,
+            `Computing $(${factorTex})(${z0x}${z0y >= 0 ? ` + ${z0y}i` : ` - ${Math.abs(z0y)}i`})$ gives $z' = ${rx}${ry >= 0 ? ` + ${ry}i` : ` - ${Math.abs(ry)}i`}$.`
+          ],
+          stepsAr: [
+            `عبارة الدوران هي $z' = (${factorTex})z$.`,
+            `بالضرب نحصل على $z' = ${rx}${ry >= 0 ? ` + ${ry}i` : ` - ${Math.abs(ry)}i`}$.`
+          ],
+          answer: `z' = ${rx}${ry >= 0 ? ` + ${ry}i` : ` - ${Math.abs(ry)}i`}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Collinearity check via (z_C - z_A)/(z_B - z_A) being real
+        const ax = Rand.nonZeroInt(-2, 2);
+        const ay = Rand.nonZeroInt(-2, 2);
+        const dx = Rand.nonZeroInt(-3, 3);
+        const dy = Rand.nonZeroInt(-3, 3);
+        const k = Rand.pick([2, 3]);
+        const bx = ax + dx, by = ay + dy;
+        const cx = ax + k * dx, cy = ay + k * dy;
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
+          statement: `Given $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$, $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$, and $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$, compute $\\dfrac{z_C - z_A}{z_B - z_A}$ and deduce whether $A, B, C$ are collinear.`,
+          statementAr: `لتكن $A$ و $B$ و $C$ ذات اللواحق المعطاة، احسب $\\dfrac{z_C - z_A}{z_B - z_A}$ واستنتج استقامية النقاط.`,
+          steps: [
+            `$z_C - z_A = ${k}(z_B - z_A)$, so $\\dfrac{z_C - z_A}{z_B - z_A} = ${k} \\in \\mathbb{R}^*$.`,
+            `A real non-zero ratio means $\\arg\\!\\left(\\frac{z_C - z_A}{z_B - z_A}\\right) \\equiv 0 \\pmod{\\pi}$, so $A, B, C$ are collinear.`
+          ],
+          stepsAr: [
+            `النسبة تساوي ${k} وهو عدد حقيقي غير معدوم.`,
+            `إذن النقاط $A$ و $B$ و $C$ على استقامة واحدة.`
+          ],
+          answer: `\\frac{z_C - z_A}{z_B - z_A} = ${k} \\implies \\text{collinear}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
     }
 
     function genCountingTechniques() {
-      const mode = Rand.pick(["combinations", "arrangements"]);
-      if (mode === "combinations") {
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Committee combinations (order does NOT matter)
         const men = Rand.int(4, 7);
         const women = Rand.int(3, 6);
         const kMen = Rand.int(1, 3);
@@ -1451,44 +2274,105 @@
         const ans = cMen * cWomen;
 
         return {
-          book: "Algebra and Vectors",
-          bookAr: "الجبر والأشعة",
-          unit: "Counting Techniques",
-          unitAr: "طرائق العد",
-          statement: `A committee of $${totalSize}$ members is selected simultaneously from $${men}$ men and $${women}$ women. How many committees contain exactly $${kMen}$ ${kMen === 1 ? "man" : "men"} and $${kWomen}$ ${kWomen === 1 ? "woman" : "women"}?`,
-          statementAr: `نختار لجنة مؤلفة من $${totalSize}$ أعضاء دفعة واحدة من بين $${men}$ رجال و $${women}$ نساء. بكم طريقة يمكن تشكيل لجنة تضم $${kMen}$ ${kMen === 1 ? "رجلاً" : "رجال"} و $${kWomen}$ ${kWomen === 1 ? "امرأة" : "نساء"} بالضبط؟`,
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Counting Techniques", unitAr: "طرائق العد",
+          statement: `Select a committee of $${totalSize}$ members from $${men}$ men and $${women}$ women with exactly $${kMen}$ ${kMen === 1 ? "man" : "men"} and $${kWomen}$ ${kWomen === 1 ? "woman" : "women"}. How many ways?`,
+          statementAr: `نختار لجنة من $${totalSize}$ أعضاء من بين $${men}$ رجال و $${women}$ نساء بحيث تضم $${kMen}$ ${kMen === 1 ? "رجلاً" : "رجال"} و $${kWomen}$ ${kWomen === 1 ? "امرأة" : "نساء"}. بكم طريقة؟`,
           steps: [
-            `Since order does not matter in a committee, use combinations $\\binom{n}{r} = \\dfrac{n!}{r!(n-r)!}$.`,
-            `Select $${kMen}$ ${kMen === 1 ? "man" : "men"} out of $${men}$ in $\\binom{${men}}{${kMen}} = ${cMen}$ ways, and $${kWomen}$ ${kWomen === 1 ? "woman" : "women"} out of $${women}$ in $\\binom{${women}}{${kWomen}} = ${cWomen}$ ways.`,
-            `By the fundamental counting principle (multiplication rule), total committees $= ${cMen} \\times ${cWomen} = ${ans}$.`
+            `Order is irrelevant, so use $\\binom{${men}}{${kMen}} = ${cMen}$ and $\\binom{${women}}{${kWomen}} = ${cWomen}$.`,
+            `Multiply: ${cMen} \\times ${cWomen} = ${ans}.`
           ],
           stepsAr: [
-            `لأن الترتيب غير مهم في اللجنة نستخدم التوافيق $\\binom{n}{r} = \\dfrac{n!}{r!(n-r)!}$.`,
-            `نختار الرجال بـ $\\binom{${men}}{${kMen}} = ${cMen}$ طريقة، والنساء بـ $\\binom{${women}}{${kWomen}} = ${cWomen}$ طريقة.`,
-            `بحسب المبدأ الأساسي للعد، العدد الكلي للجان هو ${cMen} \\times ${cWomen} = ${ans}$.`
+            `الترتيب غير مهم فنستخدم التوافيق: $\\binom{${men}}{${kMen}} = ${cMen}$ و $\\binom{${women}}{${kWomen}} = ${cWomen}$.`,
+            `العدد الكلي هو ${cMen} \\times ${cWomen} = ${ans}.`
           ],
           answer: `${ans}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
+      } else if (idx === 1) {
+        // Trap 2: Arrangements (order matters, no repetition)
         const n = Rand.int(5, 8);
         const k = Rand.int(2, 4);
         const ans = MathFmt.perm(n, k);
 
         return {
-          book: "Algebra and Vectors",
-          bookAr: "الجبر والأشعة",
-          unit: "Counting Techniques",
-          unitAr: "طرائق العد",
-          statement: `From a group of $${n}$ distinct candidates, how many ordered selections of $${k}$ distinct positions (for example: President, Vice-President, Secretary, Treasurer) can be formed without repetition?`,
-          statementAr: `من بين $${n}$ مرشحين مختلفين، بكم طريقة يمكن اختيار $${k}$ مناصب متمايزة ومرتبة (مثلاً: رئيس، نائب رئيس، أمين سر، أمين صندوق) دون تكرار؟`,
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Counting Techniques", unitAr: "طرائق العد",
+          statement: `How many ordered selections of $${k}$ distinct roles can be chosen from $${n}$ candidates without repetition?`,
+          statementAr: `بكم طريقة يمكن اختيار $${k}$ مناصب مرتبة ومختلفة من بين $${n}$ مرشحاً دون تكرار؟`,
           steps: [
-            `Because the $${k}$ positions are distinct and repetition is not allowed, use arrangements (permutations) $A_{n}^{k} = \\dfrac{n!}{(n-k)!}$.`,
-            `Compute $A_{${n}}^{${k}} = ${n} \\times ${n - 1}${k >= 3 ? ` \\times ${n - 2}` : ""}${k >= 4 ? ` \\times ${n - 3}` : ""} = ${ans}$.`
+            `Distinct ordered roles without repetition: $A_{${n}}^{${k}} = \\dfrac{${n}!}{(${n}-${k})!} = ${ans}$.`
           ],
           stepsAr: [
-            `لأن المناصب متمايزة والترتيب مهم دون تكرار نستخدم التراتيب $A_{n}^{k} = \\dfrac{n!}{(n-k)!}$.`,
-            `نحسب $A_{${n}}^{${k}} = ${n} \\times ${n - 1}${k >= 3 ? ` \\times ${n - 2}` : ""}${k >= 4 ? ` \\times ${n - 3}` : ""} = ${ans}$.`
+            `الترتيب مهم دون تكرار فنستخدم التراتيب: $A_{${n}}^{${k}} = ${ans}$.`
+          ],
+          answer: `${ans}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: "At least one" complement trick (total minus none)
+        const total = Rand.int(6, 9);
+        const special = Rand.int(2, 4);
+        const pick = Rand.int(2, 3);
+        const allWays = MathFmt.comb(total, pick);
+        const noneWays = MathFmt.comb(total - special, pick);
+        const atLeastOne = allWays - noneWays;
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Counting Techniques", unitAr: "طرائق العد",
+          statement: `From $${total}$ items ($${special}$ are defective), $${pick}$ are chosen at random. How many choices include at least $1$ defective item (trap: multiplying $\\binom{${special}}{1}$ by $\\binom{${total-1}}{${pick-1}}$ double-counts multiple defectives!)?`,
+          statementAr: `من بين $${total}$ قطعة (منها $${special}$ تالفة) نختار $${pick}$ قطع. بكم طريقة نحوي على قطعة تالفة واحدة على الأقل (انتبه لعدم التكرار باستخدام المتمم).`,
+          steps: [
+            `Total subsets of size $${pick}$: $\\binom{${total}}{${pick}} = ${allWays}$.`,
+            `Subsets with $0$ defectives: $\\binom{${total - special}}{${pick}} = ${noneWays}$, so at least one defective $= ${allWays} - ${noneWays} = ${atLeastOne}$.`
+          ],
+          stepsAr: [
+            `المجموع الكلي هو $\\binom{${total}}{${pick}} = ${allWays}$ والحالات الخالية من التالف هي $\\binom{${total - special}}{${pick}} = ${noneWays}$.`,
+            `بالطرح نجد ${allWays} - ${noneWays} = ${atLeastOne}.`
+          ],
+          answer: `${atLeastOne}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: Password / code with repetition allowed (n^k vs n! / (n-k)!)
+        const digits = Rand.int(4, 7);
+        const length = Rand.int(2, 4);
+        const ans = Math.pow(digits, length);
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Counting Techniques", unitAr: "طرائق العد",
+          statement: `How many $${length}$-digit codes can be formed using digits from $\\{1, 2, \\dots, ${digits}\\}$ when repetition IS allowed?`,
+          statementAr: `كم رمزاً مؤلفاً من $${length}$ أرقام يمكن تشكيله من الأرقام $1$ إلى $${digits}$ مع السماح بالتكرار؟`,
+          steps: [
+            `Each of the $${length}$ positions has $${digits}$ choices independently: $${digits}^{${length}} = ${ans}$.`
+          ],
+          stepsAr: [
+            `لكل خانة من الخانات الـ $${length}$ لدينا $${digits}$ خيارات، فالعدد هو $${digits}^{${length}} = ${ans}$.`
+          ],
+          answer: `${ans}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Anagram / word arrangements with repeated letters (n! / (k1! * k2!))
+        // Example: "AA BB" -> 4! / (2! * 2!) = 6, or "AAA B" -> 4! / 3! = 4
+        const nA = Rand.int(2, 3);
+        const nB = Rand.int(1, 2);
+        const totalLetters = nA + nB;
+        // fact(totalLetters) / (fact(nA) * fact(nB)) = comb(totalLetters, nA)
+        const ans = MathFmt.comb(totalLetters, nA);
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Counting Techniques", unitAr: "طرائق العد",
+          statement: `How many distinct arrangements can be made using $${nA}$ identical letters "A" and $${nB}$ identical letters "B" (total $${totalLetters}$ letters)?`,
+          statementAr: `كم كلمة (ترتيباً مختلفاً) يمكن تشكيلها باستخدام $${nA}$ حرفاً من النوع A و $${nB}$ حرفاً من النوع B (المجموع $${totalLetters}$ أحرف)؟`,
+          steps: [
+            `Divide total permutations $${totalLetters}!$ by indistinguishable permutations $${nA}! \\cdot ${nB}!$: $\\dfrac{${totalLetters}!}{${nA}!${nB}!} = ${ans}$.`
+          ],
+          stepsAr: [
+            `نقسم تباديل الأحرف الكلية على مضروب تكرار كل حرف: $\\dfrac{${totalLetters}!}{${nA}!${nB}!} = ${ans}$.`
           ],
           answer: `${ans}`,
           answerLabelAr: "الجواب النهائي"
@@ -1497,29 +2381,116 @@
     }
 
     function genProbability() {
-      const r = Rand.int(3, 6);
-      const b = Rand.int(2, 5);
-      const total = r + b;
-      const prob = MathFmt.frac(r * (r - 1), total * (total - 1));
+      const idx = Rand.int(0, 4);
+      if (idx === 0) {
+        // Trap 1: Successive drawing WITHOUT replacement
+        const r = Rand.int(3, 6);
+        const b = Rand.int(2, 5);
+        const total = r + b;
+        const prob = MathFmt.frac(r * (r - 1), total * (total - 1));
 
-      return {
-        book: "Algebra and Vectors",
-        bookAr: "الجبر والأشعة",
-        unit: "Probability",
-        unitAr: "الاحتمالات",
-        statement: `An urn contains $${r}$ red balls and $${b}$ blue balls. Two balls are drawn successively without replacement. Compute the probability that both drawn balls are red.`,
-        statementAr: `يحتوي صندوق على $${r}$ كرات حمراء و $${b}$ كرات زرقاء. نسحب كرتين على التتالي دون إعادة. احسب احتمال أن تكون الكرتان المسحوبتان حمراوين.`,
-        steps: [
-          `Total balls: $N = ${total}$.`,
-          `$P(R_1 \\cap R_2) = \\dfrac{${r}}{${total}} \\cdot \\dfrac{${r - 1}}{${total - 1}} = \\dfrac{${r * (r - 1)}}{${total * (total - 1)}} = ${MathFmt.texFrac(prob)}$.`
-        ],
-        stepsAr: [
-          `العدد الكلي للكرات: $N = ${total}$.`,
-          `$P(R_1 \\cap R_2) = \\dfrac{${r}}{${total}} \\cdot \\dfrac{${r - 1}}{${total - 1}} = \\dfrac{${r * (r - 1)}}{${total * (total - 1)}} = ${MathFmt.texFrac(prob)}$.`
-        ],
-        answer: `P = ${MathFmt.texFrac(prob)}`,
-        answerLabelAr: "الجواب النهائي"
-      };
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Probability", unitAr: "الاحتمالات",
+          statement: `An urn has $${r}$ red and $${b}$ blue balls. Two balls are drawn successively without replacement. Find the probability both are red.`,
+          statementAr: `صندوق يحوي $${r}$ كرات حمراء و $${b}$ كرات زرقاء. نسحب كرتين على التتالي دون إعادة. احسب احتمال أن تكونا حمراوين.`,
+          steps: [
+            `First red has probability $\\frac{${r}}{${total}}$; without replacement, second red has $\\frac{${r - 1}}{${total - 1}}$.`,
+            `Product: $\\dfrac{${r * (r - 1)}}{${total * (total - 1)}} = ${MathFmt.texFrac(prob)}$.`
+          ],
+          stepsAr: [
+            `احتمال الأولى حمراء $\\frac{${r}}{${total}}$ والثانية دون إعادة $\\frac{${r - 1}}{${total - 1}}$.`,
+            `الجداء يساوي ${MathFmt.texFrac(prob)}.`
+          ],
+          answer: `P = ${MathFmt.texFrac(prob)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 1) {
+        // Trap 2: Conditional probability P(A | B) = P(A n B) / P(B) (dividing by P(A) instead of P(B)!)
+        const pAnB = MathFmt.frac(1, 6);
+        const pB = MathFmt.frac(1, 2);
+        const condFrac = MathFmt.frac(pAnB.n * pB.d, pAnB.d * pB.n);
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Probability", unitAr: "الاحتمالات",
+          statement: `Given $P(A \\cap B) = \\dfrac{1}{6}$ and $P(B) = \\dfrac{1}{2}$, compute $P(A \\mid B)$ (trap: dividing by $P(A)$ rather than the conditioning event $P(B)$).`,
+          statementAr: `إذا كان $P(A \\cap B) = \\dfrac{1}{6}$ و $P(B) = \\dfrac{1}{2}$، احسب الاحتمال الشرطي $P(A \\mid B)$ (انتبه للقسمة على احتمال الحدث الشرطي $P(B)$).`,
+          steps: [
+            `By definition, $P(A \\mid B) = \\dfrac{P(A \\cap B)}{P(B)} = \\dfrac{1/6}{1/2} = ${MathFmt.texFrac(condFrac)}$.`
+          ],
+          stepsAr: [
+            `بحسب التعريف: $P(A \\mid B) = \\dfrac{P(A \\cap B)}{P(B)} = ${MathFmt.texFrac(condFrac)}$.`
+          ],
+          answer: `P(A \\mid B) = ${MathFmt.texFrac(condFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 2) {
+        // Trap 3: P(A U B) when A and B are NOT disjoint: P(A) + P(B) - P(A n B)
+        const pA = MathFmt.frac(1, 2);
+        const pB = MathFmt.frac(1, 3);
+        const pInter = MathFmt.frac(1, 6);
+        const unionFrac = MathFmt.subFrac(MathFmt.addFrac(pA, pB), pInter);
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Probability", unitAr: "الاحتمالات",
+          statement: `If $P(A) = \\dfrac{1}{2}$, $P(B) = \\dfrac{1}{3}$, and $P(A \\cap B) = \\dfrac{1}{6}$, find $P(A \\cup B)$ (trap: adding $P(A) + P(B)$ without subtracting $P(A \\cap B)$).`,
+          statementAr: `إذا كان $P(A) = \\dfrac{1}{2}$ و $P(B) = \\dfrac{1}{3}$ و $P(A \\cap B) = \\dfrac{1}{6}$، احسب $P(A \\cup B)$ (انتبه لطرح التقاطع).`,
+          steps: [
+            `$P(A \\cup B) = P(A) + P(B) - P(A \\cap B) = \\dfrac{1}{2} + \\dfrac{1}{3} - \\dfrac{1}{6} = ${MathFmt.texFrac(unionFrac)}$.`
+          ],
+          stepsAr: [
+            `$P(A \\cup B) = \\dfrac{1}{2} + \\dfrac{1}{3} - \\dfrac{1}{6} = ${MathFmt.texFrac(unionFrac)}$.`
+          ],
+          answer: `P(A \\cup B) = ${MathFmt.texFrac(unionFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 3) {
+        // Trap 4: Law of total probability with two partitions
+        const pE1 = MathFmt.frac(1, 4);
+        const pE2 = MathFmt.frac(3, 4);
+        const pAonE1 = MathFmt.frac(2, 3);
+        const pAonE2 = MathFmt.frac(1, 3);
+        const totalP = MathFmt.addFrac(MathFmt.mulFrac(pE1, pAonE1), MathFmt.mulFrac(pE2, pAonE2));
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Probability", unitAr: "الاحتمالات",
+          statement: `A partition $\\{E_1, E_2\\}$ has $P(E_1) = \\dfrac{1}{4}$ and $P(E_2) = \\dfrac{3}{4}$, with $P(A \\mid E_1) = \\dfrac{2}{3}$ and $P(A \\mid E_2) = \\dfrac{1}{3}$. Compute $P(A)$.`,
+          statementAr: `تجزئة $\\{E_1, E_2\\}$ تحقق $P(E_1) = \\dfrac{1}{4}$ و $P(E_2) = \\dfrac{3}{4}$، مع $P(A \\mid E_1) = \\dfrac{2}{3}$ و $P(A \\mid E_2) = \\dfrac{1}{3}$. احسب $P(A)$.`,
+          steps: [
+            `Law of total probability: $P(A) = P(E_1)P(A \\mid E_1) + P(E_2)P(A \\mid E_2)$.`,
+            `$P(A) = \\dfrac{1}{4}\\cdot\\dfrac{2}{3} + \\dfrac{3}{4}\\cdot\\dfrac{1}{3} = \\dfrac{1}{6} + \\dfrac{1}{4} = ${MathFmt.texFrac(totalP)}$.`
+          ],
+          stepsAr: [
+            `بحسب قانون الاحتمال الكلي: $P(A) = \\dfrac{1}{4}\\cdot\\dfrac{2}{3} + \\dfrac{3}{4}\\cdot\\dfrac{1}{3} = ${MathFmt.texFrac(totalP)}$.`
+          ],
+          answer: `P(A) = ${MathFmt.texFrac(totalP)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Trap 5: Binomial probability P(X = k) = C(n, k) * p^k * (1-p)^(n-k) — watch binomial coefficient!
+        const n = 3;
+        const k = 1;
+        // p = 1/3 -> C(3, 1) * (1/3)^1 * (2/3)^2 = 3 * (1/3) * (4/9) = 4/9
+        const prob = MathFmt.frac(4, 9);
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Probability", unitAr: "الاحتمالات",
+          statement: `In $3$ independent Bernoulli trials with success probability $p = \\dfrac{1}{3}$, find the probability of getting exactly $1$ success (trap: forgetting the binomial coefficient $\\binom{3}{1} = 3$ for the positions of the success).`,
+          statementAr: `في $3$ تجارب برنولي مستقلة احتمال النجاح في كل منها $p = \\dfrac{1}{3}$، احسب احتمال الحصول على نجاح واحد بالضبط (انتبه لمعامل التوفيقة $\\binom{3}{1}$).`,
+          steps: [
+            `$P(X = 1) = \\binom{3}{1} \\left(\\dfrac{1}{3}\\right)^1 \\left(\\dfrac{2}{3}\\right)^2 = 3 \\cdot \\dfrac{1}{3} \\cdot \\dfrac{4}{9} = ${MathFmt.texFrac(prob)}$.`
+          ],
+          stepsAr: [
+            `$P(X = 1) = \\binom{3}{1} \\left(\\dfrac{1}{3}\\right)^1 \\left(\\dfrac{2}{3}\\right)^2 = ${MathFmt.texFrac(prob)}$.`
+          ],
+          answer: `P(X = 1) = ${MathFmt.texFrac(prob)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
     }
 
     /* =========================================================================
