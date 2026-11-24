@@ -967,13 +967,12 @@
     };
 
     /* =========================================================================
-       2. BOOK 1: ANALYSIS GENERATORS (7 UNITS × 5 TRAP TEMPLATES EACH, EN + AR)
+       2. BOOK 1: ANALYSIS GENERATORS (7 UNITS, EN + AR)
        ========================================================================= */
 
     function genSequences() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: Affine sequence with a < 0 (oscillating signs + false fixed-point trap)
         const a = Rand.pick([-2, -3]);
         const oneMinusA = 1 - a;
         const k = Rand.nonZeroInt(-3, 3);
@@ -1004,7 +1003,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Telescoping sum starting at k = 1 with off-by-one term trap
         const m = Rand.int(4, 12);
         const sFrac = MathFmt.frac(m, m + 1);
         return {
@@ -1026,18 +1024,10 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Reciprocal transformation v_n = 1/(u_n - c) — Syrian Bac staple
         const c = Rand.nonZeroInt(-3, 3);
-        const d = Rand.nonZeroInt(-3, 3);
-        // u_{n+1} - c = d(u_n - c)/(1 + ...) -> make v_{n+1} = q v_n + r cleanly
-        // Suppose u_{n+1} = c + 1 / (a/(u_n - c) + b) ? Better: v_n = 1/(u_n - c), v_{n+1} = k v_n
         const k = Rand.pick([2, 3, 4]);
-        let v0 = Rand.nonZeroInt(-3, 3);
-        // u_0 = c + 1/v0; choose v0 = 1 or -1 or 1/2 so u0 is clean integer
-        v0 = Rand.pick([-1, 1]);
+        const v0 = Rand.pick([-1, 1]);
         const u0 = c + v0;
-        // v_{n+1} = k v_n => 1/(u_{n+1}-c) = k/(u_n-c) => u_{n+1} - c = (u_n - c)/k
-        // Let's make v_{n+1} = k v_n -> u_{n+1} = c + (u_n - c)/k
         const targetN = Rand.int(2, 4);
         const vN = v0 * Math.pow(k, targetN);
         const uNFrac = MathFmt.addFrac({ n: c, d: 1 }, { n: 1, d: vN });
@@ -1061,11 +1051,9 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: Geometric sum with index count trap (n+1 terms vs n terms)
         const q = Rand.pick([2, 3, -2]);
         const u0 = Rand.nonZeroInt(-3, 4);
         const n = Rand.int(3, 5);
-        // Sum_{k=0}^{n} u0 * q^k = u0 * (q^(n+1) - 1) / (q - 1)
         const num = u0 * (Math.pow(q, n + 1) - 1);
         const den = q - 1;
         const sFrac = MathFmt.frac(num, den);
@@ -1087,12 +1075,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Adjacent sequences (u_n and v_n) where u_n - v_n is geometric -> limit trap
-        const a = Rand.pick([0.5, 0.25]);
-        const aFrac = a === 0.5 ? MathFmt.frac(1, 2) : MathFmt.frac(1, 4);
+        const aFrac = Rand.pick([MathFmt.frac(1, 2), MathFmt.frac(1, 4)]);
         const diff0 = Rand.nonZeroInt(-4, 4);
-        const baseConst = Rand.nonZeroInt(-3, 4);
-        // Suppose w_n = u_n - v_n has w_0 = diff0, w_{n+1} = aFrac * w_n, and u_n + v_n -> 2*baseConst
         const wTarget = MathFmt.mulFrac({ n: diff0, d: 1 }, MathFmt.frac(Math.pow(aFrac.n, 3), Math.pow(aFrac.d, 3)));
 
         return {
@@ -1115,9 +1099,8 @@
     }
 
     function genLimits() {
-      const idx = Rand.int(0, 4);
+      const idx = Rand.int(0, 9);
       if (idx === 0) {
-        // Trap 1: Composite limit f[f(x)] with one-sided approach to vertical asymptote
         const c = Rand.pick([1, 2, 3]);
         const r = Rand.nonZeroInt(-4, 4);
         const a = c * r;
@@ -1149,7 +1132,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Floor function squeeze limit at +infinity
         const a = Rand.int(1, 5);
         const b = Rand.int(1, 6);
         const c = Rand.int(1, 4);
@@ -1173,11 +1155,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Indeterminate form sqrt(ax^2 + bx + c) + dx as x -> -infinity (sign trap!)
         const k = Rand.pick([1, 2, 3]);
         const b = Rand.nonZeroInt(-4, 4);
-        // sqrt(k^2 x^2 + b x + 1) + k x as x -> -infinity:
-        // Let u = -x -> +infinity: sqrt(k^2 u^2 - b u + 1) - k u -> -b / (2k)
         const kSq = k * k;
         const limFrac = MathFmt.frac(-b, 2 * k);
 
@@ -1198,7 +1177,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: sin(ax) / sin(bx) as x -> 0
         const a = Rand.nonZeroInt(-5, 5);
         const b = Rand.nonZeroInt(-5, 5);
         const limFrac = MathFmt.frac(a, b);
@@ -1219,12 +1197,10 @@
           answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(limFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        // Trap 5: Oblique asymptote remainder sign trap at +infinity vs -infinity
+      } else if (idx === 4) {
         const m = Rand.nonZeroInt(-3, 3);
         const p = Rand.nonZeroInt(-4, 4);
         const a0 = Rand.nonZeroInt(-4, 4);
-        // f(x) = mx + p + a0 / (x - r)
         const r = Rand.nonZeroInt(-3, 3);
         const remSign = a0 > 0 ? "0^+" : "0^-";
 
@@ -1244,13 +1220,130 @@
           answer: `y = ${MathFmt.linear(m, p, "x")}; \\; f(x)-y \\to ${remSign}`,
           answerLabelAr: "الجواب النهائي"
         };
+      } else if (idx === 5) {
+        // Two-Trap Hard 1: Conjugating sqrt(k^2 x^2 + bx + 1) + kx as x -> -infinity AND dividing by (-x)
+        const k = Rand.pick([2, 3]);
+        const b = Rand.nonZeroInt(-4, 4);
+        const kSq = k * k;
+        const limFrac = MathFmt.frac(-b, 2 * k);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$ [Two traps: (1) $\\sqrt{${kSq}x^2} = -${k}x$ for $x < 0$, so multiplying by the conjugate leaves $-${k}x$ in the denominator, NOT $+${k}x$; (2) dividing top and bottom by $-x$ keeps sign alignment].`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$ [فخان: (1) لأن $x < 0$ فإن $\\sqrt{${kSq}x^2} = -${k}x$ فتصبح إشارة المرافق $-${k}x$؛ (2) القسمة على $-x$ تحافظ على الإشارات بدقة].`,
+          steps: [
+            `Trap 1: As $x \\to -\\infty$, $\\sqrt{${kSq}x^2 + \\cdots} \\sim -${k}x$, so adding $${k}x$ is $\\infty - \\infty$. Multiply by $\\dfrac{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}$ to get $\\dfrac{${b}x + 1}{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}$.`,
+            `Trap 2: Factor $-x > 0$ from the denominator to get $-x\\!\\left(\\sqrt{${kSq} + \\frac{${b}}{x} + \\frac{1}{x^2}} + ${k}\\right)$, cancel $x$, and take $x \\to -\\infty$: $\\dfrac{${b}}{${k} + ${k}} = ${MathFmt.texFrac(limFrac)}$.`
+          ],
+          stepsAr: [
+            `الفخ الأول: عند $-\\infty$ نضرب بالمرافق لإزالة $\\infty - \\infty$ مع الانتباه أن المقام يحوي $-${k}x$.`,
+            `الفخ الثاني: بإخراج $-x$ من المقام واختزاله مع البسط نجد النهاية $${MathFmt.texFrac(limFrac)}$.`
+          ],
+          answer: `\\lim_{x \\to -\\infty} = ${MathFmt.texFrac(limFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 6) {
+        // Two-Trap Hard 2: (e^(k x^2) - cos(b x)) / x^2 as x -> 0
+        const k = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-4, 4);
+        // lim_{x->0} (e^(k x^2) - 1)/x^2 = k, and lim_{x->0} (1 - cos(bx))/x^2 = b^2 / 2
+        // Note: e^(k x^2) - cos(bx) = (e^(k x^2) - 1) + (1 - cos(bx))
+        const bSqHalf = MathFmt.frac(b * b, 2);
+        const totalLim = MathFmt.addFrac({ n: k, d: 1 }, bSqHalf);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(k, "x^2", true)}} - \\cos(${MathFmt.coeff(b, "x", true)})}{x^2}$ [Two traps: (1) $\\displaystyle\\lim_{t \\to 0} \\dfrac{1 - \\cos t}{t^2} = \\frac{1}{2}$, so $\\dfrac{1 - \\cos(${b}x)}{x^2} \\to \\dfrac{(${b})^2}{2}$ — squaring $${b}$, NOT multiplying by $2$; (2) splitting as $(e^{${MathFmt.coeff(k, "x^2", true)}} - 1) + (1 - \\cos(${MathFmt.coeff(b, "x", true)}))$].`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(k, "x^2", true)}} - \\cos(${MathFmt.coeff(b, "x", true)})}{x^2}$ [فخان: (1) في $\\frac{1 - \\cos(${b}x)}{x^2}$ نربع $${b}$ وليس ضربها بـ $2$؛ (2) تفكيك البسط إلى $(e^{...} - 1) + (1 - \\cos(...))$].`,
+          steps: [
+            `Split numerator: $\\dfrac{e^{${MathFmt.coeff(k, "x^2", true)}} - 1}{x^2} + \\dfrac{1 - \\cos(${MathFmt.coeff(b, "x", true)})}{x^2}$.`,
+            `First term tends to $${k}$; second term equals $\\dfrac{1 - \\cos(${b}x)}{(${b}x)^2} \\cdot ${b * b} \\to \\dfrac{1}{2} \\cdot ${b * b} = ${MathFmt.texFrac(bSqHalf)}$, giving $${MathFmt.texFrac(totalLim)}$.`
+          ],
+          stepsAr: [
+            `نفكك البسط إلى حد أسي وآخر مثلثي كما في الخطوة الأولى.`,
+            `الأول نهايته $${k}$ والثاني نهايته $${MathFmt.texFrac(bSqHalf)}$، والمجموع $${MathFmt.texFrac(totalLim)}$.`
+          ],
+          answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(totalLim)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 7) {
+        // Two-Trap Hard 3: lim_{x -> +infinity} x * (ln(x + a) - ln(x - b)) = a + b
+        const a = Rand.int(1, 4);
+        const b = Rand.int(1, 4);
+        const sumAB = a + b;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} x\\Big[\\ln(x + ${a}) - \\ln(x - ${b})\\Big]$ [Two traps: (1) $\\infty \\cdot 0$ is indeterminate, not $0$; (2) $\\ln\\!\\left(\\frac{x+${a}}{x-${b}}\\right) = \\ln\\!\\left(1 + \\frac{${sumAB}}{x - ${b}}\\right)$ has numerator $${sumAB}$ ($a - (-b)$), NOT $${a - b}$!].`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} x\\Big[\\ln(x + ${a}) - \\ln(x - ${b})\\Big]$ [فخان: (1) شكل عدم تعيين $\\infty \\cdot 0$؛ (2) فرق اللوغاريتم يعطي $\\frac{x+${a}}{x-${b}} = 1 + \\frac{${sumAB}}{x-${b}}$ بجمع $${a} + ${b}$].`,
+          steps: [
+            `Combine logarithms: $\\ln(x + ${a}) - \\ln(x - ${b}) = \\ln\\!\\left(1 + \\dfrac{${sumAB}}{x - ${b}}\\right)$.`,
+            `Write as $\\dfrac{\\ln\\!\\left(1 + \\frac{${sumAB}}{x-${b}}\\right)}{\\frac{${sumAB}}{x-${b}}} \\cdot \\dfrac{${sumAB}x}{x - ${b}} \\to 1 \\cdot ${sumAB} = ${sumAB}$ as $x \\to +\\infty$.`
+          ],
+          stepsAr: [
+            `نجمع اللوغاريتمين لنحصل على $\\ln\\!\\left(1 + \\dfrac{${sumAB}}{x - ${b}}\\right)$.`,
+            `بالاعتماد على نهاية $\\frac{\\ln(1+t)}{t}$ عند $t \\to 0$ نجد الناتج $${sumAB}$.`
+          ],
+          answer: `\\lim_{x \\to +\\infty} = ${sumAB}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 8) {
+        // Two-Trap Hard 4: One-sided limit with |x - r| and sqrt((x - r)^2) as x -> r^-
+        const r = Rand.nonZeroInt(-4, 4);
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(1, 4);
+        // For x < r: sqrt((x - r)^2) = r - x = -(x - r), |x - r| = -(x - r)
+        // Let f(x) = (sqrt((x - r)^2) + a * |x - r|) / (b * (x - r)) as x -> r^-
+        // Numerator = -(1 + a)(x - r), Denominator = b(x - r) -> limit is -(1 + a) / b
+        const limFrac = MathFmt.frac(-(1 + a), b);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Compute $\\displaystyle\\lim_{x \\to ${r}^-} \\dfrac{\\sqrt{(x - (${r}))^2} + ${MathFmt.coeff(a, "|x - (" + r + ")|", true)}}{${b}(x - (${r}))}$ [Two traps: (1) on $]-\\infty, ${r}[$, both $\\sqrt{(x-${r})^2}$ and $|x-${r}|$ equal $-(x-${r})$, NOT $+(x-${r})$; (2) after canceling $(x-${r})$, the minus sign from $-(1 + ${a})$ remains].`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to ${r}^-} \\dfrac{\\sqrt{(x - (${r}))^2} + ${MathFmt.coeff(a, "|x - (" + r + ")|", true)}}{${b}(x - (${r}))}$ [فخان: (1) على يسار $${r}$ نبدل إشارة الجذر والقيمة المطلقة إلى $-(x-${r})$؛ (2) الانتباه للإشارة السالبة بعد الاختزال].`,
+          steps: [
+            `For $x < ${r}$, $x - (${r}) < 0$, so $\\sqrt{(x - (${r}))^2} = -(x - (${r}))$ and $|x - (${r})| = -(x - (${r}))$.`,
+            `Numerator becomes $-(1 + ${a})(x - (${r}))$; dividing by $${b}(x - (${r}))$ gives $${MathFmt.texFrac(limFrac)}$.`
+          ],
+          stepsAr: [
+            `عند $x < ${r}$ يكون المقدار داخل الجذر والقيمة المطلقة سالباً فيُفك بإشارة ناقص.`,
+            `بعد الاختزال على $(x - (${r}))$ نحصل على النهاية $${MathFmt.texFrac(limFrac)}$.`
+          ],
+          answer: `\\lim_{x \\to ${r}^-} = ${MathFmt.texFrac(limFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Two-Trap Hard 5: lim_{x -> +infinity} (a x^2 + b x) * e^(-k x) with k > 0
+        const k = Rand.pick([1, 2]);
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-4, 4);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$ [Two traps: (1) $\\infty \\cdot 0$ is indeterminate — do NOT claim the polynomial wins or the limit is $\\pm\\infty$; (2) substitute $t = ${k}x \\to +\\infty$ so $x^2 e^{-${k === 1 ? "" : k}x} = \\frac{1}{${k * k}} t^2 e^{-t} \\to 0$].`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$ [فخان: (1) حالة عدم تعيين $\\infty \\cdot 0$ وليست لا نهاية؛ (2) التعويض بـ $t = ${k}x$ لإظهار غلبة الأسي السالب وتؤول إلى $0$].`,
+          steps: [
+            `As $x \\to +\\infty$, ${a}x^2 + ${b}x \\to \\pm\\infty$ while $e^{-${k === 1 ? "" : k}x} \\to 0$ ($\\infty \\cdot 0$ form).`,
+            `With $t = ${k}x$, $\\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-t} = \\left(\\frac{${a}}{${k * k}} t^2 + \\frac{${b}}{${k}} t\\right)e^{-t} \\to 0$ as $t \\to +\\infty$.`
+          ],
+          stepsAr: [
+            `المقدار على شكل عدم تعيين $\\infty \\cdot 0$ عند $+\\infty$.`,
+            `بوضع $t = ${k}x$ واستخدام النهاية الشهيرة $t^n e^{-t} \\to 0$ نجد النهاية تساوي $0$.`
+          ],
+          answer: `\\lim_{x \\to +\\infty} = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
       }
     }
 
     function genDifferentiation() {
-      const idx = Rand.int(0, 4);
+      const idx = Rand.int(0, 9);
       if (idx === 0) {
-        // Trap 1: f(cos x) or f(sin x) with sqrt(1 - u^2) sign trap on interval
         const k = Rand.nonZeroInt(-5, 5);
         const innerIsCos = Rand.pick([true, false]);
         const innerFn = innerIsCos ? "\\cos x" : "\\sin x";
@@ -1279,13 +1372,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Non-differentiability at a corner/cusp due to |u(x)|
-        const a = Rand.nonZeroInt(-4, 4);
-        const b = Rand.nonZeroInt(-4, 4);
-        // x0 = -b/a -> let's use a = 1 so x0 = -b is clean integer
         const x0 = Rand.nonZeroInt(-4, 4);
         const slope = Rand.nonZeroInt(-4, 4);
-        // f(x) = slope * |x - x0| + c
         const c = Rand.nonZeroInt(-3, 3);
         const leftDeriv = -slope;
         const rightDeriv = slope;
@@ -1307,12 +1395,10 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Derivative of (u/v) with sign distribution trap on numerator
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-4, 4);
         const c = Rand.pick([1, 2]);
         const d = Rand.nonZeroInt(-3, 3);
-        // f(x) = (ax + b) / (cx + d) -> f'(x) = (ad - bc) / (cx + d)^2
         const det = a * d - b * c;
 
         return {
@@ -1332,11 +1418,9 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: Tangent line equation at x0 when f'(x0) = 0 (horizontal tangent trap)
         const x0 = Rand.nonZeroInt(-3, 3);
         const k = Rand.pick([1, 2, 3]);
         const y0 = Rand.nonZeroInt(-4, 4);
-        // f(x) = k(x - x0)^2 + y0 -> f'(x0) = 0, tangent is y = y0
         const bCoeff = -2 * k * x0;
         const cCoeff = k * x0 * x0 + y0;
 
@@ -1356,8 +1440,7 @@
           answer: `y = ${y0}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        // Trap 5: Derivative of cos(ax + b) / sin(ax + b) frequency factor trap
+      } else if (idx === 4) {
         const a = Rand.nonZeroInt(-4, 4);
         const b = Rand.nonZeroInt(-3, 3);
         const useCos = Rand.pick([true, false]);
@@ -1382,13 +1465,133 @@
           answer: `f'(x) = ${derivTex}`,
           answerLabelAr: "الجواب النهائي"
         };
+      } else if (idx === 5) {
+        // Two-Trap Hard 1: Product + negative exponent chain rule f(x) = (x - r)^2 e^(-k x)
+        const r = Rand.nonZeroInt(-3, 3);
+        const k = Rand.pick([1, 2]);
+        // f'(x) = [2(x - r) - k(x - r)^2] e^(-kx) = (x - r)[2 - k(x - r)] e^(-kx)
+        // = (x - r)(-k x + k r + 2) e^(-kx)
+        const cConst = k * r + 2;
+        const x2 = r + MathFmt.texFrac(MathFmt.frac(2, k));
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = (x - (${r}))^2 e^{-${k === 1 ? "" : k}x}$ on $\\mathbb{R}$. Find $f'(x)$ in factored form and its zeros [Two traps: (1) $(e^{-${k === 1 ? "" : k}x})' = -${k}e^{-${k === 1 ? "" : k}x}$ carries a minus sign; (2) factoring $(x - (${r}))e^{-${k === 1 ? "" : k}x}$ leaves $2 - ${k}(x - (${r}))$, giving the second zero $x = ${x2}$].`,
+          statementAr: `لتكن $f(x) = (x - (${r}))^2 e^{-${k === 1 ? "" : k}x}$ على $\\mathbb{R}$. أوجد $f'(x)$ بالصيغة المحللة وانعداماته [فخان: (1) مشتق الأس السالب يحمل إشارة ناقص؛ (2) إخراج $(x - (${r}))e^{-...}$ بدقة لإيجاد الجذر الثاني $x = ${x2}$].`,
+          steps: [
+            `Product rule: $f'(x) = 2(x - (${r}))e^{-${k === 1 ? "" : k}x} - ${k}(x - (${r}))^2 e^{-${k === 1 ? "" : k}x}$.`,
+            `Factor $(x - (${r}))e^{-${k === 1 ? "" : k}x}$: $f'(x) = (x - (${r}))(${cConst}${MathFmt.coeff(-k, "x", false)})e^{-${k === 1 ? "" : k}x}$, vanishing at $x = ${r}$ and $x = ${x2}$.`
+          ],
+          stepsAr: [
+            `نطبق مشتق الجداء مع مشتق الأسي السالب.`,
+            `نخرج العامل المشترك فينعدم المشتق عند $x = ${r}$ و $x = ${x2}$.`
+          ],
+          answer: `f'(x) = (x - (${r}))(${cConst}${MathFmt.coeff(-k, "x", false)})e^{-${k === 1 ? "" : k}x}; \\; x \\in \\{${r}, ${x2}\\}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 6) {
+        // Two-Trap Hard 2: Derivative of ln|(x - p) / (x - q)|
+        const p = Rand.nonZeroInt(-3, 3);
+        let q = Rand.nonZeroInt(-3, 3);
+        while (q === p) q = Rand.nonZeroInt(-3, 3);
+        const diffPQ = p - q;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = \\ln\\!\\left|\\dfrac{x - (${p})}{x - (${q})}\\right|$ on $D_f = \\mathbb{R} \\setminus \\{${p}, ${q}\\}$. Compute $f'(x)$ [Two traps: (1) $\\ln\\!\\left|\\frac{x-${p}}{x-${q}}\\right| = \\ln|x-${p}| - \\ln|x-${q}|$, so $\\frac{1}{x-${p}} - \\frac{1}{x-${q}}$ has numerator $(x-${q}) - (x-${p}) = ${diffPQ}$, NOT ${-diffPQ}$; (2) domain excludes both $${p}$$ and $${q}$$].`,
+          statementAr: `لتكن $f(x) = \\ln\\!\\left|\\dfrac{x - (${p})}{x - (${q})}\\right|$ على $\\mathbb{R} \\setminus \\{${p}, ${q}\\}$. احسب $f'(x)$ [فخان: (1) بسط الفرق هو $(x-${q}) - (x-${p}) = ${diffPQ}$ وليس ${-diffPQ}$؛ (2) استبعاد القيمتين $${p}$$ و $${q}$$].`,
+          steps: [
+            `Decompose on $D_f$: $f(x) = \\ln|x - (${p})| - \\ln|x - (${q})|$.`,
+            `Differentiate: $f'(x) = \\dfrac{1}{x - (${p})} - \\dfrac{1}{x - (${q})} = \\dfrac{${diffPQ}}{(x - (${p}))(x - (${q}))}$.`
+          ],
+          stepsAr: [
+            `نفكك التابع إلى فرق لوغاريتمين على مجموعة التعريف.`,
+            `نشتق ونوحد المقامات فنجد $f'(x) = \\dfrac{${diffPQ}}{(x - (${p}))(x - (${q}))}$.`
+          ],
+          answer: `f'(x) = \\frac{${diffPQ}}{(x - (${p}))(x - (${q}))}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 7) {
+        // Two-Trap Hard 3: f(x) = e^(a x) sin(b x) derivative
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-4, 4);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Differentiate $f(x) = e^{${MathFmt.coeff(a, "x", true)}}\\sin(${MathFmt.coeff(b, "x", true)})$ on $\\mathbb{R}$ [Two traps: (1) inner derivative $${b}$ in $(\\sin(${b}x))' = ${b}\\cos(${b}x)$ and $${a}$ in $(e^{${a}x})' = ${a}e^{${a}x}$; (2) keeping both terms inside $e^{${MathFmt.coeff(a, "x", true)}}$ with proper signs].`,
+          statementAr: `اشتق التابع $f(x) = e^{${MathFmt.coeff(a, "x", true)}}\\sin(${MathFmt.coeff(b, "x", true)})$ على $\\mathbb{R}$ [فخان: (1) ضرب مشتق المضمون $${b}$ ومشتق الأس $${a}$؛ (2) إخراج $e^{...}$ كعامل مشترك دون إغفال أي حد].`,
+          steps: [
+            `Product rule: $f'(x) = (${a}e^{${MathFmt.coeff(a, "x", true)}})\\sin(${MathFmt.coeff(b, "x", true)}) + e^{${MathFmt.coeff(a, "x", true)}}(${b}\\cos(${MathFmt.coeff(b, "x", true)}))$.`,
+            `Factor out $e^{${MathFmt.coeff(a, "x", true)}}$: $f'(x) = e^{${MathFmt.coeff(a, "x", true)}}\\big(${a}\\sin(${MathFmt.coeff(b, "x", true)})${MathFmt.coeff(b, "\\cos(" + b + "x)", false)}\\big)$.`
+          ],
+          stepsAr: [
+            `نطبق مشتق الجداء مع اشتقاق التابع الأسي والمثلثي.`,
+            `نخرج $e^{...}$ كعامل مشترك فنحصل على الصيغة النهائية.`
+          ],
+          answer: `f'(x) = e^{${MathFmt.coeff(a, "x", true)}}\\big(${a}\\sin(${MathFmt.coeff(b, "x", true)})${MathFmt.coeff(b, "\\cos(" + b + "x)", false)}\\big)`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 8) {
+        // Two-Trap Hard 4: Tangent parallel to line y = m x + p for f(x) = x^2 + b x + c
+        const m = Rand.nonZeroInt(-4, 4);
+        const b = Rand.nonZeroInt(-4, 4);
+        const c = Rand.nonZeroInt(-5, 5);
+        // f(x) = x^2 + bx + c => f'(x0) = 2x0 + b = m => x0 = (m - b)/2
+        // Make m - b even so x0 is a clean integer!
+        const evenM = m + ((m - b) % 2 !== 0 ? 1 : 0);
+        const x0 = (evenM - b) / 2;
+        const y0 = x0 * x0 + b * x0 + c;
+        const pLine = y0 - evenM * x0;
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}$. Find the point $A(x_0, y_0)$ on $\\mathcal{C}_f$ where the tangent is parallel to $(d): y = ${evenM}x + 7$ [Two traps: (1) parallel means $f'(x_0) = ${evenM}$, NOT $-\\frac{1}{${evenM}}$ and NOT solving $f'(x_0)=0$; (2) after finding $x_0 = ${x0}$, compute $y_0 = f(${x0}) = ${y0}$ rather than using $7$ from $(d)$].`,
+          statementAr: `ليكن $f(x) = x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}$. أوجد إحداثيي النقطة $A(x_0, y_0)$ من $\\mathcal{C}_f$ التي يكون عندها المماس موازياً للمستقيم $y = ${evenM}x + 7$ [فخان: (1) التوازي يعني $f'(x_0) = ${evenM}$ وليس معكوس الميل؛ (2) حساب $y_0 = f(${x0}) = ${y0}$ من الدالة نفسها].`,
+          steps: [
+            `Solve $f'(x_0) = 2x_0${MathFmt.signedNum(b)} = ${evenM} \\implies 2x_0 = ${evenM - b} \\implies x_0 = ${x0}$.`,
+            `Evaluate $y_0 = f(${x0}) = (${x0})^2${MathFmt.coeff(b, "(" + x0 + ")", false)}${MathFmt.signedNum(c)} = ${y0}$ (tangent is $y = ${evenM}x${MathFmt.signedNum(pLine)}$).`
+          ],
+          stepsAr: [
+            `نحل المعادلة $f'(x_0) = ${evenM}$ فنجد $x_0 = ${x0}$.`,
+            `نعوض في $f$ لإيجاد $y_0 = ${y0}$ فتكون النقطة $A(${x0}, ${y0})$.`
+          ],
+          answer: `A(${x0}, ${y0})`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Two-Trap Hard 5: f(x) = sqrt(a - b x^2) derivative and sign of f'(x)
+        const b = Rand.pick([1, 2, 3]);
+        const rBound = Rand.int(2, 4);
+        const a = b * rBound * rBound;
+        // f(x) = sqrt(a - b x^2) on ]-rBound, rBound[
+        // f'(x) = (-2 b x) / (2 sqrt(a - b x^2)) = (-b x) / sqrt(a - b x^2)
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = \\sqrt{${a} - ${b}x^2}$ on $]-${rBound}, ${rBound}[$. Find $f'(x)$ and state where $f'(x) > 0$ [Two traps: (1) $(\\sqrt{u})' = \\frac{u'}{2\\sqrt{u}}$ with $u' = -${2 * b}x$, simplifying the $2$'s to $\\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$; (2) $f'(x) > 0$ holds where $-${b}x > 0$, i.e., $x < 0$ on $]-${rBound}, 0[$, NOT $x > 0$].`,
+          statementAr: `لتكن $f(x) = \\sqrt{${a} - ${b}x^2}$ على $]-${rBound}, ${rBound}[$. أوجد $f'(x)$ وحدد أين يكون $f'(x) > 0$ [فخان: (1) مشتق الجذر التربيعي هو $\\frac{u'}{2\\sqrt{u}}$ مع اختصار الـ $2$؛ (2) إشارة المشتق موجبة على $]-${rBound}, 0[$ وليس على الموجب لأن مشتق $-${b}x^2$ سالب للـ $x$ الموجبة].`,
+          steps: [
+            `Here $u(x) = ${a} - ${b}x^2$ and $u'(x) = -${2 * b}x$, so $f'(x) = \\dfrac{-${2 * b}x}{2\\sqrt{${a} - ${b}x^2}} = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$.`,
+            `Since $\\sqrt{${a} - ${b}x^2} > 0$ on $]-${rBound}, ${rBound}[$ and $${b} > 0$, $f'(x) > 0 \\iff -x > 0 \\iff x \\in ]-${rBound}, 0[$.`
+          ],
+          stepsAr: [
+            `نحسب $f'(x) = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$ بعد اختصار الـ $2$.`,
+            `يكون المشتق موجباً تماماً عندما $x \\in ]-${rBound}, 0[$.`
+          ],
+          answer: `f'(x) = \\frac{-${b}x}{\\sqrt{${a} - ${b}x^2}}; \\; f'(x) > 0 \\text{ on } ]-${rBound}, 0[`,
+          answerLabelAr: "الجواب النهائي"
+        };
       }
     }
 
     function genMonotonicitySequence() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: u_n = an + b + c/n (difference + positive integer check)
         const a = Rand.int(1, 3);
         const b = Rand.nonZeroInt(-5, 5);
         const c = Rand.int(1, Math.max(1, 2 * a - 1));
@@ -1409,7 +1612,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: u_n = a^n / n! ratio test threshold trap
         const a = Rand.int(2, 6);
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1428,7 +1630,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Alternating sequence (-1)^n / n is NOT monotonic!
         const k = Rand.int(1, 5);
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1447,11 +1648,9 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: Rational sequence u_n = (an + b) / (n + c) with c > 0 -> monotone via derivative of f(x)
         const a = Rand.int(1, 3);
         const c = Rand.int(2, 5);
         const b = Rand.nonZeroInt(-4, 4);
-        // f(x) = (ax + b)/(x + c) -> f'(x) = (ac - b)/(x + c)^2
         const num = a * c - b;
         const trend = num > 0 ? "strictly increasing" : (num < 0 ? "strictly decreasing" : "constant");
 
@@ -1472,11 +1671,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Quadratic sequence u_n = n^2 - 2kn + c where minimum occurs at rank n0
         const k = Rand.int(3, 6);
         const c = Rand.nonZeroInt(-5, 5);
-        // u_{n+1} - u_n = (n+1)^2 - n^2 - 2k(n+1 - n) = 2n + 1 - 2k
-        // > 0 iff 2n > 2k - 1 => n >= k
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
@@ -1499,10 +1695,8 @@
     function genLogarithmic() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: Log equation domain trap (extraneous root where one log argument <= 0)
         const a = Rand.int(2, 5);
         const b = Rand.int(2, 5);
-        // (x + a)(x + b) = (a + b)x + ab; suppose equation is ln(x+a) + ln(x+b) = ln((r1+a)(r1+b)) with r1 > 0
         const r1 = Rand.int(2, 5);
         const prod = (r1 + a) * (r1 + b);
         const minDom = Math.max(-a, -b);
@@ -1524,7 +1718,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Derivative of ln(|ax + b|) on both branches
         const a = Rand.nonZeroInt(-4, 4);
         const b = Rand.nonZeroInt(-4, 4);
         const rootFrac = MathFmt.texFrac(MathFmt.frac(-b, a));
@@ -1546,7 +1739,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Limit x * ln(x) as x -> 0+ (0 * (-infinity) indeterminate form)
         const k = Rand.nonZeroInt(-4, 4);
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1565,7 +1757,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: ln(1 + ax) / bx as x -> 0
         const a = Rand.nonZeroInt(-5, 5);
         const b = Rand.nonZeroInt(-5, 5);
         const limFrac = MathFmt.frac(a, b);
@@ -1587,8 +1778,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Logarithmic inequality with strictly decreasing branch when argument has negative x coeff
-        // ln(k - x) > ln(m) on ]-infinity, k[ -> k - x > m => x < k - m
         const m = Rand.int(1, 4);
         const diff = Rand.int(2, 5);
         const k = m + diff;
@@ -1616,7 +1805,6 @@
     function genExponential() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: Product rule + factoring e^(ax) with negative coefficient
         const k = Rand.nonZeroInt(-4, 4);
         const a = Rand.nonZeroInt(-3, -1);
         const m = Rand.nonZeroInt(-5, 5);
@@ -1640,7 +1828,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: (e^(ax) - 1) / (bx) as x -> 0
         const a = Rand.nonZeroInt(-5, 5);
         const b = Rand.nonZeroInt(-5, 5);
         const limFrac = MathFmt.frac(a, b);
@@ -1662,11 +1849,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Exponential equation with e^(2x) - (e^a + e^b)e^x + e^(a+b) = 0 -> roots e^a and e^b
         const a = Rand.int(1, 3);
         const b = Rand.int(2, 4);
-        const s = Math.exp(a) + Math.exp(b);
-        const p = Math.exp(a + b);
 
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1685,7 +1869,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: x * e^(ax) as x -> -infinity (when a > 0, x -> -infinity gives x * e^(ax) -> 0!)
         const a = Rand.int(1, 4);
         const k = Rand.nonZeroInt(-4, 4);
         return {
@@ -1705,7 +1888,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Derivative of e^(u(x)) when u(x) is quadratic
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-4, 4);
         const c = Rand.nonZeroInt(-4, 4);
@@ -1734,7 +1916,6 @@
     function genIntegration() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: Polynomial definite integral with clean antiderivative
         const p = Rand.int(1, 4);
         const a = 3 * Rand.nonZeroInt(-2, 2);
         const b = 2 * Rand.nonZeroInt(-3, 3);
@@ -1760,7 +1941,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Odd function over symmetric interval [-a, a] -> integral is 0 even when integrand looks complex!
         const a = Rand.int(2, 6);
         const k = Rand.nonZeroInt(-5, 5);
         return {
@@ -1780,13 +1960,9 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Integrating u'(x) / u(x) -> ln|u(x)|
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-3, 3);
-        // integral from 1 to 2 of a / (x + b), where x + b > 0 on [1, 2]
         const safeB = Math.max(1, b);
-        const val1 = Math.log(1 + safeB);
-        const val2 = Math.log(2 + safeB);
 
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1805,11 +1981,7 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: Area between two curves where intersection lies inside [0, 2] -> splitting integral at intersection!
-        // y1 = x^2 and y2 = x on [0, 2]: intersect at x = 0 and x = 1.
-        // Area = int_0^1 (x - x^2) dx + int_1^2 (x^2 - x) dx = 1/6 + (8/3 - 2 - (1/3 - 1/2)) = 1/6 + 5/6 = 1!
         const k = Rand.pick([1, 2, 3]);
-        // Scale by k: y1 = k x^2, y2 = k x on [0, 2] -> area = k
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Integration", unitAr: "التكامل",
@@ -1827,10 +1999,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Exponential integral int_0^a e^(kx) dx
         const k = Rand.nonZeroInt(-3, 3);
         const a = Rand.int(1, 2);
-        // int_0^a e^(kx) dx = (e^(ka) - 1) / k
         const ka = k * a;
 
         return {
@@ -1853,13 +2023,12 @@
     }
 
     /* =========================================================================
-       3. BOOK 2: ALGEBRA AND VECTORS GENERATORS (5 UNITS × 5 TRAP TEMPLATES EACH, EN + AR)
+       3. BOOK 2: ALGEBRA AND VECTORS GENERATORS (5 UNITS, EN + AR)
        ========================================================================= */
 
     function genVector() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: Dot product & cross product norm
         const u = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
         const v = [Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4), Rand.nonZeroInt(-4, 4)];
         const dot = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
@@ -1885,12 +2054,10 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Middle component sign in cross product (y-component is u_z v_x - u_x v_z!)
         const ux = Rand.nonZeroInt(-3, 3);
         const uz = Rand.nonZeroInt(-3, 3);
         const vx = Rand.nonZeroInt(-3, 3);
         const vz = Rand.nonZeroInt(-3, 3);
-        // u = (ux, 0, uz), v = (vx, 0, vz) -> u x v = (0, uz*vx - ux*vz, 0)
         const cy = uz * vx - ux * vz;
 
         return {
@@ -1910,11 +2077,9 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Scalar triple product [u, v, w] = (u x v) . w for coplanarity / volume
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-3, 3);
         const c = Rand.nonZeroInt(-3, 3);
-        // u = (1, 0, 0), v = (0, 1, 0), w = (a, b, c) -> (u x v) = (0, 0, 1) -> dot w = c
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Vector", unitAr: "الأشعة",
@@ -1932,11 +2097,9 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: Distance from point A to plane ax + by + cz + d = 0 (forgetting |numerator| or sqrt(a^2+b^2+c^2))
         const x0 = Rand.nonZeroInt(-3, 3);
         const y0 = Rand.nonZeroInt(-3, 3);
         const z0 = Rand.nonZeroInt(-3, 3);
-        // Plane: 2x - 2y + z + d = 0 -> norm of normal is sqrt(4 + 4 + 1) = 3!
         const d = Rand.nonZeroInt(-5, 5);
         const rawNum = 2 * x0 - 2 * y0 + z0 + d;
         const absNum = Math.abs(rawNum);
@@ -1959,10 +2122,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Dot product with opposite/scaled vector
         const u = [Rand.nonZeroInt(-3, 3), Rand.nonZeroInt(-3, 3), Rand.nonZeroInt(-3, 3)];
         const k = Rand.pick([-2, 2, 3]);
-        const v = [k * u[0], k * u[1], k * u[2]];
         const normSq = u[0] * u[0] + u[1] * u[1] + u[2] * u[2];
         const dotVal = k * normSq;
 
@@ -1986,9 +2147,8 @@
     }
 
     function genComplexNumbers() {
-      const idx = Rand.int(0, 4);
+      const idx = Rand.int(0, 9);
       if (idx === 0) {
-        // Trap 1: Principal argument in ]-pi, pi] of product/quotient with negative real factor
         const m = Rand.pick([1, 2, 3]);
         const iLabel = m === 1 ? "i" : (m === 2 ? "-1" : "-i");
         const iArg = MathFmt.frac(m, 2);
@@ -2029,12 +2189,11 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Modulus & exponential form when real/imag part has negative sign (-a - ia -> module is a*sqrt(2), arg is -3pi/4)
         const a = Rand.int(1, 4);
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Write $z = -${a} - ${a}i$ in exponential form $r e^{i\\theta}$ with $\\theta \\in ]-\\pi, \\pi]$ (trap: placing $\\theta = \\frac{\\pi}{4}$ instead of the third quadrant $-\frac{3\\pi}{4}$).`,
+          statement: `Write $z = -${a} - ${a}i$ in exponential form $r e^{i\\theta}$ with $\\theta \\in ]-\\pi, \\pi]$ (trap: placing $\\theta = \\frac{\\pi}{4}$ instead of the third quadrant $-\\frac{3\\pi}{4}$).`,
           statementAr: `اكتب العدد العقدي $z = -${a} - ${a}i$ بالشكل الأسي $r e^{i\\theta}$ بحيث $\\theta \\in ]-\\pi, \\pi]$ (انتبه للربع الثالث).`,
           steps: [
             `Modulus: $|z| = \\sqrt{(-${a})^2 + (-${a})^2} = ${a}\\sqrt{2}$.`,
@@ -2048,7 +2207,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Conjugate and modulus properties: |z|^2 = z * z_bar, conjugate of quotient/sum
         const x = Rand.nonZeroInt(-4, 4);
         const y = Rand.nonZeroInt(-4, 4);
         const normSq = x * x + y * y;
@@ -2072,11 +2230,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: De Moivre's theorem (e^(i theta))^n = e^(i n theta) — watch modulus r^n!
         const r = Rand.pick([2, 3]);
         const n = Rand.pick([3, 4]);
-        // theta = pi/6 -> n*theta = pi/2 or 2pi/3
-        const thetaFrac = MathFmt.frac(1, 6);
         const nTheta = MathFmt.frac(n, 6);
         const rPowN = Math.pow(r, n);
 
@@ -2096,11 +2251,9 @@
           answer: `z^{${n}} = ${rPowN} e^{i${MathFmt.texPi(nTheta)}}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        // Trap 5: Quadratic equation with real coefficients and negative discriminant -> complex conjugate roots
+      } else if (idx === 4) {
         const k = Rand.int(1, 3);
         const b = Rand.nonZeroInt(-3, 3);
-        // (z - (k + bi))(z - (k - bi)) = z^2 - 2kz + (k^2 + b^2)
         const s2 = -2 * k;
         const pConst = k * k + b * b;
         const bSign = b > 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`;
@@ -2122,13 +2275,119 @@
           answer: `z_1 = ${k}${bSign}, \\quad z_2 = ${k}${bConjSign}`,
           answerLabelAr: "الجواب النهائي"
         };
+      } else if (idx === 5) {
+        // Two-Trap Hard 1: Z = (1 + i)^6 / (1 - i sqrt(3))^3
+        // (1 + i)^6 = (sqrt(2) e^(i pi/4))^6 = 8 e^(i 3pi/2) = -8i
+        // (1 - i sqrt(3))^3 = (2 e^(-i pi/3))^3 = 8 e^(-i pi) = -8
+        // Z = (-8i)/(-8) = i = e^(i pi/2)
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `Compute $Z = \\dfrac{(1 + i)^6}{(1 - i\\sqrt{3})^3}$ in algebraic and exponential form [Two traps: (1) $1 - i\\sqrt{3}$ lies in quadrant IV with argument $-\\frac{\\pi}{3}$, NOT $+\\frac{\\pi}{3}$; (2) $(1+i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$ and $(1-i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$, so dividing gives $i = e^{i\\frac{\\pi}{2}}$].`,
+          statementAr: `احسب $Z = \\dfrac{(1 + i)^6}{(1 - i\\sqrt{3})^3}$ بالشكلين الجبري والأسي [فخان: (1) زاوية $1 - i\\sqrt{3}$ هي $-\\frac{\\pi}{3}$ لأنها في الربع الرابع؛ (2) دقة حساب قوى الطويلة والزوايا قبل القسمة].`,
+          steps: [
+            `Trap 1: $1 - i\\sqrt{3} = 2e^{-i\\frac{\\pi}{3}} \\implies (1 - i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$.`,
+            `Trap 2: $1 + i = \\sqrt{2}e^{i\\frac{\\pi}{4}} \\implies (1 + i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$; hence $Z = \\dfrac{-8i}{-8} = i = e^{i\\frac{\\pi}{2}}$.`
+          ],
+          stepsAr: [
+            `الفخ الأول: نحسب $(1 - i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$ بزاوية سالبة.`,
+            `الفخ الثاني: $(1 + i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$، وبالقسمة نجد $Z = i = e^{i\\frac{\\pi}{2}}$.`
+          ],
+          answer: `Z = i = e^{i\\frac{\\pi}{2}}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 6) {
+        // Two-Trap Hard 2: Purely imaginary condition for z = (x - a) + i(x^2 - b) with x real
+        const a = Rand.nonZeroInt(-3, 3);
+        // Choose b != a^2 so z is genuinely purely imaginary at x = a
+        const b = a * a + Rand.nonZeroInt(-3, 3);
+        const imAtA = a * a - b;
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `For $x \\in \\mathbb{R}$, let $z = (x - (${a})) + i(x^2 - (${b}))$. Find all $x \\in \\mathbb{R}$ for which $z$ is purely imaginary [Two traps: (1) purely imaginary requires $\\operatorname{Re}(z) = 0$ AND $\\operatorname{Im}(z) \\neq 0$ ($z \\neq 0$); (2) at $x = ${a}$, $\\operatorname{Im}(z) = (${a})^2 - (${b}) = ${imAtA} \\neq 0$, whereas if $\\operatorname{Im}(z) = 0$ that gives real $z$, not purely imaginary].`,
+          statementAr: `من أجل $x \\in \\mathbb{R}$، ليكن $z = (x - (${a})) + i(x^2 - (${b}))$. أوجد قيم $x$ التي تجعل $z$ تخيلياً صرفاً [فخان: (1) التخيلي الصرف يقتضي انعدام الحقيقي وعدم انعدام التخيلي؛ (2) التحقق من $\\operatorname{Im}(z) \\neq 0$ وعدم الخلط مع الحالة الحقيقية].`,
+          steps: [
+            `Trap 1 & 2: $\\operatorname{Re}(z) = 0 \\iff x = ${a}$. At $x = ${a}$, $\\operatorname{Im}(z) = ${a * a} - (${b}) = ${imAtA} \\neq 0$.`,
+            `Since $\\operatorname{Im}(z) \\neq 0$ at $x = ${a}$, $z = ${imAtA}i$ is purely imaginary for $x = ${a}$.`
+          ],
+          stepsAr: [
+            `نجعل الجزء الحقيقي معدوماً فنجد $x = ${a}$.`,
+            `نتحقق أن الجزء التخيلي يساوي ${imAtA} وهو غير معدوم، إذن الحل هو $x = ${a}$.`
+          ],
+          answer: `x = ${a}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 7) {
+        // Two-Trap Hard 3: Solving z^2 = -i in exponential form (all roots!)
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `Solve in $\\mathbb{C}$ the equation $z^2 = -i$, giving the solutions in exponential form [Two traps: (1) $-i = e^{-i\\frac{\\pi}{2}}$ has argument $-\\frac{\\pi}{2}$, so halving gives $-\\frac{\\pi}{4}$ (not $+\\frac{\\pi}{4}$); (2) a quadratic in $\\mathbb{C}$ has TWO roots separated by $\\pi$: $z_0 = e^{-i\\frac{\\pi}{4}}$ and $z_1 = e^{i\\frac{3\\pi}{4}}$].`,
+          statementAr: `حل في $\\mathbb{C}$ المعادلة $z^2 = -i$ واكتب الحلول بالشكل الأسي [فخان: (1) $-i = e^{-i\\frac{\\pi}{2}}$ فتصبح الزاوية بعد القسمة على $2$ هي $-\\frac{\\pi}{4}$؛ (2) وجود حلين متعاكسين بالاتجاه بفرق $\\pi$].`,
+          steps: [
+            `Write $-i = e^{-i\\frac{\\pi}{2}}$; taking square roots gives $z_k = e^{i\\left(-\\frac{\\pi}{4} + k\\pi\\right)}$ for $k \\in \\{0, 1\\}$.`,
+            `For $k = 0$: $z_0 = e^{-i\\frac{\\pi}{4}}$; for $k = 1$: $z_1 = e^{i\\frac{3\\pi}{4}}$ (in $]-\\pi, \\pi]$).`
+          ],
+          stepsAr: [
+            `نكتب $-i = e^{-i\\frac{\\pi}{2}}$ فنجد الجذرين $z_k = e^{i\\left(-\\frac{\\pi}{4} + k\\pi\\right)}$ لـ $k = 0, 1$.`,
+            `الحلان هما $z_0 = e^{-i\\frac{\\pi}{4}}$ و $z_1 = e^{i\\frac{3\\pi}{4}}$.`
+          ],
+          answer: `z_0 = e^{-i\\frac{\\pi}{4}}, \\quad z_1 = e^{i\\frac{3\\pi}{4}}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else if (idx === 8) {
+        // Two-Trap Hard 4: Modulus of z_1 + z_2_bar
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-3, 3);
+        const c = Rand.nonZeroInt(-3, 3);
+        const d = Rand.nonZeroInt(-3, 3);
+        // z1 = a + bi, z2_bar = c - di => sum = (a + c) + i(b - d)
+        const reSum = a + c;
+        const imSum = b - d;
+        const modSq = reSum * reSum + imSum * imSum;
+
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `Let $z_1 = ${a}${b >= 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`}$ and $z_2 = ${c}${d >= 0 ? ` + ${d}i` : ` - ${Math.abs(d)}i`}$. Compute $|z_1 + \\overline{z_2}|$ [Two traps: (1) $\\overline{z_2} = ${c}$${-d >= 0 ? ` + ${-d}i` : ` - ${Math.abs(-d)}i`}$ flips the sign of the imaginary part of $z_2$; (2) compute modulus AFTER summing ($|z_1 + \\overline{z_2}|$), NOT $|z_1| + |z_2|$].`,
+          statementAr: `لتكن $z_1 = ${a}${b >= 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`}$ و $z_2 = ${c}${d >= 0 ? ` + ${d}i` : ` - ${Math.abs(d)}i`}$. احسب $|z_1 + \\overline{z_2}|$ [فخان: (1) أخذ مرافق $z_2$ بعكس إشارة جزئه التخيلي؛ (2) الجمع أولاً ثم حساب الطويلة وليس جمع الطويلتين].`,
+          steps: [
+            `Here $\\overline{z_2} = ${c}$${-d >= 0 ? ` + ${-d}i` : ` - ${Math.abs(-d)}i`}$, so $z_1 + \\overline{z_2} = ${reSum}${imSum >= 0 ? ` + ${imSum}i` : ` - ${Math.abs(imSum)}i`}$.`,
+            `Modulus: $|z_1 + \\overline{z_2}| = \\sqrt{(${reSum})^2 + (${imSum})^2} = ${MathFmt.texSqrt(modSq)}$.`
+          ],
+          stepsAr: [
+            `نحسب $z_1 + \\overline{z_2} = ${reSum}${imSum >= 0 ? ` + ${imSum}i` : ` - ${Math.abs(imSum)}i`}$.`,
+            `الطويلة تساوي ${MathFmt.texSqrt(modSq)}.`
+          ],
+          answer: `|z_1 + \\overline{z_2}| = ${MathFmt.texSqrt(modSq)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      } else {
+        // Two-Trap Hard 5: Linearization of cos^2(theta) via Euler's formula
+        return {
+          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+          statement: `Using Euler's formulas, linearize $\\cos^2\\theta$ in terms of $\\cos(2\\theta)$ [Two traps: (1) $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$, so squaring gives $\\dfrac{(e^{i\\theta} + e^{-i\\theta})^2}{4}$ — dividing by $4$, NOT $2$; (2) expanding $(e^{i\\theta} + e^{-i\\theta})^2$ includes the middle term $2e^{i\\theta}e^{-i\\theta} = 2$].`,
+          statementAr: `باستعمال دستوري أويلر، أخطِط العبارة $\\cos^2\\theta$ بدلالة $\\cos(2\\theta)$ [فخان: (1) قسمة مربع البسط على $4$ وليس $2$؛ (2) عدم إغفال الحد الأوسط $2e^{i\\theta}e^{-i\\theta} = 2$ عند النشر].`,
+          steps: [
+            `Square $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$: $\\cos^2\\theta = \\dfrac{e^{2i\\theta} + 2 + e^{-2i\\theta}}{4}$.`,
+            `Group $e^{2i\\theta} + e^{-2i\\theta} = 2\\cos(2\\theta)$: $\\cos^2\\theta = \\dfrac{2\\cos(2\\theta) + 2}{4} = \\dfrac{1 + \\cos(2\\theta)}{2}$.`
+          ],
+          stepsAr: [
+            `نربع $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$ فنحصل على $\\dfrac{e^{2i\\theta} + 2 + e^{-2i\\theta}}{4}$.`,
+            `نجمع الحدود فنصل إلى $\\cos^2\\theta = \\dfrac{1 + \\cos(2\\theta)}{2}$.`
+          ],
+          answer: `\\cos^2\\theta = \\frac{1 + \\cos(2\\theta)}{2}`,
+          answerLabelAr: "الجواب النهائي"
+        };
       }
     }
 
     function genComplexGeometry() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: Angle (AB, AC) = arg((z_C - z_A)/(z_B - z_A))
         const ax = Rand.nonZeroInt(-3, 3);
         const ay = Rand.nonZeroInt(-3, 3);
         const bx = ax + 2;
@@ -2158,13 +2417,10 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Distance AB = |z_B - z_A| -> perpendicular bisector / circle locus
         const ax = Rand.nonZeroInt(-3, 3);
         const ay = Rand.nonZeroInt(-3, 3);
-        const dx = 3;
-        const dy = 4; // 3-4-5 triangle!
-        const bx = ax + dx;
-        const by = ay + dy;
+        const bx = ax + 3;
+        const by = ay + 4;
 
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
@@ -2183,10 +2439,8 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: Locus |z - z_A| = |z - z_B| is the perpendicular bisector of [AB], NOT a circle!
         const a = Rand.nonZeroInt(-4, 4);
         const b = Rand.nonZeroInt(-4, 4);
-        // |z - a| = |z - ib| -> distances to A(a, 0) and B(0, b) are equal
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
@@ -2204,12 +2458,10 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: Translation z' = z + b vs Rotation around origin z' = e^(i alpha) z
         const alpha = Rand.pick(["\\frac{\\pi}{2}", "-\\frac{\\pi}{2}", "\\pi"]);
         const factorTex = alpha === "\\frac{\\pi}{2}" ? "i" : (alpha === "-\\frac{\\pi}{2}" ? "-i" : "-1");
         const z0x = Rand.nonZeroInt(-3, 3);
         const z0y = Rand.nonZeroInt(-3, 3);
-        // Multiply (z0x + z0y i) by factorTex
         let rx = z0x, ry = z0y;
         if (factorTex === "i") { rx = -z0y; ry = z0x; }
         else if (factorTex === "-i") { rx = z0y; ry = -z0x; }
@@ -2232,7 +2484,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Collinearity check via (z_C - z_A)/(z_B - z_A) being real
         const ax = Rand.nonZeroInt(-2, 2);
         const ay = Rand.nonZeroInt(-2, 2);
         const dx = Rand.nonZeroInt(-3, 3);
@@ -2263,7 +2514,6 @@
     function genCountingTechniques() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: Committee combinations (order does NOT matter)
         const men = Rand.int(4, 7);
         const women = Rand.int(3, 6);
         const kMen = Rand.int(1, 3);
@@ -2290,7 +2540,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Arrangements (order matters, no repetition)
         const n = Rand.int(5, 8);
         const k = Rand.int(2, 4);
         const ans = MathFmt.perm(n, k);
@@ -2310,7 +2559,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: "At least one" complement trick (total minus none)
         const total = Rand.int(6, 9);
         const special = Rand.int(2, 4);
         const pick = Rand.int(2, 3);
@@ -2335,7 +2583,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: Password / code with repetition allowed (n^k vs n! / (n-k)!)
         const digits = Rand.int(4, 7);
         const length = Rand.int(2, 4);
         const ans = Math.pow(digits, length);
@@ -2355,12 +2602,9 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Anagram / word arrangements with repeated letters (n! / (k1! * k2!))
-        // Example: "AA BB" -> 4! / (2! * 2!) = 6, or "AAA B" -> 4! / 3! = 4
         const nA = Rand.int(2, 3);
         const nB = Rand.int(1, 2);
         const totalLetters = nA + nB;
-        // fact(totalLetters) / (fact(nA) * fact(nB)) = comb(totalLetters, nA)
         const ans = MathFmt.comb(totalLetters, nA);
 
         return {
@@ -2383,7 +2627,6 @@
     function genProbability() {
       const idx = Rand.int(0, 4);
       if (idx === 0) {
-        // Trap 1: Successive drawing WITHOUT replacement
         const r = Rand.int(3, 6);
         const b = Rand.int(2, 5);
         const total = r + b;
@@ -2406,7 +2649,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 1) {
-        // Trap 2: Conditional probability P(A | B) = P(A n B) / P(B) (dividing by P(A) instead of P(B)!)
         const pAnB = MathFmt.frac(1, 6);
         const pB = MathFmt.frac(1, 2);
         const condFrac = MathFmt.frac(pAnB.n * pB.d, pAnB.d * pB.n);
@@ -2426,7 +2668,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 2) {
-        // Trap 3: P(A U B) when A and B are NOT disjoint: P(A) + P(B) - P(A n B)
         const pA = MathFmt.frac(1, 2);
         const pB = MathFmt.frac(1, 3);
         const pInter = MathFmt.frac(1, 6);
@@ -2447,7 +2688,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 3) {
-        // Trap 4: Law of total probability with two partitions
         const pE1 = MathFmt.frac(1, 4);
         const pE2 = MathFmt.frac(3, 4);
         const pAonE1 = MathFmt.frac(2, 3);
@@ -2470,10 +2710,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Trap 5: Binomial probability P(X = k) = C(n, k) * p^k * (1-p)^(n-k) — watch binomial coefficient!
-        const n = 3;
-        const k = 1;
-        // p = 1/3 -> C(3, 1) * (1/3)^1 * (2/3)^2 = 3 * (1/3) * (4/9) = 4/9
         const prob = MathFmt.frac(4, 9);
 
         return {
