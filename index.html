@@ -41,7 +41,7 @@
       background-color: var(--bg-primary);
       color: var(--text-primary);
       font-family: var(--font-mono);
-      line-height: 1.8;
+      line-height: 1.82;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -72,7 +72,6 @@
       position: relative;
     }
 
-    /* 3x5 Grid Pixel Typography matching the reference alphabet */
     .brand-logo {
       display: inline-flex;
       align-items: center;
@@ -121,7 +120,7 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      transition: all 0.15s ease;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
     }
 
     .hamburger-btn:hover {
@@ -171,7 +170,7 @@
       font-weight: 600;
       cursor: pointer;
       margin-bottom: 0.45rem;
-      transition: all 0.15s ease;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
 
     .menu-lang-btn:hover {
@@ -268,7 +267,7 @@
       border-radius: 6px;
       font-size: 0.78rem;
       cursor: pointer;
-      transition: all 0.12s ease;
+      transition: background-color 0.12s ease, color 0.12s ease;
     }
 
     .unit-item-btn:hover {
@@ -320,8 +319,8 @@
     .saved-menu-preview {
       font-size: 0.76rem;
       color: var(--text-primary);
-      line-height: 1.6;
-      max-height: 4.8rem;
+      line-height: 1.65;
+      max-height: 4.95rem;
       overflow: hidden;
     }
 
@@ -339,7 +338,7 @@
       border: 1px solid var(--border-subtle);
       background: var(--bg-elevated);
       color: var(--text-primary);
-      transition: all 0.12s ease;
+      transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
     }
 
     .btn-mini:hover {
@@ -352,7 +351,6 @@
       color: var(--danger);
     }
 
-    /* Two-Section Problem Block */
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -430,14 +428,13 @@
     .problem-statement {
       font-size: 1rem;
       color: var(--text-primary);
-      line-height: 2.05;
+      line-height: 2.12;
     }
 
     .problem-statement .katex-display {
-      margin: 1.1rem 0;
+      margin: 1.15rem 0;
     }
 
-    /* Centered Icon Action Controls */
     .controls {
       display: flex;
       flex-direction: column;
@@ -464,7 +461,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s ease;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
       flex-shrink: 0;
     }
 
@@ -542,7 +539,7 @@
       letter-spacing: 0.05em;
       color: var(--success);
       font-weight: 600;
-      margin-bottom: 1.15rem;
+      margin-bottom: 1.2rem;
     }
 
     .steps-list {
@@ -550,7 +547,7 @@
       counter-reset: step-counter;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 1.3rem;
     }
 
     .steps-list li {
@@ -558,14 +555,14 @@
       position: relative;
       padding-left: 2.2rem;
       font-size: 0.92rem;
-      line-height: 2.05;
+      line-height: 2.12;
     }
 
     .steps-list li::before {
       content: counter(step-counter);
       position: absolute;
       left: 0;
-      top: 0.3rem;
+      top: 0.32rem;
       width: 1.45rem;
       height: 1.45rem;
       border-radius: 50%;
@@ -580,14 +577,14 @@
     }
 
     .final-answer-box {
-      margin-top: 1.4rem;
+      margin-top: 1.45rem;
       padding: 0.95rem 1.15rem;
       background: var(--success-bg);
       border: 1px solid rgba(78, 201, 176, 0.3);
       border-radius: 6px;
       color: var(--text-primary);
       font-size: 0.96rem;
-      line-height: 1.85;
+      line-height: 1.9;
     }
 
     .final-answer-box strong {
@@ -595,7 +592,6 @@
       margin-right: 0.5rem;
     }
 
-    /* LTR Layout Stability & Mono-Styled Arabic Typography */
     .ar-text {
       font-family: var(--font-ar-mono);
       direction: ltr;
@@ -650,7 +646,6 @@
           <span class="pixel-cell"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
           <span class="pixel-cell"></span><span class="pixel-cell on"></span><span class="pixel-cell"></span>
         </div>
-
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
@@ -658,7 +653,6 @@
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
         </div>
-
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
@@ -666,7 +660,6 @@
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
         </div>
-
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell on"></span>
@@ -674,7 +667,6 @@
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell"></span>
         </div>
-
         <div class="pixel-letter" aria-hidden="true">
           <span class="pixel-cell on"></span><span class="pixel-cell on"></span><span class="pixel-cell on"></span>
           <span class="pixel-cell on"></span><span class="pixel-cell"></span><span class="pixel-cell"></span>
@@ -744,14 +736,14 @@
 
     <div class="controls">
       <div class="btn-group">
-        <button class="icon-btn primary" id="btn-new" type="button" title="New Problem" aria-label="New Problem">
+        <button class="icon-btn primary" id="btn-new" type="button" title="New Problem (N)" aria-label="New Problem">
           <svg viewBox="0 0 24 24">
             <path d="M21 12a9 9 0 1 1-2.64-6.36" />
             <polyline points="21 3 21 9 15 9" />
           </svg>
         </button>
 
-        <button class="icon-btn secondary" id="btn-toggle-solution" type="button" title="Show Solution" aria-label="Show Solution">
+        <button class="icon-btn secondary" id="btn-toggle-solution" type="button" title="Show Solution (S)" aria-label="Show Solution">
           <svg id="icon-eye" viewBox="0 0 24 24">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx="12" cy="12" r="3" />
@@ -783,7 +775,7 @@
 
   <script>
     /* =========================================================================
-       1. SEEDED PRNG (MULBERRY32) & EXACT ALGEBRAIC UTILITIES
+       1. SEEDED PRNG (MULBERRY32) & EXACT ALGEBRAIC / COMPLEX UTILITIES
        ========================================================================= */
     const DIFFICULTY = "bac";
     let activeRng = Math.random;
@@ -791,7 +783,6 @@
     function createSeededRng(seedUint32) {
       let a = seedUint32 >>> 0;
       return function () {
-        a |= 0;
         a = (a + 0x6d2b79f5) | 0;
         let t = Math.imul(a ^ (a >>> 15), 1 | a);
         t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
@@ -817,15 +808,11 @@
       const trimmed = rawParam.trim();
       if (/^[0-9a-zA-Z]{1,10}$/.test(trimmed)) {
         const parsed = parseInt(trimmed, 36);
-        if (Number.isFinite(parsed) && parsed > 0) {
-          return (parsed >>> 0);
-        }
+        if (Number.isFinite(parsed) && parsed > 0) return (parsed >>> 0);
       }
       if (/^\d{1,12}$/.test(trimmed)) {
         const parsed = Number(trimmed);
-        if (Number.isFinite(parsed) && parsed > 0) {
-          return (parsed >>> 0);
-        }
+        if (Number.isFinite(parsed) && parsed > 0) return (parsed >>> 0);
       }
       return null;
     }
@@ -860,6 +847,13 @@
 
       mulFrac(f1, f2) {
         return this.frac(f1.n * f2.n, f1.d * f2.d);
+      },
+
+      normalizePi(f) {
+        let norm = this.frac(f.n, f.d);
+        while (norm.n > norm.d) norm = this.subFrac(norm, this.frac(2, 1));
+        while (norm.n <= -norm.d) norm = this.addFrac(norm, this.frac(2, 1));
+        return norm;
       },
 
       texFrac(f) {
@@ -902,6 +896,15 @@
         if (k === 1) return ` + ${sym}`;
         if (k === -1) return ` - ${sym}`;
         return k > 0 ? ` + ${k}${sym}` : ` - ${Math.abs(k)}${sym}`;
+      },
+
+      complex(re, im) {
+        const rePart = re === 0 ? "" : `${re}`;
+        if (im === 0) return rePart === "" ? "0" : rePart;
+        const absIm = Math.abs(im);
+        const imSym = absIm === 1 ? "i" : `${absIm}i`;
+        if (rePart === "") return im < 0 ? `-${imSym}` : imSym;
+        return im < 0 ? `${rePart} - ${imSym}` : `${rePart} + ${imSym}`;
       },
 
       simplifySqrt(n) {
@@ -1003,7 +1006,8 @@
           answer: `u_n = ${k}${v0Sign}(${a})^n, \\quad u_{${targetN}} = ${uN}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const m = Rand.int(4, 12);
         const sFrac = MathFmt.frac(m, m + 1);
         return {
@@ -1024,7 +1028,8 @@
           answer: `S_{${m}} = \\frac{${sFrac.n}}{${sFrac.d}}, \\quad \\lim_{n \\to +\\infty} S_n = 1`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const c = Rand.nonZeroInt(-3, 3);
         const k = Rand.pick([2, 3, 4]);
         const v0 = Rand.pick([-1, 1]);
@@ -1051,13 +1056,12 @@
           answer: `u_n = ${c} + \\frac{1}{${v0} \\cdot ${k}^n}, \\quad u_{${targetN}} = ${MathFmt.texFrac(uNFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const q = Rand.pick([2, 3, -2]);
         const u0 = Rand.nonZeroInt(-3, 4);
         const n = Rand.int(3, 5);
-        const num = u0 * (Math.pow(q, n + 1) - 1);
-        const den = q - 1;
-        const sFrac = MathFmt.frac(num, den);
+        const sFrac = MathFmt.frac(u0 * (Math.pow(q, n + 1) - 1), q - 1);
 
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1075,28 +1079,28 @@
           answer: `T_{${n}} = ${MathFmt.texFrac(sFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const aFrac = Rand.pick([MathFmt.frac(1, 2), MathFmt.frac(1, 4)]);
-        const diff0 = Rand.nonZeroInt(-4, 4);
-        const wTarget = MathFmt.mulFrac({ n: diff0, d: 1 }, MathFmt.frac(Math.pow(aFrac.n, 3), Math.pow(aFrac.d, 3)));
-
-        return {
-          book: "Analysis", bookAr: "التحليل",
-          unit: "Sequences", unitAr: "المتتاليات",
-          statement: `Two sequences $(u_n)$ and $(v_n)$ satisfy $u_0 - v_0 = ${diff0}$ and $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ for all $n \\ge 0$. Find $u_3 - v_3$ and $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
-          statementAr: `متتاليتان $(u_n)$ و $(v_n)$ تحققان $u_0 - v_0 = ${diff0}$ و $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ لكل $n \\ge 0$. أوجد $u_3 - v_3$ و $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
-          steps: [
-            `Let $w_n = u_n - v_n$; then $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
-            `At $n = 3$, $w_3 = ${MathFmt.texFrac(wTarget)}$; since $\\left|${MathFmt.texFrac(aFrac)}\\right| < 1$, $\\displaystyle\\lim_{n \\to +\\infty} w_n = 0$.`
-          ],
-          stepsAr: [
-            `نضع $w_n = u_n - v_n$ فنجد $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
-            `عند $n = 3$ نجد $w_3 = ${MathFmt.texFrac(wTarget)}$، وبما أن الأساس بالقيمة المطلقة أصغر من $1$ فإن النهاية عند $+\\infty$ هي $0$.`
-          ],
-          answer: `u_3 - v_3 = ${MathFmt.texFrac(wTarget)}, \\quad \\lim_{n \\to +\\infty} (u_n - v_n) = 0`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const aFrac = Rand.pick([MathFmt.frac(1, 2), MathFmt.frac(1, 4)]);
+      const diff0 = Rand.nonZeroInt(-4, 4);
+      const wTarget = MathFmt.mulFrac({ n: diff0, d: 1 }, MathFmt.frac(Math.pow(aFrac.n, 3), Math.pow(aFrac.d, 3)));
+
+      return {
+        book: "Analysis", bookAr: "التحليل",
+        unit: "Sequences", unitAr: "المتتاليات",
+        statement: `Two sequences $(u_n)$ and $(v_n)$ satisfy $u_0 - v_0 = ${diff0}$ and $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ for all $n \\ge 0$. Find $u_3 - v_3$ and $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
+        statementAr: `متتاليتان $(u_n)$ و $(v_n)$ تحققان $u_0 - v_0 = ${diff0}$ و $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ لكل $n \\ge 0$. أوجد $u_3 - v_3$ و $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
+        steps: [
+          `Let $w_n = u_n - v_n$; then $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
+          `At $n = 3$, $w_3 = ${MathFmt.texFrac(wTarget)}$; since $\\left|${MathFmt.texFrac(aFrac)}\\right| < 1$, $\\displaystyle\\lim_{n \\to +\\infty} w_n = 0$.`
+        ],
+        stepsAr: [
+          `نضع $w_n = u_n - v_n$ فنجد $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
+          `عند $n = 3$ نجد $w_3 = ${MathFmt.texFrac(wTarget)}$، وبما أن الأساس بالقيمة المطلقة أصغر من $1$ فإن النهاية عند $+\\infty$ هي $0$.`
+        ],
+        answer: `u_3 - v_3 = ${MathFmt.texFrac(wTarget)}, \\quad \\lim_{n \\to +\\infty} (u_n - v_n) = 0`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genLimits() {
@@ -1106,15 +1110,14 @@
         const r = Rand.nonZeroInt(-4, 4);
         const a = c * r;
         const d = -c * r;
-        let b = a * r;
-        while (b === a * r || a * r + b === 0) b = a * r + Rand.nonZeroInt(-6, 6);
+        let b = -a * r;
+        while (b === -a * r || a * r + b === 0) b = -a * r + Rand.nonZeroInt(-6, 6);
         const dirSign = Rand.pick([-1, 1]);
         const dirTex = dirSign === -1 ? "-\\infty" : "+\\infty";
-        const k = b - a * r;
-        const approachDir = (k * dirSign > 0) ? "+" : "-";
-        const numAtR = a * r + b;
+        const rem = a * r + b;
+        const approachDir = (rem * dirSign > 0) ? "+" : "-";
         const denomSign = approachDir === "+" ? 1 : -1;
-        const finalInf = (numAtR * denomSign > 0) ? "+\\infty" : "-\\infty";
+        const finalInf = (rem * denomSign > 0) ? "+\\infty" : "-\\infty";
 
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1122,17 +1125,18 @@
           statement: `Let $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ on $\\mathbb{R} \\setminus \\{${r}\\}$. Evaluate $\\displaystyle\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$.`,
           statementAr: `لتكن $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ على $\\mathbb{R} \\setminus \\{${r}\\}$. احسب $\\displaystyle\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$.`,
           steps: [
-            `Rewrite $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}}$; as $x \\to ${dirTex}$, $f(x) \\to ${r}^{${approachDir}}$.`,
+            `Write $ax + b = a(x - ${r}) + (${rem})$, so $f(x) = ${r} + \\dfrac{${rem}}{${c}(x - ${r})}$. As $x \\to ${dirTex}$, $f(x) \\to ${r}^{${approachDir}}$.`,
             `Evaluating $f(u)$ as $u \\to ${r}^{${approachDir}}$ yields $${finalInf}$.`
           ],
           stepsAr: [
-            `نكتب $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}}$، وعند $x \\to ${dirTex}$ نجد $f(x) \\to ${r}^{${approachDir}}$.`,
+            `نكتب $f(x) = ${r} + \\dfrac{${rem}}{${c}(x - ${r})}$، وعند $x \\to ${dirTex}$ نجد $f(x) \\to ${r}^{${approachDir}}$.`,
             `بحساب نهاية $f(u)$ عندما $u \\to ${r}^{${approachDir}}$ نحصل على $${finalInf}$.`
           ],
           answer: `\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big] = ${finalInf}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const a = Rand.int(1, 5);
         const b = Rand.int(1, 6);
         const c = Rand.int(1, 4);
@@ -1155,7 +1159,8 @@
           answer: `\\lim_{x \\to +\\infty} f(x) = 0`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const k = Rand.pick([1, 2, 3]);
         const b = Rand.nonZeroInt(-4, 4);
         const kSq = k * k;
@@ -1177,7 +1182,8 @@
           answer: `\\lim_{x \\to -\\infty} = ${MathFmt.texFrac(limFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const a = Rand.nonZeroInt(-5, 5);
         const b = Rand.nonZeroInt(-5, 5);
         const limFrac = MathFmt.frac(a, b);
@@ -1198,7 +1204,8 @@
           answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(limFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 4) {
+      }
+      if (idx === 4) {
         const m = Rand.nonZeroInt(-3, 3);
         const p = Rand.nonZeroInt(-4, 4);
         const a0 = Rand.nonZeroInt(-4, 4);
@@ -1221,7 +1228,8 @@
           answer: `y = ${MathFmt.linear(m, p, "x")}; \\; f(x)-y \\to ${remSign}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 5) {
+      }
+      if (idx === 5) {
         const k = Rand.pick([2, 3]);
         const b = Rand.nonZeroInt(-4, 4);
         const kSq = k * k;
@@ -1243,7 +1251,8 @@
           answer: `\\lim_{x \\to -\\infty} = ${MathFmt.texFrac(limFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 6) {
+      }
+      if (idx === 6) {
         const k = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-4, 4);
         const bSqHalf = MathFmt.frac(b * b, 2);
@@ -1265,7 +1274,8 @@
           answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(totalLim)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 7) {
+      }
+      if (idx === 7) {
         const a = Rand.int(1, 4);
         const b = Rand.int(1, 4);
         const sumAB = a + b;
@@ -1286,7 +1296,8 @@
           answer: `\\lim_{x \\to +\\infty} = ${sumAB}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 8) {
+      }
+      if (idx === 8) {
         const r = Rand.nonZeroInt(-4, 4);
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(1, 4);
@@ -1308,28 +1319,28 @@
           answer: `\\lim_{x \\to ${r}^-} = ${MathFmt.texFrac(limFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const k = Rand.pick([1, 2]);
-        const a = Rand.nonZeroInt(-3, 3);
-        const b = Rand.nonZeroInt(-4, 4);
-
-        return {
-          book: "Analysis", bookAr: "التحليل",
-          unit: "Limits", unitAr: "النهايات",
-          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
-          steps: [
-            `As $x \\to +\\infty$, ${a}x^2 + ${b}x \\to \\pm\\infty$ while $e^{-${k === 1 ? "" : k}x} \\to 0$ ($\\infty \\cdot 0$ form).`,
-            `With $t = ${k}x$, $\\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-t} = \\left(\\frac{${a}}{${k * k}} t^2 + \\frac{${b}}{${k}} t\\right)e^{-t} \\to 0$ as $t \\to +\\infty$.`
-          ],
-          stepsAr: [
-            `المقدار على شكل عدم تعيين $\\infty \\cdot 0$ عند $+\\infty$.`,
-            `بوضع $t = ${k}x$ واستخدام النهاية الشهيرة $t^n e^{-t} \\to 0$ نجد النهاية تساوي $0$.`
-          ],
-          answer: `\\lim_{x \\to +\\infty} = 0`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const k = Rand.pick([1, 2]);
+      const a = Rand.nonZeroInt(-3, 3);
+      const b = Rand.nonZeroInt(-4, 4);
+
+      return {
+        book: "Analysis", bookAr: "التحليل",
+        unit: "Limits", unitAr: "النهايات",
+        statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
+        statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
+        steps: [
+          `As $x \\to +\\infty$, ${a}x^2 + ${b}x \\to \\pm\\infty$ while $e^{-${k === 1 ? "" : k}x} \\to 0$ ($\\infty \\cdot 0$ form).`,
+          `With $t = ${k}x$, $\\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-t} = \\left(\\frac{${a}}{${k * k}} t^2 + \\frac{${b}}{${k}} t\\right)e^{-t} \\to 0$ as $t \\to +\\infty$.`
+        ],
+        stepsAr: [
+          `المقدار على شكل عدم تعيين $\\infty \\cdot 0$ عند $+\\infty$.`,
+          `بوضع $t = ${k}x$ واستخدام النهاية الشهيرة $t^n e^{-t} \\to 0$ نجد النهاية تساوي $0$.`
+        ],
+        answer: `\\lim_{x \\to +\\infty} = 0`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genDifferentiation() {
@@ -1362,7 +1373,8 @@
           answer: `g'(x) = ${finalConst}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const x0 = Rand.nonZeroInt(-4, 4);
         const slope = Rand.nonZeroInt(-4, 4);
         const c = Rand.nonZeroInt(-3, 3);
@@ -1385,7 +1397,8 @@
           answer: `f'_d(${x0}) = ${rightDeriv}, \\; f'_g(${x0}) = ${leftDeriv} \\implies \\text{not differentiable at } ${x0}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-4, 4);
         const c = Rand.pick([1, 2]);
@@ -1408,7 +1421,8 @@
           answer: `f'(x) = \\frac{${det}}{(${MathFmt.linear(c, d, "x")})^2}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const x0 = Rand.nonZeroInt(-3, 3);
         const k = Rand.pick([1, 2, 3]);
         const y0 = Rand.nonZeroInt(-4, 4);
@@ -1431,7 +1445,8 @@
           answer: `y = ${y0}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 4) {
+      }
+      if (idx === 4) {
         const a = Rand.nonZeroInt(-4, 4);
         const b = Rand.nonZeroInt(-3, 3);
         const useCos = Rand.pick([true, false]);
@@ -1456,7 +1471,8 @@
           answer: `f'(x) = ${derivTex}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 5) {
+      }
+      if (idx === 5) {
         const r = Rand.nonZeroInt(-3, 3);
         const k = Rand.pick([1, 2]);
         const cConst = k * r + 2;
@@ -1478,11 +1494,12 @@
           answer: `f'(x) = (x - (${r}))(${cConst}${MathFmt.coeff(-k, "x", false)})e^{-${k === 1 ? "" : k}x}; \\; x \\in \\{${r}, ${x2}\\}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 6) {
+      }
+      if (idx === 6) {
         const p = Rand.nonZeroInt(-3, 3);
         let q = Rand.nonZeroInt(-3, 3);
         while (q === p) q = Rand.nonZeroInt(-3, 3);
-        const diffPQ = p - q;
+        const diffQP = q - p;
 
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1491,16 +1508,17 @@
           statementAr: `لتكن $f(x) = \\ln\\!\\left|\\dfrac{x - (${p})}{x - (${q})}\\right|$ على $\\mathbb{R} \\setminus \\{${p}, ${q}\\}$. احسب $f'(x)$.`,
           steps: [
             `Decompose on $D_f$: $f(x) = \\ln|x - (${p})| - \\ln|x - (${q})|$.`,
-            `Differentiate: $f'(x) = \\dfrac{1}{x - (${p})} - \\dfrac{1}{x - (${q})} = \\dfrac{${diffPQ}}{(x - (${p}))(x - (${q}))}$.`
+            `Differentiate: $f'(x) = \\dfrac{1}{x - (${p})} - \\dfrac{1}{x - (${q})} = \\dfrac{(x - (${q})) - (x - (${p}))}{(x - (${p}))(x - (${q}))} = \\dfrac{${diffQP}}{(x - (${p}))(x - (${q}))}$.`
           ],
           stepsAr: [
             `نفكك التابع إلى فرق لوغاريتمين على مجموعة التعريف.`,
-            `نشتق ونوحد المقامات فنجد $f'(x) = \\dfrac{${diffPQ}}{(x - (${p}))(x - (${q}))}$.`
+            `نشتق ونوحد المقامات فنجد $f'(x) = \\dfrac{${diffQP}}{(x - (${p}))(x - (${q}))}$.`
           ],
-          answer: `f'(x) = \\frac{${diffPQ}}{(x - (${p}))(x - (${q}))}`,
+          answer: `f'(x) = \\frac{${diffQP}}{(x - (${p}))(x - (${q}))}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 7) {
+      }
+      if (idx === 7) {
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-4, 4);
 
@@ -1520,7 +1538,8 @@
           answer: `f'(x) = e^{${MathFmt.coeff(a, "x", true)}}\\big(${a}\\sin(${MathFmt.coeff(b, "x", true)})${MathFmt.coeff(b, "\\cos(" + b + "x)", false)}\\big)`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 8) {
+      }
+      if (idx === 8) {
         const m = Rand.nonZeroInt(-4, 4);
         const b = Rand.nonZeroInt(-4, 4);
         const c = Rand.nonZeroInt(-5, 5);
@@ -1545,28 +1564,28 @@
           answer: `A(${x0}, ${y0})`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const b = Rand.pick([1, 2, 3]);
-        const rBound = Rand.int(2, 4);
-        const a = b * rBound * rBound;
-
-        return {
-          book: "Analysis", bookAr: "التحليل",
-          unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Let $f(x) = \\sqrt{${a} - ${b}x^2}$ on $]-${rBound}, ${rBound}[$. Find $f'(x)$ and state where $f'(x) > 0$.`,
-          statementAr: `لتكن $f(x) = \\sqrt{${a} - ${b}x^2}$ على $]-${rBound}, ${rBound}[$. أوجد $f'(x)$ وحدد أين يكون $f'(x) > 0$.`,
-          steps: [
-            `Here $u(x) = ${a} - ${b}x^2$ and $u'(x) = -${2 * b}x$, so $f'(x) = \\dfrac{-${2 * b}x}{2\\sqrt{${a} - ${b}x^2}} = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$.`,
-            `Since $\\sqrt{${a} - ${b}x^2} > 0$ on $]-${rBound}, ${rBound}[$ and $${b} > 0$, $f'(x) > 0 \\iff -x > 0 \\iff x \\in ]-${rBound}, 0[$.`
-          ],
-          stepsAr: [
-            `نحسب $f'(x) = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$ بعد اختصار الـ $2$.`,
-            `يكون المشتق موجباً تماماً عندما $x \\in ]-${rBound}, 0[$.`
-          ],
-          answer: `f'(x) = \\frac{-${b}x}{\\sqrt{${a} - ${b}x^2}}; \\; f'(x) > 0 \\text{ on } ]-${rBound}, 0[`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const b = Rand.pick([1, 2, 3]);
+      const rBound = Rand.int(2, 4);
+      const a = b * rBound * rBound;
+
+      return {
+        book: "Analysis", bookAr: "التحليل",
+        unit: "Differentiation", unitAr: "الاشتقاق",
+        statement: `Let $f(x) = \\sqrt{${a} - ${b}x^2}$ on $]-${rBound}, ${rBound}[$. Find $f'(x)$ and state where $f'(x) > 0$.`,
+        statementAr: `لتكن $f(x) = \\sqrt{${a} - ${b}x^2}$ على $]-${rBound}, ${rBound}[$. أوجد $f'(x)$ وحدد أين يكون $f'(x) > 0$.`,
+        steps: [
+          `Here $u(x) = ${a} - ${b}x^2$ and $u'(x) = -${2 * b}x$, so $f'(x) = \\dfrac{-${2 * b}x}{2\\sqrt{${a} - ${b}x^2}} = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$.`,
+          `Since $\\sqrt{${a} - ${b}x^2} > 0$ on $]-${rBound}, ${rBound}[$ and $${b} > 0$, $f'(x) > 0 \\iff -x > 0 \\iff x \\in ]-${rBound}, 0[$.`
+        ],
+        stepsAr: [
+          `نحسب $f'(x) = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$ بعد اختصار الـ $2$.`,
+          `يكون المشتق موجباً تماماً عندما $x \\in ]-${rBound}, 0[$.`
+        ],
+        answer: `f'(x) = \\frac{-${b}x}{\\sqrt{${a} - ${b}x^2}}; \\; f'(x) > 0 \\text{ on } ]-${rBound}, 0[`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genMonotonicitySequence() {
@@ -1591,7 +1610,8 @@
           answer: `(u_n)_{n \\ge 1} \\text{ is strictly increasing}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const a = Rand.int(2, 6);
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1609,7 +1629,8 @@
           answer: `\\frac{u_{n+1}}{u_n} = \\frac{${a}}{n+1}; \\text{ strictly decreasing for } n \\ge ${a}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const k = Rand.int(1, 5);
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1627,7 +1648,8 @@
           answer: `\\text{Not monotonic (alternating signs)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const a = Rand.int(1, 3);
         const c = Rand.int(2, 5);
         const b = Rand.nonZeroInt(-4, 4);
@@ -1650,26 +1672,26 @@
           answer: `(u_n)_{n \\ge 1} \\text{ is ${trend}}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const k = Rand.int(3, 6);
-        const c = Rand.nonZeroInt(-5, 5);
-        return {
-          book: "Analysis", bookAr: "التحليل",
-          unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
-          statement: `For $n \\ge 1$, let $u_n = n^2${MathFmt.coeff(-2 * k, "n", false)}${MathFmt.signedNum(c)}$. Compute $u_{n+1} - u_n$ and find for which $n \\ge 1$ the sequence becomes strictly increasing.`,
-          statementAr: `من أجل $n \\ge 1$، ليكن $u_n = n^2${MathFmt.coeff(-2 * k, "n", false)}${MathFmt.signedNum(c)}$. احسب $u_{n+1} - u_n$ وحدد من أجل أي $n$ تصبح المتتالية متزايدة تماماً.`,
-          steps: [
-            `$u_{n+1} - u_n = (2n + 1) - ${2 * k} = 2n - ${2 * k - 1}$.`,
-            `$u_{n+1} - u_n > 0 \\iff n > ${k - 0.5} \\iff n \\ge ${k}$.`
-          ],
-          stepsAr: [
-            `نحسب الفرق: $u_{n+1} - u_n = 2n - ${2 * k - 1}$.`,
-            `يكون موجباً تماماً عندما $n \\ge ${k}$.`
-          ],
-          answer: `u_{n+1} - u_n = 2n - ${2 * k - 1}; \\text{ strictly increasing for } n \\ge ${k}`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const k = Rand.int(3, 6);
+      const c = Rand.nonZeroInt(-5, 5);
+      return {
+        book: "Analysis", bookAr: "التحليل",
+        unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
+        statement: `For $n \\ge 1$, let $u_n = n^2${MathFmt.coeff(-2 * k, "n", false)}${MathFmt.signedNum(c)}$. Compute $u_{n+1} - u_n$ and find for which $n \\ge 1$ the sequence becomes strictly increasing.`,
+        statementAr: `من أجل $n \\ge 1$، ليكن $u_n = n^2${MathFmt.coeff(-2 * k, "n", false)}${MathFmt.signedNum(c)}$. احسب $u_{n+1} - u_n$ وحدد من أجل أي $n$ تصبح المتتالية متزايدة تماماً.`,
+        steps: [
+          `$u_{n+1} - u_n = (2n + 1) - ${2 * k} = 2n - ${2 * k - 1}$.`,
+          `$u_{n+1} - u_n > 0 \\iff n > ${k - 0.5} \\iff n \\ge ${k}$.`
+        ],
+        stepsAr: [
+          `نحسب الفرق: $u_{n+1} - u_n = 2n - ${2 * k - 1}$.`,
+          `يكون موجباً تماماً عندما $n \\ge ${k}$.`
+        ],
+        answer: `u_{n+1} - u_n = 2n - ${2 * k - 1}; \\text{ strictly increasing for } n \\ge ${k}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genLogarithmic() {
@@ -1697,7 +1719,8 @@
           answer: `x = ${r1}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const a = Rand.nonZeroInt(-4, 4);
         const b = Rand.nonZeroInt(-4, 4);
         const rootFrac = MathFmt.texFrac(MathFmt.frac(-b, a));
@@ -1718,7 +1741,8 @@
           answer: `f'(x) = \\frac{${a}}{${MathFmt.linear(a, b, "x")}}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const k = Rand.nonZeroInt(-4, 4);
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1736,7 +1760,8 @@
           answer: `\\lim_{x \\to 0^+} = 0`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const a = Rand.nonZeroInt(-5, 5);
         const b = Rand.nonZeroInt(-5, 5);
         const limFrac = MathFmt.frac(a, b);
@@ -1757,29 +1782,29 @@
           answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(limFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const m = Rand.int(1, 4);
-        const diff = Rand.int(2, 5);
-        const k = m + diff;
-        const solBound = k - m;
-
-        return {
-          book: "Analysis", bookAr: "التحليل",
-          unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
-          statement: `Solve $\\ln(${k} - x) > \\ln(${m})$ on $]-\\infty, ${k}[$.`,
-          statementAr: `حل المتراجحة $\\ln(${k} - x) > \\ln(${m})$ على المجال $]-\\infty, ${k}[$.`,
-          steps: [
-            `Domain: $x < ${k}$. Since $\\ln$ is strictly increasing on $]0, +\\infty[$, ${k} - x > ${m}$.`,
-            `Subtracting ${k} and multiplying by $-1$ gives $x < ${solBound}$, which lies inside $]-\\infty, ${k}[$.`
-          ],
-          stepsAr: [
-            `مجموعة التعريف هي $] -\\infty, ${k}[$ وبما أن اللوغاريتم متزايد تماماً فإن ${k} - x > ${m}$.`,
-            `بحل المتراجحة نجد $x < ${solBound}$.`
-          ],
-          answer: `x < ${solBound}`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const m = Rand.int(1, 4);
+      const diff = Rand.int(2, 5);
+      const k = m + diff;
+      const solBound = k - m;
+
+      return {
+        book: "Analysis", bookAr: "التحليل",
+        unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
+        statement: `Solve $\\ln(${k} - x) > \\ln(${m})$ on $]-\\infty, ${k}[$.`,
+        statementAr: `حل المتراجحة $\\ln(${k} - x) > \\ln(${m})$ على المجال $]-\\infty, ${k}[$.`,
+        steps: [
+          `Domain: $x < ${k}$. Since $\\ln$ is strictly increasing on $]0, +\\infty[$, ${k} - x > ${m}$.`,
+          `Subtracting ${k} and multiplying by $-1$ gives $x < ${solBound}$, which lies inside $]-\\infty, ${k}[$.`
+        ],
+        stepsAr: [
+          `مجموعة التعريف هي $] -\\infty, ${k}[$ وبما أن اللوغاريتم متزايد تماماً فإن ${k} - x > ${m}$.`,
+          `بحل المتراجحة نجد $x < ${solBound}$.`
+        ],
+        answer: `x < ${solBound}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genExponential() {
@@ -1807,7 +1832,8 @@
           answer: `f'(x) = \\big(${MathFmt.linear(xCoeff, constPart, "x")}\\big)e^{${a}x}, \\quad \\lim_{x \\to +\\infty} f(x) = 0`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const a = Rand.nonZeroInt(-5, 5);
         const b = Rand.nonZeroInt(-5, 5);
         const limFrac = MathFmt.frac(a, b);
@@ -1828,7 +1854,8 @@
           answer: `\\lim_{x \\to 0} = ${MathFmt.texFrac(limFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const a = Rand.int(1, 3);
         const b = Rand.int(2, 4);
 
@@ -1848,7 +1875,8 @@
           answer: `S = \\{${a}, ${b}\\}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const a = Rand.int(1, 4);
         const k = Rand.nonZeroInt(-4, 4);
         return {
@@ -1867,30 +1895,30 @@
           answer: `\\lim_{x \\to -\\infty} = 0`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const a = Rand.nonZeroInt(-3, 3);
-        const b = Rand.nonZeroInt(-4, 4);
-        const c = Rand.nonZeroInt(-4, 4);
-        const uTex = `${MathFmt.coeff(a, "x^2", true)}${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}`;
-        const uPrimeTex = `${2 * a}x${MathFmt.signedNum(b)}`;
-
-        return {
-          book: "Analysis", bookAr: "التحليل",
-          unit: "Exponential Function", unitAr: "التابع الأسي",
-          statement: `Differentiate $f(x) = e^{${uTex}}$ on $\\mathbb{R}$.`,
-          statementAr: `اشتق التابع $f(x) = e^{${uTex}}$ على $\\mathbb{R}$.`,
-          steps: [
-            `Here $u(x) = ${uTex}$ and $u'(x) = ${uPrimeTex}$.`,
-            `Thus $f'(x) = (${uPrimeTex})e^{${uTex}}$.`
-          ],
-          stepsAr: [
-            `مشتق الأس هو $u'(x) = ${uPrimeTex}$.`,
-            `إذن $f'(x) = (${uPrimeTex})e^{${uTex}}$.`
-          ],
-          answer: `f'(x) = (${uPrimeTex})e^{${uTex}}`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const a = Rand.nonZeroInt(-3, 3);
+      const b = Rand.nonZeroInt(-4, 4);
+      const c = Rand.nonZeroInt(-4, 4);
+      const uTex = `${MathFmt.coeff(a, "x^2", true)}${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}`;
+      const uPrimeTex = `${2 * a}x${MathFmt.signedNum(b)}`;
+
+      return {
+        book: "Analysis", bookAr: "التحليل",
+        unit: "Exponential Function", unitAr: "التابع الأسي",
+        statement: `Differentiate $f(x) = e^{${uTex}}$ on $\\mathbb{R}$.`,
+        statementAr: `اشتق التابع $f(x) = e^{${uTex}}$ على $\\mathbb{R}$.`,
+        steps: [
+          `Here $u(x) = ${uTex}$ and $u'(x) = ${uPrimeTex}$.`,
+          `Thus $f'(x) = (${uPrimeTex})e^{${uTex}}$.`
+        ],
+        stepsAr: [
+          `مشتق الأس هو $u'(x) = ${uPrimeTex}$.`,
+          `إذن $f'(x) = (${uPrimeTex})e^{${uTex}}$.`
+        ],
+        answer: `f'(x) = (${uPrimeTex})e^{${uTex}}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genIntegration() {
@@ -1920,7 +1948,8 @@
           answer: `I = ${exactVal}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const a = Rand.int(2, 6);
         const k = Rand.nonZeroInt(-5, 5);
         return {
@@ -1939,10 +1968,10 @@
           answer: `J = 0`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const a = Rand.nonZeroInt(-3, 3);
-        const b = Rand.nonZeroInt(-3, 3);
-        const safeB = Math.max(1, b);
+        const safeB = Math.max(1, Rand.nonZeroInt(-3, 3));
 
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1960,7 +1989,8 @@
           answer: `I = ${a}\\ln\\!\\left(\\frac{${2 + safeB}}{${1 + safeB}}\\right)`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const k = Rand.pick([1, 2, 3]);
         return {
           book: "Analysis", bookAr: "التحليل",
@@ -1978,28 +2008,29 @@
           answer: `\\text{Area} = ${k}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const k = Rand.nonZeroInt(-3, 3);
-        const a = Rand.int(1, 2);
-        const ka = k * a;
-
-        return {
-          book: "Analysis", bookAr: "التحليل",
-          unit: "Integration", unitAr: "التكامل",
-          statement: `Evaluate $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$.`,
-          statementAr: `احسب التكامل $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$.`,
-          steps: [
-            `An antiderivative of $e^{${MathFmt.coeff(k, "x", true)}}$ is $\\dfrac{1}{${k}} e^{${MathFmt.coeff(k, "x", true)}}$.`,
-            `Evaluating from $0$ to $${a}$ gives $I = \\dfrac{e^{${ka === 1 ? "" : (ka === -1 ? "-" : ka)}} - 1}{${k}}$.`
-          ],
-          stepsAr: [
-            `التابع الأصلي هو $\\dfrac{1}{${k}} e^{${MathFmt.coeff(k, "x", true)}}$.`,
-            `بالتعويض بين $0$ و $${a}$ نجد $I = \\dfrac{e^{${ka === 1 ? "" : (ka === -1 ? "-" : ka)}} - 1}{${k}}$.`
-          ],
-          answer: `I = \\frac{e^{${ka === 1 ? "" : (ka === -1 ? "-" : ka)}} - 1}{${k}}`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const k = Rand.nonZeroInt(-3, 3);
+      const a = Rand.int(1, 2);
+      const ka = k * a;
+      const kaTex = ka === 1 ? "" : (ka === -1 ? "-" : `${ka}`);
+
+      return {
+        book: "Analysis", bookAr: "التحليل",
+        unit: "Integration", unitAr: "التكامل",
+        statement: `Evaluate $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$.`,
+        statementAr: `احسب التكامل $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$.`,
+        steps: [
+          `An antiderivative of $e^{${MathFmt.coeff(k, "x", true)}}$ is $\\dfrac{1}{${k}} e^{${MathFmt.coeff(k, "x", true)}}$.`,
+          `Evaluating from $0$ to $${a}$ gives $I = \\dfrac{e^{${kaTex}} - 1}{${k}}$.`
+        ],
+        stepsAr: [
+          `التابع الأصلي هو $\\dfrac{1}{${k}} e^{${MathFmt.coeff(k, "x", true)}}$.`,
+          `بالتعويض بين $0$ و $${a}$ نجد $I = \\dfrac{e^{${kaTex}} - 1}{${k}}$.`
+        ],
+        answer: `I = \\frac{e^{${kaTex}} - 1}{${k}}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     /* =========================================================================
@@ -2033,7 +2064,8 @@
           answer: `\\vec{u} \\cdot \\vec{v} = ${dot}, \\quad \\|\\vec{u} \\times \\vec{v}\\| = ${MathFmt.texSqrt(normSq)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const ux = Rand.nonZeroInt(-3, 3);
         const uz = Rand.nonZeroInt(-3, 3);
         const vx = Rand.nonZeroInt(-3, 3);
@@ -2056,7 +2088,8 @@
           answer: `\\vec{u} \\times \\vec{v} = (0, ${cy}, 0)`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-3, 3);
         const c = Rand.nonZeroInt(-3, 3);
@@ -2076,7 +2109,8 @@
           answer: `(\\vec{u} \\times \\vec{v}) \\cdot \\vec{w} = ${c}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const x0 = Rand.nonZeroInt(-3, 3);
         const y0 = Rand.nonZeroInt(-3, 3);
         const z0 = Rand.nonZeroInt(-3, 3);
@@ -2101,29 +2135,29 @@
           answer: `d(A, \\mathcal{P}) = ${MathFmt.texFrac(distFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const u = [Rand.nonZeroInt(-3, 3), Rand.nonZeroInt(-3, 3), Rand.nonZeroInt(-3, 3)];
-        const k = Rand.pick([-2, 2, 3]);
-        const normSq = u[0] * u[0] + u[1] * u[1] + u[2] * u[2];
-        const dotVal = k * normSq;
-
-        return {
-          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
-          unit: "Vector", unitAr: "الأشعة",
-          statement: `Let $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ and $\\vec{v} = ${k}\\vec{u}$. Compute $\\vec{u} \\cdot \\vec{v}$.`,
-          statementAr: `ليكن $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ و $\\vec{v} = ${k}\\vec{u}$. احسب الجداء السلمي $\\vec{u} \\cdot \\vec{v}$.`,
-          steps: [
-            `Here $\\|\\vec{u}\\|^2 = ${u[0]}^2 + ${u[1]}^2 + ${u[2]}^2 = ${normSq}$.`,
-            `$\\vec{u} \\cdot \\vec{v} = ${k}(\\vec{u} \\cdot \\vec{u}) = ${k} \\times ${normSq} = ${dotVal}$.`
-          ],
-          stepsAr: [
-            `مربع طويلة $\\vec{u}$ هو ${normSq}.`,
-            `إذن $\\vec{u} \\cdot (${k}\\vec{u}) = ${k} \\times ${normSq} = ${dotVal}$.`
-          ],
-          answer: `\\vec{u} \\cdot \\vec{v} = ${dotVal}`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const u = [Rand.nonZeroInt(-3, 3), Rand.nonZeroInt(-3, 3), Rand.nonZeroInt(-3, 3)];
+      const k = Rand.pick([-2, 2, 3]);
+      const normSq = u[0] * u[0] + u[1] * u[1] + u[2] * u[2];
+      const dotVal = k * normSq;
+
+      return {
+        book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+        unit: "Vector", unitAr: "الأشعة",
+        statement: `Let $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ and $\\vec{v} = ${k}\\vec{u}$. Compute $\\vec{u} \\cdot \\vec{v}$.`,
+        statementAr: `ليكن $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ و $\\vec{v} = ${k}\\vec{u}$. احسب الجداء السلمي $\\vec{u} \\cdot \\vec{v}$.`,
+        steps: [
+          `Here $\\|\\vec{u}\\|^2 = ${u[0]}^2 + ${u[1]}^2 + ${u[2]}^2 = ${normSq}$.`,
+          `$\\vec{u} \\cdot \\vec{v} = ${k}(\\vec{u} \\cdot \\vec{u}) = ${k} \\times ${normSq} = ${dotVal}$.`
+        ],
+        stepsAr: [
+          `مربع طويلة $\\vec{u}$ هو ${normSq}.`,
+          `إذن $\\vec{u} \\cdot (${k}\\vec{u}) = ${k} \\times ${normSq} = ${dotVal}$.`
+        ],
+        answer: `\\vec{u} \\cdot \\vec{v} = ${dotVal}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genComplexNumbers() {
@@ -2141,16 +2175,13 @@
         ];
         const alpha = Rand.pick(alphas);
         const denoms = [
-          { tex: "1 - \\sqrt{3}", arg: MathFmt.frac(1, 1), reason: "$1 - \\sqrt{3} < 0 \\implies \\arg(1 - \\sqrt{3}) \\equiv \\pi \\pmod{2\\pi}$" },
-          { tex: "1 + i\\sqrt{3}", arg: MathFmt.frac(1, 3), reason: "$1 + i\\sqrt{3} = 2e^{i\\pi/3}$" },
-          { tex: "-1 + i\\sqrt{3}", arg: MathFmt.frac(2, 3), reason: "$-1 + i\\sqrt{3} = 2e^{i2\\pi/3}$" },
-          { tex: "\\sqrt{3} + i", arg: MathFmt.frac(1, 6), reason: "$\\sqrt{3} + i = 2e^{i\\pi/6}$" }
+          { tex: "1 - \\sqrt{3}", arg: MathFmt.frac(1, 1), reason: "1 - \\sqrt{3} < 0 \\implies \\arg(1 - \\sqrt{3}) \\equiv \\pi \\pmod{2\\pi}" },
+          { tex: "1 + i\\sqrt{3}", arg: MathFmt.frac(1, 3), reason: "1 + i\\sqrt{3} = 2e^{i\\pi/3}" },
+          { tex: "-1 + i\\sqrt{3}", arg: MathFmt.frac(2, 3), reason: "-1 + i\\sqrt{3} = 2e^{i2\\pi/3}" },
+          { tex: "\\sqrt{3} + i", arg: MathFmt.frac(1, 6), reason: "\\sqrt{3} + i = 2e^{i\\pi/6}" }
         ];
         const denom = Rand.pick(denoms);
-        let rawArg = MathFmt.subFrac(MathFmt.addFrac(iArg, alpha.f), denom.arg);
-        let norm = { n: rawArg.n, d: rawArg.d };
-        while (norm.n > norm.d) norm = MathFmt.subFrac(norm, MathFmt.frac(2, 1));
-        while (norm.n <= -norm.d) norm = MathFmt.addFrac(norm, MathFmt.frac(2, 1));
+        const norm = MathFmt.normalizePi(MathFmt.subFrac(MathFmt.addFrac(iArg, alpha.f), denom.arg));
 
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
@@ -2158,17 +2189,18 @@
           statement: `Find the principal argument $\\arg(Z) \\in ]-\\pi, \\pi]$ for $Z = \\dfrac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}$.`,
           statementAr: `أوجد الزاوية الرئيسية $\\arg(Z) \\in ]-\\pi, \\pi]$ للعدد العقدي $Z = \\dfrac{${iLabel} \\cdot e^{i${alpha.tex}}}{${denom.tex}}$.`,
           steps: [
-            `Using $\\arg\\!\\left(\\frac{uv}{w}\\right) \\equiv \\arg u + \\arg v - \\arg w \\pmod{2\\pi}$ with ${denom.reason}.`,
+            `Using $\\arg\\!\\left(\\frac{uv}{w}\\right) \\equiv \\arg u + \\arg v - \\arg w \\pmod{2\\pi}$ with $${denom.reason}$$.`,
             `Normalizing into $]-\\pi, \\pi]$ yields $${MathFmt.texPi(norm)}$.`
           ],
           stepsAr: [
-            `نجمع زوايا البسط ونطرح زاوية المقام مع ${denom.reason}.`,
+            `نجمع زوايا البسط ونطرح زاوية المقام مع $${denom.reason}$$.`,
             `بإرجاع الناتج إلى المجال $]-\\pi, \\pi]$ نجد $${MathFmt.texPi(norm)}$.`
           ],
           answer: `\\arg(Z) = ${MathFmt.texPi(norm)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const a = Rand.int(1, 4);
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
@@ -2186,30 +2218,30 @@
           answer: `z = ${a}\\sqrt{2} e^{-i\\frac{3\\pi}{4}}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const x = Rand.nonZeroInt(-4, 4);
         const y = Rand.nonZeroInt(-4, 4);
         const normSq = x * x + y * y;
-        const zTex = `${x}${y >= 0 ? ` + ${y}i` : ` - ${Math.abs(y)}i`}`;
-        const zBarTex = `${x}${y >= 0 ? ` - ${y}i` : ` + ${Math.abs(y)}i`}`;
 
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `For $z = ${zTex}$, compute $\\overline{z}$ and $z \\cdot \\overline{z}$.`,
-          statementAr: `من أجل $z = ${zTex}$، احسب المرافق $\\overline{z}$ والجداء $z \\cdot \\overline{z}$.`,
+          statement: `For $z = ${MathFmt.complex(x, y)}$, compute $\\overline{z}$ and $z \\cdot \\overline{z}$.`,
+          statementAr: `من أجل $z = ${MathFmt.complex(x, y)}$، احسب المرافق $\\overline{z}$ والجداء $z \\cdot \\overline{z}$.`,
           steps: [
-            `Conjugate flips the sign of the imaginary part: $\\overline{z} = ${zBarTex}$.`,
+            `Conjugate flips the sign of the imaginary part: $\\overline{z} = ${MathFmt.complex(x, -y)}$.`,
             `Product: $z \\cdot \\overline{z} = |z|^2 = (${x})^2 + (${y})^2 = ${normSq}$.`
           ],
           stepsAr: [
-            `المرافق هو $\\overline{z} = ${zBarTex}$.`,
+            `المرافق هو $\\overline{z} = ${MathFmt.complex(x, -y)}$.`,
             `الجداء هو $z \\cdot \\overline{z} = ${x}^2 + ${y}^2 = ${normSq}$.`
           ],
-          answer: `\\overline{z} = ${zBarTex}, \\quad z \\cdot \\overline{z} = ${normSq}`,
+          answer: `\\overline{z} = ${MathFmt.complex(x, -y)}, \\quad z \\cdot \\overline{z} = ${normSq}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const r = Rand.pick([2, 3]);
         const n = Rand.pick([3, 4]);
         const nTheta = MathFmt.frac(n, 6);
@@ -2231,13 +2263,12 @@
           answer: `z^{${n}} = ${rPowN} e^{i${MathFmt.texPi(nTheta)}}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 4) {
+      }
+      if (idx === 4) {
         const k = Rand.int(1, 3);
         const b = Rand.nonZeroInt(-3, 3);
         const s2 = -2 * k;
         const pConst = k * k + b * b;
-        const bSign = b > 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`;
-        const bConjSign = b > 0 ? ` - ${b}i` : ` + ${Math.abs(b)}i`;
 
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
@@ -2246,16 +2277,17 @@
           statementAr: `حل في $\\mathbb{C}$ المعادلة: $z^2${MathFmt.coeff(s2, "z", false)} + ${pConst} = 0$.`,
           steps: [
             `Discriminant $\\Delta = (${s2})^2 - 4(1)(${pConst}) = ${s2 * s2 - 4 * pConst} < 0$.`,
-            `Roots are $z_1 = ${k}${bSign}$ and $z_2 = ${k}${bConjSign}$.`
+            `Roots are $z_1 = ${MathFmt.complex(k, b)}$ and $z_2 = ${MathFmt.complex(k, -b)}$.`
           ],
           stepsAr: [
             `المميز $\\Delta = ${s2 * s2 - 4 * pConst} < 0$.`,
-            `الجذران هما $z_1 = ${k}${bSign}$ و $z_2 = ${k}${bConjSign}$.`
+            `الجذران هما $z_1 = ${MathFmt.complex(k, b)}$ و $z_2 = ${MathFmt.complex(k, -b)}$.`
           ],
-          answer: `z_1 = ${k}${bSign}, \\quad z_2 = ${k}${bConjSign}`,
+          answer: `z_1 = ${MathFmt.complex(k, b)}, \\quad z_2 = ${MathFmt.complex(k, -b)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 5) {
+      }
+      if (idx === 5) {
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
@@ -2267,12 +2299,13 @@
           ],
           stepsAr: [
             `نحسب $(1 - i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$ بزاوية سالبة.`,
-            `(1 + i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$، وبالقسمة نجد $Z = i = e^{i\\frac{\\pi}{2}}$.`
+            `$(1 + i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$، وبالقسمة نجد $Z = i = e^{i\\frac{\\pi}{2}}$.`
           ],
           answer: `Z = i = e^{i\\frac{\\pi}{2}}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 6) {
+      }
+      if (idx === 6) {
         const a = Rand.nonZeroInt(-3, 3);
         const b = a * a + Rand.nonZeroInt(-3, 3);
         const imAtA = a * a - b;
@@ -2293,7 +2326,8 @@
           answer: `x = ${a}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 7) {
+      }
+      if (idx === 7) {
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
@@ -2310,7 +2344,8 @@
           answer: `z_0 = e^{-i\\frac{\\pi}{4}}, \\quad z_1 = e^{i\\frac{3\\pi}{4}}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 8) {
+      }
+      if (idx === 8) {
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-3, 3);
         const c = Rand.nonZeroInt(-3, 3);
@@ -2322,37 +2357,37 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Let $z_1 = ${a}${b >= 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`}$ and $z_2 = ${c}${d >= 0 ? ` + ${d}i` : ` - ${Math.abs(d)}i`}$. Compute $|z_1 + \\overline{z_2}|$.`,
-          statementAr: `لتكن $z_1 = ${a}${b >= 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`}$ و $z_2 = ${c}${d >= 0 ? ` + ${d}i` : ` - ${Math.abs(d)}i`}$. احسب $|z_1 + \\overline{z_2}|$.`,
+          statement: `Let $z_1 = ${MathFmt.complex(a, b)}$ and $z_2 = ${MathFmt.complex(c, d)}$. Compute $|z_1 + \\overline{z_2}|$.`,
+          statementAr: `لتكن $z_1 = ${MathFmt.complex(a, b)}$ و $z_2 = ${MathFmt.complex(c, d)}$. احسب $|z_1 + \\overline{z_2}|$.`,
           steps: [
-            `Here $\\overline{z_2} = ${c}$${-d >= 0 ? ` + ${-d}i` : ` - ${Math.abs(-d)}i`}$, so $z_1 + \\overline{z_2} = ${reSum}${imSum >= 0 ? ` + ${imSum}i` : ` - ${Math.abs(imSum)}i`}$.`,
+            `Here $\\overline{z_2} = ${MathFmt.complex(c, -d)}$, so $z_1 + \\overline{z_2} = ${MathFmt.complex(reSum, imSum)}$.`,
             `Modulus: $|z_1 + \\overline{z_2}| = \\sqrt{(${reSum})^2 + (${imSum})^2} = ${MathFmt.texSqrt(modSq)}$.`
           ],
           stepsAr: [
-            `نحسب $z_1 + \\overline{z_2} = ${reSum}${imSum >= 0 ? ` + ${imSum}i` : ` - ${Math.abs(imSum)}i`}$.`,
+            `نحسب $z_1 + \\overline{z_2} = ${MathFmt.complex(reSum, imSum)}$.`,
             `الطويلة تساوي ${MathFmt.texSqrt(modSq)}.`
           ],
           answer: `|z_1 + \\overline{z_2}| = ${MathFmt.texSqrt(modSq)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        return {
-          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
-          unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Using Euler's formulas, linearize $\\cos^2\\theta$ in terms of $\\cos(2\\theta)$.`,
-          statementAr: `باستعمال دستوري أويلر، أخطِط العبارة $\\cos^2\\theta$ بدلالة $\\cos(2\\theta)$.`,
-          steps: [
-            `Square $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$: $\\cos^2\\theta = \\dfrac{e^{2i\\theta} + 2 + e^{-2i\\theta}}{4}$.`,
-            `Group $e^{2i\\theta} + e^{-2i\\theta} = 2\\cos(2\\theta)$: $\\cos^2\\theta = \\dfrac{2\\cos(2\\theta) + 2}{4} = \\dfrac{1 + \\cos(2\\theta)}{2}$.`
-          ],
-          stepsAr: [
-            `نربع $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$ فنحصل على $\\dfrac{e^{2i\\theta} + 2 + e^{-2i\\theta}}{4}$.`,
-            `نجمع الحدود فنصل إلى $\\cos^2\\theta = \\dfrac{1 + \\cos(2\\theta)}{2}$.`
-          ],
-          answer: `\\cos^2\\theta = \\frac{1 + \\cos(2\\theta)}{2}`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      return {
+        book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+        unit: "Complex Numbers", unitAr: "الأعداد العقدية",
+        statement: `Using Euler's formulas, linearize $\\cos^2\\theta$ in terms of $\\cos(2\\theta)$.`,
+        statementAr: `باستعمال دستوري أويلر، أخطِط العبارة $\\cos^2\\theta$ بدلالة $\\cos(2\\theta)$.`,
+        steps: [
+          `Square $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$: $\\cos^2\\theta = \\dfrac{e^{2i\\theta} + 2 + e^{-2i\\theta}}{4}$.`,
+          `Group $e^{2i\\theta} + e^{-2i\\theta} = 2\\cos(2\\theta)$: $\\cos^2\\theta = \\dfrac{2\\cos(2\\theta) + 2}{4} = \\dfrac{1 + \\cos(2\\theta)}{2}$.`
+        ],
+        stepsAr: [
+          `نربع $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$ فنحصل على $\\dfrac{e^{2i\\theta} + 2 + e^{-2i\\theta}}{4}$.`,
+          `نجمع الحدود فنصل إلى $\\cos^2\\theta = \\dfrac{1 + \\cos(2\\theta)}{2}$.`
+        ],
+        answer: `\\cos^2\\theta = \\frac{1 + \\cos(2\\theta)}{2}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genComplexGeometry() {
@@ -2373,10 +2408,10 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
-          statement: `Let $A$, $B$, and $C$ have affixes $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$, $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$, and $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$. Find $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
-          statementAr: `لتكن $A$ و $B$ و $C$ ذات اللواحق $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$ و $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$ و $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$. أوجد قياس الزاوية $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
+          statement: `Let $A$, $B$, and $C$ have affixes $z_A = ${MathFmt.complex(ax, ay)}$, $z_B = ${MathFmt.complex(bx, by)}$, and $z_C = ${MathFmt.complex(cx, cy)}$. Find $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
+          statementAr: `لتكن $A$ و $B$ و $C$ ذات اللواحق $z_A = ${MathFmt.complex(ax, ay)}$ و $z_B = ${MathFmt.complex(bx, by)}$ و $z_C = ${MathFmt.complex(cx, cy)}$. أوجد قياس الزاوية $\\widehat{(\\vec{AB}, \\vec{AC})}$.`,
           steps: [
-            `Compute $\\dfrac{z_C - z_A}{z_B - z_A} = \\dfrac{${angleChoice.dx}${angleChoice.dy >= 0 ? ` + ${angleChoice.dy}i` : ` - ${Math.abs(angleChoice.dy)}i`}}{2}$.`,
+            `Compute $\\dfrac{z_C - z_A}{z_B - z_A} = \\dfrac{${MathFmt.complex(angleChoice.dx, angleChoice.dy)}}{2}$.`,
             `Its argument is $${angleChoice.tex} \\pmod{2\\pi}$.`
           ],
           stepsAr: [
@@ -2386,29 +2421,33 @@
           answer: `\\widehat{(\\vec{AB}, \\vec{AC})} = ${angleChoice.tex} \\pmod{2\\pi}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const ax = Rand.nonZeroInt(-3, 3);
         const ay = Rand.nonZeroInt(-3, 3);
         const bx = ax + 3;
         const by = ay + 4;
+        const midX = ax + 1.5;
+        const midY = ay + 2;
 
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
-          statement: `Given $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$ and $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$, compute the length $AB = |z_B - z_A|$ and the affix of midpoint $I$ of $[AB]$.`,
-          statementAr: `لتكن $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$ و $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$. احسب الطول $AB = |z_B - z_A|$ ولاحقة منتصف $[AB]$.`,
+          statement: `Given $z_A = ${MathFmt.complex(ax, ay)}$ and $z_B = ${MathFmt.complex(bx, by)}$, compute the length $AB = |z_B - z_A|$ and the affix of midpoint $I$ of $[AB]$.`,
+          statementAr: `لتكن $z_A = ${MathFmt.complex(ax, ay)}$ و $z_B = ${MathFmt.complex(bx, by)}$. احسب الطول $AB = |z_B - z_A|$ ولاحقة منتصف $[AB]$.`,
           steps: [
             `$z_B - z_A = 3 + 4i \\implies AB = |3 + 4i| = \\sqrt{3^2 + 4^2} = 5$.`,
-            `Midpoint affix: $z_I = \\dfrac{z_A + z_B}{2} = ${ax + 1.5}${ay + 2 >= 0 ? ` + ${ay + 2}i` : ` - ${Math.abs(ay + 2)}i`}$.`
+            `Midpoint affix: $z_I = \\dfrac{z_A + z_B}{2} = ${MathFmt.complex(midX, midY)}$.`
           ],
           stepsAr: [
             `الطول هو $|z_B - z_A| = |3 + 4i| = 5$.`,
-            `لاحقة المنتصف هي $z_I = \\dfrac{z_A + z_B}{2} = ${ax + 1.5}${ay + 2 >= 0 ? ` + ${ay + 2}i` : ` - ${Math.abs(ay + 2)}i`}$.`
+            `لاحقة المنتصف هي $z_I = \\dfrac{z_A + z_B}{2} = ${MathFmt.complex(midX, midY)}$.`
           ],
-          answer: `AB = 5, \\quad z_I = ${ax + 1.5}${ay + 2 >= 0 ? ` + ${ay + 2}i` : ` - ${Math.abs(ay + 2)}i`}`,
+          answer: `AB = 5, \\quad z_I = ${MathFmt.complex(midX, midY)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const a = Rand.nonZeroInt(-4, 4);
         const b = Rand.nonZeroInt(-4, 4);
         return {
@@ -2427,12 +2466,14 @@
           answer: `\\text{Perpendicular bisector of } [AB]`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const alpha = Rand.pick(["\\frac{\\pi}{2}", "-\\frac{\\pi}{2}", "\\pi"]);
         const factorTex = alpha === "\\frac{\\pi}{2}" ? "i" : (alpha === "-\\frac{\\pi}{2}" ? "-i" : "-1");
         const z0x = Rand.nonZeroInt(-3, 3);
         const z0y = Rand.nonZeroInt(-3, 3);
-        let rx = z0x, ry = z0y;
+        let rx = z0x;
+        let ry = z0y;
         if (factorTex === "i") { rx = -z0y; ry = z0x; }
         else if (factorTex === "-i") { rx = z0y; ry = -z0x; }
         else { rx = -z0x; ry = -z0y; }
@@ -2440,45 +2481,47 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
-          statement: `Under a rotation of center $O$ and angle $${alpha}$, find the affix $z'$ of the image of $M$ with affix $z = ${z0x}${z0y >= 0 ? ` + ${z0y}i` : ` - ${Math.abs(z0y)}i`}$.`,
-          statementAr: `بدوران مركزه $O$ وزاويته $${alpha}$، أوجد لاحقة صورة النقطة ذات اللاحقة $z = ${z0x}${z0y >= 0 ? ` + ${z0y}i` : ` - ${Math.abs(z0y)}i`}$.`,
+          statement: `Under a rotation of center $O$ and angle $${alpha}$, find the affix $z'$ of the image of $M$ with affix $z = ${MathFmt.complex(z0x, z0y)}$.`,
+          statementAr: `بدوران مركزه $O$ وزاويته $${alpha}$، أوجد لاحقة صورة النقطة ذات اللاحقة $z = ${MathFmt.complex(z0x, z0y)}$.`,
           steps: [
             `Rotation around $O$ by angle $${alpha}$ acts via $z' = e^{i(${alpha})}z = (${factorTex})z$.`,
-            `Computing $(${factorTex})(${z0x}${z0y >= 0 ? ` + ${z0y}i` : ` - ${Math.abs(z0y)}i`})$ gives $z' = ${rx}${ry >= 0 ? ` + ${ry}i` : ` - ${Math.abs(ry)}i`}$.`
+            `Computing $(${factorTex})(${MathFmt.complex(z0x, z0y)})$ gives $z' = ${MathFmt.complex(rx, ry)}$.`
           ],
           stepsAr: [
             `عبارة الدوران هي $z' = (${factorTex})z$.`,
-            `بالضرب نحصل على $z' = ${rx}${ry >= 0 ? ` + ${ry}i` : ` - ${Math.abs(ry)}i`}$.`
+            `بالضرب نحصل على $z' = ${MathFmt.complex(rx, ry)}$.`
           ],
-          answer: `z' = ${rx}${ry >= 0 ? ` + ${ry}i` : ` - ${Math.abs(ry)}i`}`,
-          answerLabelAr: "الجواب النهائي"
-        };
-      } else {
-        const ax = Rand.nonZeroInt(-2, 2);
-        const ay = Rand.nonZeroInt(-2, 2);
-        const dx = Rand.nonZeroInt(-3, 3);
-        const dy = Rand.nonZeroInt(-3, 3);
-        const k = Rand.pick([2, 3]);
-        const bx = ax + dx, by = ay + dy;
-        const cx = ax + k * dx, cy = ay + k * dy;
-
-        return {
-          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
-          unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
-          statement: `Given $z_A = ${ax}${ay >= 0 ? ` + ${ay}i` : ` - ${Math.abs(ay)}i`}$, $z_B = ${bx}${by >= 0 ? ` + ${by}i` : ` - ${Math.abs(by)}i`}$, and $z_C = ${cx}${cy >= 0 ? ` + ${cy}i` : ` - ${Math.abs(cy)}i`}$, compute $\\dfrac{z_C - z_A}{z_B - z_A}$ and deduce whether $A, B, C$ are collinear.`,
-          statementAr: `لتكن $A$ و $B$ و $C$ ذات اللواحق المعطاة، احسب $\\dfrac{z_C - z_A}{z_B - z_A}$ واستنتج استقامية النقاط.`,
-          steps: [
-            `$z_C - z_A = ${k}(z_B - z_A)$, so $\\dfrac{z_C - z_A}{z_B - z_A} = ${k} \\in \\mathbb{R}^*$.`,
-            `A real non-zero ratio means $\\arg\\!\\left(\\frac{z_C - z_A}{z_B - z_A}\\right) \\equiv 0 \\pmod{\\pi}$, so $A, B, C$ are collinear.`
-          ],
-          stepsAr: [
-            `النسبة تساوي ${k} وهو عدد حقيقي غير معدوم.`,
-            `إذن النقاط $A$ و $B$ و $C$ على استقامة واحدة.`
-          ],
-          answer: `\\frac{z_C - z_A}{z_B - z_A} = ${k} \\implies \\text{collinear}`,
+          answer: `z' = ${MathFmt.complex(rx, ry)}`,
           answerLabelAr: "الجواب النهائي"
         };
       }
+
+      const ax = Rand.nonZeroInt(-2, 2);
+      const ay = Rand.nonZeroInt(-2, 2);
+      const dx = Rand.nonZeroInt(-3, 3);
+      const dy = Rand.nonZeroInt(-3, 3);
+      const k = Rand.pick([2, 3]);
+      const bx = ax + dx;
+      const by = ay + dy;
+      const cx = ax + k * dx;
+      const cy = ay + k * dy;
+
+      return {
+        book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+        unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
+        statement: `Given $z_A = ${MathFmt.complex(ax, ay)}$, $z_B = ${MathFmt.complex(bx, by)}$, and $z_C = ${MathFmt.complex(cx, cy)}$, compute $\\dfrac{z_C - z_A}{z_B - z_A}$ and deduce whether $A, B, C$ are collinear.`,
+        statementAr: `لتكن $A$ و $B$ و $C$ ذات اللواحق المعطاة، احسب $\\dfrac{z_C - z_A}{z_B - z_A}$ واستنتج استقامية النقاط.`,
+        steps: [
+          `$z_C - z_A = ${k}(z_B - z_A)$, so $\\dfrac{z_C - z_A}{z_B - z_A} = ${k} \\in \\mathbb{R}^*$.`,
+          `A real non-zero ratio means $\\arg\\!\\left(\\frac{z_C - z_A}{z_B - z_A}\\right) \\equiv 0 \\pmod{\\pi}$, so $A, B, C$ are collinear.`
+        ],
+        stepsAr: [
+          `النسبة تساوي ${k} وهو عدد حقيقي غير معدوم.`,
+          `إذن النقاط $A$ و $B$ و $C$ على استقامة واحدة.`
+        ],
+        answer: `\\frac{z_C - z_A}{z_B - z_A} = ${k} \\implies \\text{collinear}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genCountingTechniques() {
@@ -2509,7 +2552,8 @@
           answer: `${ans}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const n = Rand.int(5, 8);
         const k = Rand.int(2, 4);
         const ans = MathFmt.perm(n, k);
@@ -2528,7 +2572,8 @@
           answer: `${ans}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const total = Rand.int(6, 9);
         const special = Rand.int(2, 4);
         const pick = Rand.int(2, 3);
@@ -2552,7 +2597,8 @@
           answer: `${atLeastOne}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const digits = Rand.int(4, 7);
         const length = Rand.int(2, 4);
         const ans = Math.pow(digits, length);
@@ -2571,27 +2617,27 @@
           answer: `${ans}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const nA = Rand.int(2, 3);
-        const nB = Rand.int(1, 2);
-        const totalLetters = nA + nB;
-        const ans = MathFmt.comb(totalLetters, nA);
-
-        return {
-          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
-          unit: "Counting Techniques", unitAr: "طرائق العد",
-          statement: `How many distinct arrangements can be made using $${nA}$ identical letters "A" and $${nB}$ identical letters "B" (total $${totalLetters}$ letters)?`,
-          statementAr: `كم كلمة (ترتيباً مختلفاً) يمكن تشكيلها باستخدام $${nA}$ حرفاً من النوع A و $${nB}$ حرفاً من النوع B (المجموع $${totalLetters}$ أحرف)؟`,
-          steps: [
-            `Divide total permutations $${totalLetters}!$ by indistinguishable permutations $${nA}! \\cdot ${nB}!$: $\\dfrac{${totalLetters}!}{${nA}!${nB}!} = ${ans}$.`
-          ],
-          stepsAr: [
-            `نقسم تباديل الأحرف الكلية على مضروب تكرار كل حرف: $\\dfrac{${totalLetters}!}{${nA}!${nB}!} = ${ans}$.`
-          ],
-          answer: `${ans}`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const nA = Rand.int(2, 3);
+      const nB = Rand.int(1, 2);
+      const totalLetters = nA + nB;
+      const ans = MathFmt.comb(totalLetters, nA);
+
+      return {
+        book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+        unit: "Counting Techniques", unitAr: "طرائق العد",
+        statement: `How many distinct arrangements can be made using $${nA}$ identical letters "A" and $${nB}$ identical letters "B" (total $${totalLetters}$ letters)?`,
+        statementAr: `كم كلمة (ترتيباً مختلفاً) يمكن تشكيلها باستخدام $${nA}$ حرفاً من النوع A و $${nB}$ حرفاً من النوع B (المجموع $${totalLetters}$ أحرف)؟`,
+        steps: [
+          `Divide total permutations $${totalLetters}!$ by indistinguishable permutations $${nA}! \\cdot ${nB}!$: $\\dfrac{${totalLetters}!}{${nA}!${nB}!} = ${ans}$.`
+        ],
+        stepsAr: [
+          `نقسم تباديل الأحرف الكلية على مضروب تكرار كل حرف: $\\dfrac{${totalLetters}!}{${nA}!${nB}!} = ${ans}$.`
+        ],
+        answer: `${ans}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     function genProbability() {
@@ -2618,7 +2664,8 @@
           answer: `P = ${MathFmt.texFrac(prob)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 1) {
+      }
+      if (idx === 1) {
         const pAnB = MathFmt.frac(1, 6);
         const pB = MathFmt.frac(1, 2);
         const condFrac = MathFmt.frac(pAnB.n * pB.d, pAnB.d * pB.n);
@@ -2637,7 +2684,8 @@
           answer: `P(A \\mid B) = ${MathFmt.texFrac(condFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 2) {
+      }
+      if (idx === 2) {
         const pA = MathFmt.frac(1, 2);
         const pB = MathFmt.frac(1, 3);
         const pInter = MathFmt.frac(1, 6);
@@ -2657,7 +2705,8 @@
           answer: `P(A \\cup B) = ${MathFmt.texFrac(unionFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else if (idx === 3) {
+      }
+      if (idx === 3) {
         const pE1 = MathFmt.frac(1, 4);
         const pE2 = MathFmt.frac(3, 4);
         const pAonE1 = MathFmt.frac(2, 3);
@@ -2679,24 +2728,24 @@
           answer: `P(A) = ${MathFmt.texFrac(totalP)}`,
           answerLabelAr: "الجواب النهائي"
         };
-      } else {
-        const prob = MathFmt.frac(4, 9);
-
-        return {
-          book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
-          unit: "Probability", unitAr: "الاحتمالات",
-          statement: `In $3$ independent Bernoulli trials with success probability $p = \\dfrac{1}{3}$, find the probability of getting exactly $1$ success.`,
-          statementAr: `في $3$ تجارب برنولي مستقلة احتمال النجاح في كل منها $p = \\dfrac{1}{3}$، احسب احتمال الحصول على نجاح واحد بالضبط.`,
-          steps: [
-            `$P(X = 1) = \\binom{3}{1} \\left(\\dfrac{1}{3}\\right)^1 \\left(\\dfrac{2}{3}\\right)^2 = 3 \\cdot \\dfrac{1}{3} \\cdot \\dfrac{4}{9} = ${MathFmt.texFrac(prob)}$.`
-          ],
-          stepsAr: [
-            `$P(X = 1) = \\binom{3}{1} \\left(\\dfrac{1}{3}\\right)^1 \\left(\\dfrac{2}{3}\\right)^2 = ${MathFmt.texFrac(prob)}$.`
-          ],
-          answer: `P(X = 1) = ${MathFmt.texFrac(prob)}`,
-          answerLabelAr: "الجواب النهائي"
-        };
       }
+
+      const prob = MathFmt.frac(4, 9);
+
+      return {
+        book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
+        unit: "Probability", unitAr: "الاحتمالات",
+        statement: `In $3$ independent Bernoulli trials with success probability $p = \\dfrac{1}{3}$, find the probability of getting exactly $1$ success.`,
+        statementAr: `في $3$ تجارب برنولي مستقلة احتمال النجاح في كل منها $p = \\dfrac{1}{3}$، احسب احتمال الحصول على نجاح واحد بالضبط.`,
+        steps: [
+          `$P(X = 1) = \\binom{3}{1} \\left(\\dfrac{1}{3}\\right)^1 \\left(\\dfrac{2}{3}\\right)^2 = 3 \\cdot \\dfrac{1}{3} \\cdot \\dfrac{4}{9} = ${MathFmt.texFrac(prob)}$.`
+        ],
+        stepsAr: [
+          `$P(X = 1) = \\binom{3}{1} \\left(\\dfrac{1}{3}\\right)^1 \\left(\\dfrac{2}{3}\\right)^2 = ${MathFmt.texFrac(prob)}$.`
+        ],
+        answer: `P(X = 1) = ${MathFmt.texFrac(prob)}`,
+        answerLabelAr: "الجواب النهائي"
+      };
     }
 
     /* =========================================================================
@@ -2735,37 +2784,32 @@
       ...CURRICULUM["algebra-vectors"].units
     ];
 
-    function loadSavedFromStorage() {
+    const UNIT_BY_ID = new Map(ALL_UNITS.map(u => [u.id, u]));
+
+    function safeStorageGet(key) {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        const parsed = raw ? JSON.parse(raw) : [];
+        return localStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    }
+
+    function safeStorageSet(key, val) {
+      try {
+        localStorage.setItem(key, val);
+      } catch {
+        // Ignore storage errors
+      }
+    }
+
+    function loadSavedFromStorage() {
+      const raw = safeStorageGet(STORAGE_KEY);
+      if (!raw) return [];
+      try {
+        const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : [];
       } catch {
         return [];
-      }
-    }
-
-    function persistSavedToStorage(list) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      } catch {
-        // Ignore storage quota errors
-      }
-    }
-
-    function loadLangPrefFromStorage() {
-      try {
-        return localStorage.getItem(LANG_STORAGE_KEY) === "ar";
-      } catch {
-        return false;
-      }
-    }
-
-    function persistLangPrefToStorage(isAr) {
-      try {
-        localStorage.setItem(LANG_STORAGE_KEY, isAr ? "ar" : "en");
-      } catch {
-        // Ignore storage errors
       }
     }
 
@@ -2775,7 +2819,7 @@
 
     const state = {
       activeUnit: "all",
-      arabicMode: loadLangPrefFromStorage(),
+      arabicMode: safeStorageGet(LANG_STORAGE_KEY) === "ar",
       problemIndex: 0,
       currentProblem: null,
       currentMeta: null,
@@ -2903,15 +2947,16 @@
         return;
       }
 
+      const isAr = state.arabicMode;
       dom.savedMenuContainer.innerHTML = state.savedProblems.map((item, idx) => {
-        const previewText = state.arabicMode && item.statementAr ? item.statementAr : item.statement;
-        const unitLabel = state.arabicMode && item.unitAr ? item.unitAr : item.unit;
+        const previewText = isAr && item.statementAr ? item.statementAr : item.statement;
+        const unitLabel = isAr && item.unitAr ? item.unitAr : item.unit;
         return `
           <div class="saved-menu-item" data-id="${encodeURIComponent(item.id)}">
             <div class="saved-menu-top">
-              <span>#${idx + 1} &middot; <span class="${state.arabicMode ? "ar-text" : ""}">${unitLabel}</span></span>
+              <span>#${idx + 1} &middot; <span class="${isAr ? "ar-text" : ""}">${unitLabel}</span></span>
             </div>
-            <div class="saved-menu-preview ${state.arabicMode ? "ar-mode" : ""}">${previewText}</div>
+            <div class="saved-menu-preview ${isAr ? "ar-mode" : ""}">${previewText}</div>
             <div class="saved-menu-actions">
               <button class="btn-mini open" type="button" data-action="open">Open</button>
               <button class="btn-mini delete" type="button" data-action="delete">Delete</button>
@@ -2928,7 +2973,7 @@
       if (visible) {
         dom.solutionCard.classList.add("visible");
         dom.btnToggle.classList.add("active-toggle");
-        dom.btnToggle.title = "Hide Solution";
+        dom.btnToggle.title = "Hide Solution (S)";
         dom.btnToggle.setAttribute("aria-label", "Hide Solution");
         dom.iconEye.innerHTML = `
           <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
@@ -2938,7 +2983,7 @@
       } else {
         dom.solutionCard.classList.remove("visible");
         dom.btnToggle.classList.remove("active-toggle");
-        dom.btnToggle.title = "Show Solution";
+        dom.btnToggle.title = "Show Solution (S)";
         dom.btnToggle.setAttribute("aria-label", "Show Solution");
         dom.iconEye.innerHTML = `
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -2970,9 +3015,7 @@
       dom.solutionHeader.textContent = isAr ? "خطوات الحل" : "Step-by-Step Derivation";
       dom.solutionHeader.classList.toggle("ar-text", isAr);
 
-      dom.solutionSteps.innerHTML = stepsList
-        .map(step => `<li>${step}</li>`)
-        .join("");
+      dom.solutionSteps.innerHTML = stepsList.map(step => `<li>${step}</li>`).join("");
       dom.solutionSteps.classList.toggle("ar-mode", isAr);
 
       dom.finalAnswer.innerHTML = `<strong>${answerLabel}:</strong> $${problem.answer}$`;
@@ -2997,7 +3040,7 @@
 
     function generateSeededProblem({ generatorId, seed }) {
       const seedNum = (seed >>> 0) || 1;
-      const unitObj = ALL_UNITS.find(u => u.id === generatorId);
+      const unitObj = UNIT_BY_ID.get(generatorId);
 
       activeRng = createSeededRng(seedNum);
       const selectedUnit = unitObj || Rand.pick(ALL_UNITS);
@@ -3017,10 +3060,7 @@
     function loadNewProblem(forcedSeed = null, forcedGenId = null) {
       const genId = forcedGenId || (state.activeUnit === "all" ? null : state.activeUnit);
       const seed = forcedSeed !== null ? forcedSeed : generateRandomSeed();
-      const { problem, meta } = generateSeededProblem({
-        generatorId: genId,
-        seed
-      });
+      const { problem, meta } = generateSeededProblem({ generatorId: genId, seed });
 
       state.problemIndex += 1;
       dom.statusNote.textContent = "";
@@ -3029,7 +3069,7 @@
 
     dom.btnLangToggle.addEventListener("click", () => {
       state.arabicMode = !state.arabicMode;
-      persistLangPrefToStorage(state.arabicMode);
+      safeStorageSet(LANG_STORAGE_KEY, state.arabicMode ? "ar" : "en");
       updateLangToggleUI();
       applyProblemDisplay();
       renderSavedInMenu();
@@ -3086,8 +3126,7 @@
     dom.btnSave.addEventListener("click", () => {
       if (!state.currentProblem) return;
       const sig = getProblemSignature(state.currentProblem);
-      const exists = state.savedProblems.some(item => item.id === sig);
-      if (exists) {
+      if (state.savedProblems.some(item => item.id === sig)) {
         dom.statusNote.textContent = "Already saved.";
         updateSaveButtonState();
         return;
@@ -3107,7 +3146,7 @@
         answerLabelAr: state.currentProblem.answerLabelAr,
         meta: state.currentMeta ? { ...state.currentMeta } : null
       });
-      persistSavedToStorage(state.savedProblems);
+      safeStorageSet(STORAGE_KEY, JSON.stringify(state.savedProblems));
       updateSaveButtonState();
       renderSavedInMenu();
       dom.statusNote.textContent = "Saved.";
@@ -3123,7 +3162,7 @@
 
       if (action === "delete") {
         state.savedProblems = state.savedProblems.filter(item => item.id !== id);
-        persistSavedToStorage(state.savedProblems);
+        safeStorageSet(STORAGE_KEY, JSON.stringify(state.savedProblems));
         updateSaveButtonState();
         renderSavedInMenu();
         dom.statusNote.textContent = "Deleted.";
@@ -3172,41 +3211,38 @@
       }
     });
 
-    dom.btnNew.addEventListener("click", () => loadNewProblem());
-
-    dom.btnToggle.addEventListener("click", () => {
-      setSolutionVisibility(!state.solutionVisible);
+    document.addEventListener("keydown", (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const tag = document.activeElement && document.activeElement.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.key === "n" || e.key === "N") {
+        loadNewProblem();
+      } else if (e.key === "s" || e.key === "S") {
+        setSolutionVisibility(!state.solutionVisible);
+      }
     });
+
+    dom.btnNew.addEventListener("click", () => loadNewProblem());
+    dom.btnToggle.addEventListener("click", () => setSolutionVisibility(!state.solutionVisible));
 
     function initFromUrlOrRandom() {
       const params = new URLSearchParams(window.location.search);
       const paramGen = params.get("gen");
       const paramSeed = parseSeedParam(params.get("seed"));
+      const matchedUnit = UNIT_BY_ID.get(paramGen);
 
-      const matchedUnit = ALL_UNITS.find(u => u.id === paramGen);
-      if (matchedUnit && paramSeed !== null) {
-        state.activeUnit = matchedUnit.id;
+      if (paramSeed !== null) {
+        if (matchedUnit) state.activeUnit = matchedUnit.id;
         highlightActiveUnit();
         const { problem, meta } = generateSeededProblem({
-          generatorId: matchedUnit.id,
-          seed: paramSeed
-        });
-        state.problemIndex += 1;
-        dom.statusNote.textContent = "Loaded from seeded link.";
-        renderProblem(problem, state.problemIndex, meta);
-      } else if (paramSeed !== null) {
-        highlightActiveUnit();
-        const { problem, meta } = generateSeededProblem({
-          generatorId: null,
+          generatorId: matchedUnit ? matchedUnit.id : null,
           seed: paramSeed
         });
         state.problemIndex += 1;
         dom.statusNote.textContent = "Loaded from seeded link.";
         renderProblem(problem, state.problemIndex, meta);
       } else {
-        if (matchedUnit) {
-          state.activeUnit = matchedUnit.id;
-        }
+        if (matchedUnit) state.activeUnit = matchedUnit.id;
         highlightActiveUnit();
         loadNewProblem();
       }
