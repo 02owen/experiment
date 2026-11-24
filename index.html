@@ -41,7 +41,7 @@
       background-color: var(--bg-primary);
       color: var(--text-primary);
       font-family: var(--font-mono);
-      line-height: 1.65;
+      line-height: 1.8;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -320,8 +320,8 @@
     .saved-menu-preview {
       font-size: 0.76rem;
       color: var(--text-primary);
-      line-height: 1.45;
-      max-height: 4.5rem;
+      line-height: 1.6;
+      max-height: 4.8rem;
       overflow: hidden;
     }
 
@@ -430,11 +430,11 @@
     .problem-statement {
       font-size: 1rem;
       color: var(--text-primary);
-      line-height: 1.85;
+      line-height: 2.05;
     }
 
     .problem-statement .katex-display {
-      margin: 1rem 0;
+      margin: 1.1rem 0;
     }
 
     /* Centered Icon Action Controls */
@@ -542,7 +542,7 @@
       letter-spacing: 0.05em;
       color: var(--success);
       font-weight: 600;
-      margin-bottom: 1.1rem;
+      margin-bottom: 1.15rem;
     }
 
     .steps-list {
@@ -550,7 +550,7 @@
       counter-reset: step-counter;
       display: flex;
       flex-direction: column;
-      gap: 1.1rem;
+      gap: 1.25rem;
     }
 
     .steps-list li {
@@ -558,14 +558,14 @@
       position: relative;
       padding-left: 2.2rem;
       font-size: 0.92rem;
-      line-height: 1.85;
+      line-height: 2.05;
     }
 
     .steps-list li::before {
       content: counter(step-counter);
       position: absolute;
       left: 0;
-      top: 0.25rem;
+      top: 0.3rem;
       width: 1.45rem;
       height: 1.45rem;
       border-radius: 50%;
@@ -580,13 +580,14 @@
     }
 
     .final-answer-box {
-      margin-top: 1.35rem;
-      padding: 0.9rem 1.15rem;
+      margin-top: 1.4rem;
+      padding: 0.95rem 1.15rem;
       background: var(--success-bg);
       border: 1px solid rgba(78, 201, 176, 0.3);
       border-radius: 6px;
       color: var(--text-primary);
       font-size: 0.96rem;
+      line-height: 1.85;
     }
 
     .final-answer-box strong {
@@ -987,8 +988,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Sequences", unitAr: "المتتاليات",
-          statement: `Let $(u_n)_{n \\ge 0}$ be defined by $u_0 = ${u0}$ and $u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$. Find the closed form of $u_n$ and compute $u_{${targetN}}$ (watch the alternating sign on $(-1)^n$).`,
-          statementAr: `لتكن $(u_n)_{n \\ge 0}$ المعرفة بـ $u_0 = ${u0}$ و $u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$. أوجد العبارة الصريحة لـ $u_n$ واحسب $u_{${targetN}}$ (انتبه لتناوب الإشارة مع الأس الزوجي/الفردي).`,
+          statement: `Let $(u_n)_{n \\ge 0}$ be defined by $u_0 = ${u0}$ and $u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$. Find the closed form of $u_n$ and compute $u_{${targetN}}$.`,
+          statementAr: `لتكن $(u_n)_{n \\ge 0}$ المعرفة بـ $u_0 = ${u0}$ و $u_{n+1} = ${MathFmt.coeff(a, "u_n", true)}${MathFmt.signedNum(b)}$. أوجد العبارة الصريحة لـ $u_n$ واحسب $u_{${targetN}}$.`,
           steps: [
             `Fixed point: $\\ell = ${MathFmt.coeff(a, "\\ell", true)}${MathFmt.signedNum(b)} \\implies ${oneMinusA}\\ell = ${b} \\implies \\ell = ${k}$.`,
             `Set $v_n = u_n - ${k}$; then $v_{n+1} = ${a}v_n$ and $v_0 = ${v0}$, so $v_n = ${v0}(${a})^n$.`,
@@ -1008,8 +1009,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Sequences", unitAr: "المتتاليات",
-          statement: `For $n \\ge 1$, let $u_n = \\dfrac{1}{n(n+1)}$ and $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. Compute $S_{${m}}$ and $\\displaystyle\\lim_{n \\to +\\infty} S_n$ (careful not to drop the last term $\\frac{1}{n+1}$).`,
-          statementAr: `من أجل $n \\ge 1$، ليكن $u_n = \\dfrac{1}{n(n+1)}$ و $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. احسب $S_{${m}}$ و $\\displaystyle\\lim_{n \\to +\\infty} S_n$ (انتبه لعدم إسقاط الحد الأخير $\\frac{1}{n+1}$).`,
+          statement: `For $n \\ge 1$, let $u_n = \\dfrac{1}{n(n+1)}$ and $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. Compute $S_{${m}}$ and $\\displaystyle\\lim_{n \\to +\\infty} S_n$.`,
+          statementAr: `من أجل $n \\ge 1$، ليكن $u_n = \\dfrac{1}{n(n+1)}$ و $S_n = \\displaystyle\\sum_{k=1}^{n} u_k$. احسب $S_{${m}}$ و $\\displaystyle\\lim_{n \\to +\\infty} S_n$.`,
           steps: [
             `Partial fractions: $\\dfrac{1}{k(k+1)} = \\dfrac{1}{k} - \\dfrac{1}{k+1}$.`,
             `All intermediate terms cancel: $S_n = \\left(1 - \\frac{1}{2}\\right) + \\left(\\frac{1}{2} - \\frac{1}{3}\\right) + \\cdots + \\left(\\frac{1}{n} - \\frac{1}{n+1}\\right) = 1 - \\frac{1}{n+1} = \\frac{n}{n+1}$.`,
@@ -1061,8 +1062,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Sequences", unitAr: "المتتاليات",
-          statement: `Let $(u_n)_{n \\ge 0}$ be geometric with $u_0 = ${u0}$ and ratio $q = ${q}$. Compute $T_{${n}} = \\displaystyle\\sum_{k=0}^{${n}} u_k$ (watch the number of terms: $${n + 1}$ terms, not $${n}$).`,
-          statementAr: `لتكن $(u_n)_{n \\ge 0}$ هندسية حدها الأول $u_0 = ${u0}$ وأساسها $q = ${q}$. احسب $T_{${n}} = \\displaystyle\\sum_{k=0}^{${n}} u_k$ (انتبه لعدد الحدود: $${n + 1}$ حداً وليس $${n}$).`,
+          statement: `Let $(u_n)_{n \\ge 0}$ be geometric with $u_0 = ${u0}$ and ratio $q = ${q}$. Compute $T_{${n}} = \\displaystyle\\sum_{k=0}^{${n}} u_k$.`,
+          statementAr: `لتكن $(u_n)_{n \\ge 0}$ هندسية حدها الأول $u_0 = ${u0}$ وأساسها $q = ${q}$. احسب $T_{${n}} = \\displaystyle\\sum_{k=0}^{${n}} u_k$.`,
           steps: [
             `There are ${n + 1} terms from $k = 0$ to $k = ${n}$.`,
             `Sum formula: $T_{${n}} = u_0 \\dfrac{q^{${n + 1}} - 1}{q - 1} = ${u0} \\cdot \\dfrac{(${q})^{${n + 1}} - 1}{${q} - 1} = ${MathFmt.texFrac(sFrac)}$.`
@@ -1118,8 +1119,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Let $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ on $\\mathbb{R} \\setminus \\{${r}\\}$. Evaluate $\\displaystyle\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$ (track whether $f(x)$ approaches $${r}^+$$ or $${r}^-$$).`,
-          statementAr: `لتكن $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ على $\\mathbb{R} \\setminus \\{${r}\\}$. احسب $\\displaystyle\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$ (دقق في اتجاه اقتراب $f(x)$ نحو $${r}$$ من اليمين أو اليسار).`,
+          statement: `Let $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ on $\\mathbb{R} \\setminus \\{${r}\\}$. Evaluate $\\displaystyle\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$.`,
+          statementAr: `لتكن $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ على $\\mathbb{R} \\setminus \\{${r}\\}$. احسب $\\displaystyle\\lim_{x \\to ${dirTex}} f\\big[f(x)\\big]$.`,
           steps: [
             `Rewrite $f(x) = ${r} + \\dfrac{${k}}{${MathFmt.linear(c, d, "x")}}$; as $x \\to ${dirTex}$, $f(x) \\to ${r}^{${approachDir}}$.`,
             `Evaluating $f(u)$ as $u \\to ${r}^{${approachDir}}$ yields $${finalInf}$.`
@@ -1141,8 +1142,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Let $E(x)$ be the floor function and $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ on $[0, +\\infty[$. Compute $\\displaystyle\\lim_{x \\to +\\infty} f(x)$ (do not assume $\\lim_{x\\to+\\infty} E(x)/x$ exists directly without bounding $x - E(x)$).`,
-          statementAr: `لتكن $E(x)$ دالة الجزء الصحيح و $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ على $[0, +\\infty[$. احسب $\\displaystyle\\lim_{x \\to +\\infty} f(x)$ باستخدام حصر $0 \\le x - E(x) < 1$.`,
+          statement: `Let $E(x)$ be the floor function and $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ on $[0, +\\infty[$. Compute $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
+          statementAr: `لتكن $E(x)$ دالة الجزء الصحيح و $f(x) = \\sqrt{\\dfrac{${numTex}}{${denTex}}}$ على $[0, +\\infty[$. احسب $\\displaystyle\\lim_{x \\to +\\infty} f(x)$.`,
           steps: [
             `Since $0 \\le x - E(x) < 1$, we have $${b} \\le ${numTex} < ${a + b}$.`,
             `Squeezing between $\\sqrt{\\frac{${b}}{${denTex}}}$ and $\\sqrt{\\frac{${a + b}}{${denTex}}}$ as $x \\to +\\infty$ gives $0$.`
@@ -1163,8 +1164,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$ (watch the sign when factoring $x^2$ under the square root as $x \\to -\\infty$!).`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$ (انتبه لإشارة إخراج $x^2$ من تحت الجذر عند $-\\infty$!).`,
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$.`,
           steps: [
             `For $x < 0$, $\\sqrt{x^2} = -x$, so $\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}$ is $\\infty - \\infty$.`,
             `Multiplying and dividing by the conjugate gives $\\dfrac{${b}x + 1}{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}} \\to \\dfrac{${b}}{-${k} - ${k}} = ${MathFmt.texFrac(limFrac)}$.`
@@ -1184,8 +1185,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sin(${MathFmt.coeff(a, "x", true)})}{\\sin(${MathFmt.coeff(b, "x", true)})}$ using $\\displaystyle\\lim_{t \\to 0} \\dfrac{\\sin t}{t} = 1$.`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sin(${MathFmt.coeff(a, "x", true)})}{\\sin(${MathFmt.coeff(b, "x", true)})}$ بالاعتماد على $\\displaystyle\\lim_{t \\to 0} \\dfrac{\\sin t}{t} = 1$.`,
+          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sin(${MathFmt.coeff(a, "x", true)})}{\\sin(${MathFmt.coeff(b, "x", true)})}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sin(${MathFmt.coeff(a, "x", true)})}{\\sin(${MathFmt.coeff(b, "x", true)})}$.`,
           steps: [
             `Write $\\dfrac{\\sin(${a}x)}{${a}x} \\cdot \\dfrac{${b}x}{\\sin(${b}x)} \\cdot \\dfrac{${a}}{${b}}$.`,
             `As $x \\to 0$, the first two factors tend to $1$, giving $\\dfrac{${a}}{${b}} = ${MathFmt.texFrac(limFrac)}$.`
@@ -1208,7 +1209,7 @@
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
           statement: `Let $f(x) = ${MathFmt.linear(m, p, "x")} + \\dfrac{${a0}}{x - (${r})}$ for $x \\neq ${r}$. Find the oblique asymptote $\\Delta$ as $x \\to +\\infty$ and determine the relative position of $\\mathcal{C}_f$ and $\\Delta$ for $x > ${r}$.`,
-          statementAr: `لتكن $f(x) = ${MathFmt.linear(m, p, "x")} + \\dfrac{${a0}}{x - (${r})}$ لـ $x \\neq ${r}$. أوجد المقارب المائل $\\Delta$ عند $+\\infty$ وحدد الوضع النسبي لـ $\\mathcal{C}_f$ و $\\Delta$ عندما $x > ${r}$ (الفرق يؤول إلى $${remSign}$$).`,
+          statementAr: `لتكن $f(x) = ${MathFmt.linear(m, p, "x")} + \\dfrac{${a0}}{x - (${r})}$ لـ $x \\neq ${r}$. أوجد المقارب المائل $\\Delta$ عند $+\\infty$ وحدد الوضع النسبي لـ $\\mathcal{C}_f$ و $\\Delta$ عندما $x > ${r}$.`,
           steps: [
             `Since $\\displaystyle\\lim_{x \\to +\\infty} \\dfrac{${a0}}{x - (${r})} = 0$, the line $(d): y = ${MathFmt.linear(m, p, "x")}$ is an oblique asymptote.`,
             `For $x > ${r}$, $f(x) - y = \\dfrac{${a0}}{x - (${r})}$ has sign ${a0 > 0 ? "positive (above)" : "negative (below)"} and tends to $${remSign}$.`
@@ -1221,7 +1222,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 5) {
-        // Two-Trap Hard 1: Conjugating sqrt(k^2 x^2 + bx + 1) + kx as x -> -infinity AND dividing by (-x)
         const k = Rand.pick([2, 3]);
         const b = Rand.nonZeroInt(-4, 4);
         const kSq = k * k;
@@ -1230,33 +1230,30 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$ [Two traps: (1) $\\sqrt{${kSq}x^2} = -${k}x$ for $x < 0$, so multiplying by the conjugate leaves $-${k}x$ in the denominator, NOT $+${k}x$; (2) dividing top and bottom by $-x$ keeps sign alignment].`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$ [فخان: (1) لأن $x < 0$ فإن $\\sqrt{${kSq}x^2} = -${k}x$ فتصبح إشارة المرافق $-${k}x$؛ (2) القسمة على $-x$ تحافظ على الإشارات بدقة].`,
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} \\left(\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} + ${MathFmt.coeff(k, "x", true)}\\right)$.`,
           steps: [
-            `Trap 1: As $x \\to -\\infty$, $\\sqrt{${kSq}x^2 + \\cdots} \\sim -${k}x$, so adding $${k}x$ is $\\infty - \\infty$. Multiply by $\\dfrac{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}$ to get $\\dfrac{${b}x + 1}{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}$.`,
-            `Trap 2: Factor $-x > 0$ from the denominator to get $-x\\!\\left(\\sqrt{${kSq} + \\frac{${b}}{x} + \\frac{1}{x^2}} + ${k}\\right)$, cancel $x$, and take $x \\to -\\infty$: $\\dfrac{${b}}{${k} + ${k}} = ${MathFmt.texFrac(limFrac)}$.`
+            `As $x \\to -\\infty$, $\\sqrt{${kSq}x^2 + \\cdots} \\sim -${k}x$, so adding $${k}x$ is $\\infty - \\infty$. Multiply by the conjugate $\\dfrac{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}$ to get $\\dfrac{${b}x + 1}{\\sqrt{${kSq}x^2${MathFmt.coeff(b, "x", false)} + 1} - ${MathFmt.coeff(k, "x", true)}}$.`,
+            `Factor $-x > 0$ from the denominator to get $-x\\!\\left(\\sqrt{${kSq} + \\frac{${b}}{x} + \\frac{1}{x^2}} + ${k}\\right)$, cancel $x$, and take $x \\to -\\infty$: $\\dfrac{${b}}{${k} + ${k}} = ${MathFmt.texFrac(limFrac)}$.`
           ],
           stepsAr: [
-            `الفخ الأول: عند $-\\infty$ نضرب بالمرافق لإزالة $\\infty - \\infty$ مع الانتباه أن المقام يحوي $-${k}x$.`,
-            `الفخ الثاني: بإخراج $-x$ من المقام واختزاله مع البسط نجد النهاية $${MathFmt.texFrac(limFrac)}$.`
+            `عند $-\\infty$ نضرب بالمرافق لإزالة $\\infty - \\infty$ مع الانتباه أن المقام يحوي $-${k}x$.`,
+            `بإخراج $-x$ من المقام واختزاله مع البسط نجد النهاية $${MathFmt.texFrac(limFrac)}$.`
           ],
           answer: `\\lim_{x \\to -\\infty} = ${MathFmt.texFrac(limFrac)}`,
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 6) {
-        // Two-Trap Hard 2: (e^(k x^2) - cos(b x)) / x^2 as x -> 0
         const k = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-4, 4);
-        // lim_{x->0} (e^(k x^2) - 1)/x^2 = k, and lim_{x->0} (1 - cos(bx))/x^2 = b^2 / 2
-        // Note: e^(k x^2) - cos(bx) = (e^(k x^2) - 1) + (1 - cos(bx))
         const bSqHalf = MathFmt.frac(b * b, 2);
         const totalLim = MathFmt.addFrac({ n: k, d: 1 }, bSqHalf);
 
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(k, "x^2", true)}} - \\cos(${MathFmt.coeff(b, "x", true)})}{x^2}$ [Two traps: (1) $\\displaystyle\\lim_{t \\to 0} \\dfrac{1 - \\cos t}{t^2} = \\frac{1}{2}$, so $\\dfrac{1 - \\cos(${b}x)}{x^2} \\to \\dfrac{(${b})^2}{2}$ — squaring $${b}$, NOT multiplying by $2$; (2) splitting as $(e^{${MathFmt.coeff(k, "x^2", true)}} - 1) + (1 - \\cos(${MathFmt.coeff(b, "x", true)}))$].`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(k, "x^2", true)}} - \\cos(${MathFmt.coeff(b, "x", true)})}{x^2}$ [فخان: (1) في $\\frac{1 - \\cos(${b}x)}{x^2}$ نربع $${b}$ وليس ضربها بـ $2$؛ (2) تفكيك البسط إلى $(e^{...} - 1) + (1 - \\cos(...))$].`,
+          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(k, "x^2", true)}} - \\cos(${MathFmt.coeff(b, "x", true)})}{x^2}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(k, "x^2", true)}} - \\cos(${MathFmt.coeff(b, "x", true)})}{x^2}$.`,
           steps: [
             `Split numerator: $\\dfrac{e^{${MathFmt.coeff(k, "x^2", true)}} - 1}{x^2} + \\dfrac{1 - \\cos(${MathFmt.coeff(b, "x", true)})}{x^2}$.`,
             `First term tends to $${k}$; second term equals $\\dfrac{1 - \\cos(${b}x)}{(${b}x)^2} \\cdot ${b * b} \\to \\dfrac{1}{2} \\cdot ${b * b} = ${MathFmt.texFrac(bSqHalf)}$, giving $${MathFmt.texFrac(totalLim)}$.`
@@ -1269,7 +1266,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 7) {
-        // Two-Trap Hard 3: lim_{x -> +infinity} x * (ln(x + a) - ln(x - b)) = a + b
         const a = Rand.int(1, 4);
         const b = Rand.int(1, 4);
         const sumAB = a + b;
@@ -1277,8 +1273,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} x\\Big[\\ln(x + ${a}) - \\ln(x - ${b})\\Big]$ [Two traps: (1) $\\infty \\cdot 0$ is indeterminate, not $0$; (2) $\\ln\\!\\left(\\frac{x+${a}}{x-${b}}\\right) = \\ln\\!\\left(1 + \\frac{${sumAB}}{x - ${b}}\\right)$ has numerator $${sumAB}$ ($a - (-b)$), NOT $${a - b}$!].`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} x\\Big[\\ln(x + ${a}) - \\ln(x - ${b})\\Big]$ [فخان: (1) شكل عدم تعيين $\\infty \\cdot 0$؛ (2) فرق اللوغاريتم يعطي $\\frac{x+${a}}{x-${b}} = 1 + \\frac{${sumAB}}{x-${b}}$ بجمع $${a} + ${b}$].`,
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} x\\Big[\\ln(x + ${a}) - \\ln(x - ${b})\\Big]$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} x\\Big[\\ln(x + ${a}) - \\ln(x - ${b})\\Big]$.`,
           steps: [
             `Combine logarithms: $\\ln(x + ${a}) - \\ln(x - ${b}) = \\ln\\!\\left(1 + \\dfrac{${sumAB}}{x - ${b}}\\right)$.`,
             `Write as $\\dfrac{\\ln\\!\\left(1 + \\frac{${sumAB}}{x-${b}}\\right)}{\\frac{${sumAB}}{x-${b}}} \\cdot \\dfrac{${sumAB}x}{x - ${b}} \\to 1 \\cdot ${sumAB} = ${sumAB}$ as $x \\to +\\infty$.`
@@ -1291,20 +1287,16 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 8) {
-        // Two-Trap Hard 4: One-sided limit with |x - r| and sqrt((x - r)^2) as x -> r^-
         const r = Rand.nonZeroInt(-4, 4);
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(1, 4);
-        // For x < r: sqrt((x - r)^2) = r - x = -(x - r), |x - r| = -(x - r)
-        // Let f(x) = (sqrt((x - r)^2) + a * |x - r|) / (b * (x - r)) as x -> r^-
-        // Numerator = -(1 + a)(x - r), Denominator = b(x - r) -> limit is -(1 + a) / b
         const limFrac = MathFmt.frac(-(1 + a), b);
 
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Compute $\\displaystyle\\lim_{x \\to ${r}^-} \\dfrac{\\sqrt{(x - (${r}))^2} + ${MathFmt.coeff(a, "|x - (" + r + ")|", true)}}{${b}(x - (${r}))}$ [Two traps: (1) on $]-\\infty, ${r}[$, both $\\sqrt{(x-${r})^2}$ and $|x-${r}|$ equal $-(x-${r})$, NOT $+(x-${r})$; (2) after canceling $(x-${r})$, the minus sign from $-(1 + ${a})$ remains].`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to ${r}^-} \\dfrac{\\sqrt{(x - (${r}))^2} + ${MathFmt.coeff(a, "|x - (" + r + ")|", true)}}{${b}(x - (${r}))}$ [فخان: (1) على يسار $${r}$ نبدل إشارة الجذر والقيمة المطلقة إلى $-(x-${r})$؛ (2) الانتباه للإشارة السالبة بعد الاختزال].`,
+          statement: `Compute $\\displaystyle\\lim_{x \\to ${r}^-} \\dfrac{\\sqrt{(x - (${r}))^2} + ${MathFmt.coeff(a, "|x - (" + r + ")|", true)}}{${b}(x - (${r}))}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to ${r}^-} \\dfrac{\\sqrt{(x - (${r}))^2} + ${MathFmt.coeff(a, "|x - (" + r + ")|", true)}}{${b}(x - (${r}))}$.`,
           steps: [
             `For $x < ${r}$, $x - (${r}) < 0$, so $\\sqrt{(x - (${r}))^2} = -(x - (${r}))$ and $|x - (${r})| = -(x - (${r}))$.`,
             `Numerator becomes $-(1 + ${a})(x - (${r}))$; dividing by $${b}(x - (${r}))$ gives $${MathFmt.texFrac(limFrac)}$.`
@@ -1317,7 +1309,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Two-Trap Hard 5: lim_{x -> +infinity} (a x^2 + b x) * e^(-k x) with k > 0
         const k = Rand.pick([1, 2]);
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-4, 4);
@@ -1325,8 +1316,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Limits", unitAr: "النهايات",
-          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$ [Two traps: (1) $\\infty \\cdot 0$ is indeterminate — do NOT claim the polynomial wins or the limit is $\\pm\\infty$; (2) substitute $t = ${k}x \\to +\\infty$ so $x^2 e^{-${k === 1 ? "" : k}x} = \\frac{1}{${k * k}} t^2 e^{-t} \\to 0$].`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$ [فخان: (1) حالة عدم تعيين $\\infty \\cdot 0$ وليست لا نهاية؛ (2) التعويض بـ $t = ${k}x$ لإظهار غلبة الأسي السالب وتؤول إلى $0$].`,
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
           steps: [
             `As $x \\to +\\infty$, ${a}x^2 + ${b}x \\to \\pm\\infty$ while $e^{-${k === 1 ? "" : k}x} \\to 0$ ($\\infty \\cdot 0$ form).`,
             `With $t = ${k}x$, $\\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-t} = \\left(\\frac{${a}}{${k * k}} t^2 + \\frac{${b}}{${k}} t\\right)e^{-t} \\to 0$ as $t \\to +\\infty$.`
@@ -1358,8 +1349,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Given $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$ on $]-1, 1[$ and $g(x) = f(${innerFn})$ on $${interval.tex}$, compute $g'(x)$ (watch $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${absTex}$ on $${interval.tex}$).`,
-          statementAr: `إذا كان $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$ على $]-1, 1[$ و $g(x) = f(${innerFn})$ على $${interval.tex}$، احسب $g'(x)$ (انتبه أن $\\sqrt{1 - ${innerIsCos ? "\\cos^2 x" : "\\sin^2 x"}} = ${absTex}$ على المجال).`,
+          statement: `Given $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$ on $]-1, 1[$ and $g(x) = f(${innerFn})$ on $${interval.tex}$, compute $g'(x)$.`,
+          statementAr: `إذا كان $f'(x) = \\dfrac{${k}}{\\sqrt{1 - x^2}}$ على $]-1, 1[$ و $g(x) = f(${innerFn})$ على $${interval.tex}$، احسب $g'(x)$.`,
           steps: [
             `Chain rule: $g'(x) = (${innerDeriv}) \\cdot \\dfrac{${k}}{${absTex}}$.`,
             `On $${interval.tex}$, $${cond}$, so $${absTex} = ${signedAbs}$ and $g'(x) = ${finalConst}$.`
@@ -1381,8 +1372,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Let $f(x) = ${slope}|x - (${x0})|${MathFmt.signedNum(c)}$. Study left and right differentiability at $x_0 = ${x0}$ (common trap: assuming continuity at $x_0$ implies differentiability).`,
-          statementAr: `لتكن $f(x) = ${slope}|x - (${x0})|${MathFmt.signedNum(c)}$. ادرس قابلية الاشتقاق من اليمين ومن اليسار عند $x_0 = ${x0}$ (فخ شائع: الاستمرار عند $x_0$ لا يعني حتماً قابلية الاشتقاق).`,
+          statement: `Let $f(x) = ${slope}|x - (${x0})|${MathFmt.signedNum(c)}$. Study left and right differentiability at $x_0 = ${x0}$.`,
+          statementAr: `لتكن $f(x) = ${slope}|x - (${x0})|${MathFmt.signedNum(c)}$. ادرس قابلية الاشتقاق من اليمين ومن اليسار عند $x_0 = ${x0}$.`,
           steps: [
             `For $x > ${x0}$, $f(x) = ${slope}(x - (${x0}))${MathFmt.signedNum(c)}$, so $f'_d(${x0}) = ${rightDeriv}$.`,
             `For $x < ${x0}$, $f(x) = -${slope}(x - (${x0}))${MathFmt.signedNum(c)}$, so $f'_g(${x0}) = ${leftDeriv}$. Since $f'_d(${x0}) \\neq f'_g(${x0})$, $f$ is not differentiable at $${x0}$.`
@@ -1404,8 +1395,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Differentiate $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ on $\\mathbb{R} \\setminus \\left\\{${MathFmt.texFrac(MathFmt.frac(-d, c))}\\right\\}$ (watch the minus sign in $u'v - uv'$).`,
-          statementAr: `اشتق التابع $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ على $\\mathbb{R} \\setminus \\left\\{${MathFmt.texFrac(MathFmt.frac(-d, c))}\\right\\}$ (انتبه لإشارة الطرح في $u'v - uv'$).`,
+          statement: `Differentiate $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ on $\\mathbb{R} \\setminus \\left\\{${MathFmt.texFrac(MathFmt.frac(-d, c))}\\right\\}$.`,
+          statementAr: `اشتق التابع $f(x) = ${MathFmt.rational(a, b, c, d, "x")}$ على $\\mathbb{R} \\setminus \\left\\{${MathFmt.texFrac(MathFmt.frac(-d, c))}\\right\\}$.`,
           steps: [
             `Apply $\\left(\\frac{u}{v}\\right)' = \\dfrac{u'v - uv'}{v^2}$ with $u' = ${a}$ and $v' = ${c}$.`,
             `Numerator: ${a}(${MathFmt.linear(c, d, "x")}) - ${c}(${MathFmt.linear(a, b, "x")}) = ${det}$. Thus $f'(x) = \\dfrac{${det}}{(${MathFmt.linear(c, d, "x")})^2}$.`
@@ -1427,8 +1418,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Let $f(x) = ${k}x^2${MathFmt.coeff(bCoeff, "x", false)}${MathFmt.signedNum(cCoeff)}$. Write the equation of the tangent to $\\mathcal{C}_f$ at $x_0 = ${x0}$ (trap: plugging $f'(x_0)=0$ into point-slope and getting confused with $x = ${x0}$).`,
-          statementAr: `ليكن $f(x) = ${k}x^2${MathFmt.coeff(bCoeff, "x", false)}${MathFmt.signedNum(cCoeff)}$. اكتب معادلة المماس لـ $\\mathcal{C}_f$ عند $x_0 = ${x0}$ (انتبه: المماس أفقي موازٍ لمحور الفواصل وليس شاقولياً).`,
+          statement: `Let $f(x) = ${k}x^2${MathFmt.coeff(bCoeff, "x", false)}${MathFmt.signedNum(cCoeff)}$. Write the equation of the tangent to $\\mathcal{C}_f$ at $x_0 = ${x0}$.`,
+          statementAr: `ليكن $f(x) = ${k}x^2${MathFmt.coeff(bCoeff, "x", false)}${MathFmt.signedNum(cCoeff)}$. اكتب معادلة المماس لـ $\\mathcal{C}_f$ عند $x_0 = ${x0}$.`,
           steps: [
             `Compute $f(${x0}) = ${y0}$ and $f'(x) = ${2 * k}x${MathFmt.signedNum(bCoeff)}$, so $f'(${x0}) = 0$.`,
             `Tangent equation: $y = f'(${x0})(x - ${x0}) + f(${x0}) \\implies y = ${y0}$.`
@@ -1452,8 +1443,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Find $f'(x)$ for $f(x) = ${fnTex}$ (common trap: forgetting to multiply by the inner derivative $${a}$, or inverting the sign of $\\cos$).`,
-          statementAr: `أوجد $f'(x)$ للتابع $f(x) = ${fnTex}$ (انتبه لضرب مشتق المضمون $${a}$ ولإشارة مشتق الجيب التمام).`,
+          statement: `Find $f'(x)$ for $f(x) = ${fnTex}$.`,
+          statementAr: `أوجد $f'(x)$ للتابع $f(x) = ${fnTex}$.`,
           steps: [
             `Using $(\\cos u)' = -u'\\sin u$ or $(\\sin u)' = u'\\cos u$ with $u(x) = ${MathFmt.linear(a, b, "x")}$ and $u'(x) = ${a}$:`,
             `We get $f'(x) = ${derivTex}$.`
@@ -1466,19 +1457,16 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 5) {
-        // Two-Trap Hard 1: Product + negative exponent chain rule f(x) = (x - r)^2 e^(-k x)
         const r = Rand.nonZeroInt(-3, 3);
         const k = Rand.pick([1, 2]);
-        // f'(x) = [2(x - r) - k(x - r)^2] e^(-kx) = (x - r)[2 - k(x - r)] e^(-kx)
-        // = (x - r)(-k x + k r + 2) e^(-kx)
         const cConst = k * r + 2;
         const x2 = r + MathFmt.texFrac(MathFmt.frac(2, k));
 
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Let $f(x) = (x - (${r}))^2 e^{-${k === 1 ? "" : k}x}$ on $\\mathbb{R}$. Find $f'(x)$ in factored form and its zeros [Two traps: (1) $(e^{-${k === 1 ? "" : k}x})' = -${k}e^{-${k === 1 ? "" : k}x}$ carries a minus sign; (2) factoring $(x - (${r}))e^{-${k === 1 ? "" : k}x}$ leaves $2 - ${k}(x - (${r}))$, giving the second zero $x = ${x2}$].`,
-          statementAr: `لتكن $f(x) = (x - (${r}))^2 e^{-${k === 1 ? "" : k}x}$ على $\\mathbb{R}$. أوجد $f'(x)$ بالصيغة المحللة وانعداماته [فخان: (1) مشتق الأس السالب يحمل إشارة ناقص؛ (2) إخراج $(x - (${r}))e^{-...}$ بدقة لإيجاد الجذر الثاني $x = ${x2}$].`,
+          statement: `Let $f(x) = (x - (${r}))^2 e^{-${k === 1 ? "" : k}x}$ on $\\mathbb{R}$. Find $f'(x)$ in factored form and its zeros.`,
+          statementAr: `لتكن $f(x) = (x - (${r}))^2 e^{-${k === 1 ? "" : k}x}$ على $\\mathbb{R}$. أوجد $f'(x)$ بالصيغة المحللة وانعداماته.`,
           steps: [
             `Product rule: $f'(x) = 2(x - (${r}))e^{-${k === 1 ? "" : k}x} - ${k}(x - (${r}))^2 e^{-${k === 1 ? "" : k}x}$.`,
             `Factor $(x - (${r}))e^{-${k === 1 ? "" : k}x}$: $f'(x) = (x - (${r}))(${cConst}${MathFmt.coeff(-k, "x", false)})e^{-${k === 1 ? "" : k}x}$, vanishing at $x = ${r}$ and $x = ${x2}$.`
@@ -1491,7 +1479,6 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 6) {
-        // Two-Trap Hard 2: Derivative of ln|(x - p) / (x - q)|
         const p = Rand.nonZeroInt(-3, 3);
         let q = Rand.nonZeroInt(-3, 3);
         while (q === p) q = Rand.nonZeroInt(-3, 3);
@@ -1500,8 +1487,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Let $f(x) = \\ln\\!\\left|\\dfrac{x - (${p})}{x - (${q})}\\right|$ on $D_f = \\mathbb{R} \\setminus \\{${p}, ${q}\\}$. Compute $f'(x)$ [Two traps: (1) $\\ln\\!\\left|\\frac{x-${p}}{x-${q}}\\right| = \\ln|x-${p}| - \\ln|x-${q}|$, so $\\frac{1}{x-${p}} - \\frac{1}{x-${q}}$ has numerator $(x-${q}) - (x-${p}) = ${diffPQ}$, NOT ${-diffPQ}$; (2) domain excludes both $${p}$$ and $${q}$$].`,
-          statementAr: `لتكن $f(x) = \\ln\\!\\left|\\dfrac{x - (${p})}{x - (${q})}\\right|$ على $\\mathbb{R} \\setminus \\{${p}, ${q}\\}$. احسب $f'(x)$ [فخان: (1) بسط الفرق هو $(x-${q}) - (x-${p}) = ${diffPQ}$ وليس ${-diffPQ}$؛ (2) استبعاد القيمتين $${p}$$ و $${q}$$].`,
+          statement: `Let $f(x) = \\ln\\!\\left|\\dfrac{x - (${p})}{x - (${q})}\\right|$ on $D_f = \\mathbb{R} \\setminus \\{${p}, ${q}\\}$. Compute $f'(x)$.`,
+          statementAr: `لتكن $f(x) = \\ln\\!\\left|\\dfrac{x - (${p})}{x - (${q})}\\right|$ على $\\mathbb{R} \\setminus \\{${p}, ${q}\\}$. احسب $f'(x)$.`,
           steps: [
             `Decompose on $D_f$: $f(x) = \\ln|x - (${p})| - \\ln|x - (${q})|$.`,
             `Differentiate: $f'(x) = \\dfrac{1}{x - (${p})} - \\dfrac{1}{x - (${q})} = \\dfrac{${diffPQ}}{(x - (${p}))(x - (${q}))}$.`
@@ -1514,15 +1501,14 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 7) {
-        // Two-Trap Hard 3: f(x) = e^(a x) sin(b x) derivative
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-4, 4);
 
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Differentiate $f(x) = e^{${MathFmt.coeff(a, "x", true)}}\\sin(${MathFmt.coeff(b, "x", true)})$ on $\\mathbb{R}$ [Two traps: (1) inner derivative $${b}$ in $(\\sin(${b}x))' = ${b}\\cos(${b}x)$ and $${a}$ in $(e^{${a}x})' = ${a}e^{${a}x}$; (2) keeping both terms inside $e^{${MathFmt.coeff(a, "x", true)}}$ with proper signs].`,
-          statementAr: `اشتق التابع $f(x) = e^{${MathFmt.coeff(a, "x", true)}}\\sin(${MathFmt.coeff(b, "x", true)})$ على $\\mathbb{R}$ [فخان: (1) ضرب مشتق المضمون $${b}$ ومشتق الأس $${a}$؛ (2) إخراج $e^{...}$ كعامل مشترك دون إغفال أي حد].`,
+          statement: `Differentiate $f(x) = e^{${MathFmt.coeff(a, "x", true)}}\\sin(${MathFmt.coeff(b, "x", true)})$ on $\\mathbb{R}$.`,
+          statementAr: `اشتق التابع $f(x) = e^{${MathFmt.coeff(a, "x", true)}}\\sin(${MathFmt.coeff(b, "x", true)})$ على $\\mathbb{R}$.`,
           steps: [
             `Product rule: $f'(x) = (${a}e^{${MathFmt.coeff(a, "x", true)}})\\sin(${MathFmt.coeff(b, "x", true)}) + e^{${MathFmt.coeff(a, "x", true)}}(${b}\\cos(${MathFmt.coeff(b, "x", true)}))$.`,
             `Factor out $e^{${MathFmt.coeff(a, "x", true)}}$: $f'(x) = e^{${MathFmt.coeff(a, "x", true)}}\\big(${a}\\sin(${MathFmt.coeff(b, "x", true)})${MathFmt.coeff(b, "\\cos(" + b + "x)", false)}\\big)$.`
@@ -1535,12 +1521,9 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 8) {
-        // Two-Trap Hard 4: Tangent parallel to line y = m x + p for f(x) = x^2 + b x + c
         const m = Rand.nonZeroInt(-4, 4);
         const b = Rand.nonZeroInt(-4, 4);
         const c = Rand.nonZeroInt(-5, 5);
-        // f(x) = x^2 + bx + c => f'(x0) = 2x0 + b = m => x0 = (m - b)/2
-        // Make m - b even so x0 is a clean integer!
         const evenM = m + ((m - b) % 2 !== 0 ? 1 : 0);
         const x0 = (evenM - b) / 2;
         const y0 = x0 * x0 + b * x0 + c;
@@ -1549,8 +1532,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Let $f(x) = x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}$. Find the point $A(x_0, y_0)$ on $\\mathcal{C}_f$ where the tangent is parallel to $(d): y = ${evenM}x + 7$ [Two traps: (1) parallel means $f'(x_0) = ${evenM}$, NOT $-\\frac{1}{${evenM}}$ and NOT solving $f'(x_0)=0$; (2) after finding $x_0 = ${x0}$, compute $y_0 = f(${x0}) = ${y0}$ rather than using $7$ from $(d)$].`,
-          statementAr: `ليكن $f(x) = x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}$. أوجد إحداثيي النقطة $A(x_0, y_0)$ من $\\mathcal{C}_f$ التي يكون عندها المماس موازياً للمستقيم $y = ${evenM}x + 7$ [فخان: (1) التوازي يعني $f'(x_0) = ${evenM}$ وليس معكوس الميل؛ (2) حساب $y_0 = f(${x0}) = ${y0}$ من الدالة نفسها].`,
+          statement: `Let $f(x) = x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}$. Find the point $A(x_0, y_0)$ on $\\mathcal{C}_f$ where the tangent is parallel to $(d): y = ${evenM}x + 7$.`,
+          statementAr: `ليكن $f(x) = x^2${MathFmt.coeff(b, "x", false)}${MathFmt.signedNum(c)}$. أوجد إحداثيي النقطة $A(x_0, y_0)$ من $\\mathcal{C}_f$ التي يكون عندها المماس موازياً للمستقيم $y = ${evenM}x + 7$.`,
           steps: [
             `Solve $f'(x_0) = 2x_0${MathFmt.signedNum(b)} = ${evenM} \\implies 2x_0 = ${evenM - b} \\implies x_0 = ${x0}$.`,
             `Evaluate $y_0 = f(${x0}) = (${x0})^2${MathFmt.coeff(b, "(" + x0 + ")", false)}${MathFmt.signedNum(c)} = ${y0}$ (tangent is $y = ${evenM}x${MathFmt.signedNum(pLine)}$).`
@@ -1563,18 +1546,15 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Two-Trap Hard 5: f(x) = sqrt(a - b x^2) derivative and sign of f'(x)
         const b = Rand.pick([1, 2, 3]);
         const rBound = Rand.int(2, 4);
         const a = b * rBound * rBound;
-        // f(x) = sqrt(a - b x^2) on ]-rBound, rBound[
-        // f'(x) = (-2 b x) / (2 sqrt(a - b x^2)) = (-b x) / sqrt(a - b x^2)
 
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Differentiation", unitAr: "الاشتقاق",
-          statement: `Let $f(x) = \\sqrt{${a} - ${b}x^2}$ on $]-${rBound}, ${rBound}[$. Find $f'(x)$ and state where $f'(x) > 0$ [Two traps: (1) $(\\sqrt{u})' = \\frac{u'}{2\\sqrt{u}}$ with $u' = -${2 * b}x$, simplifying the $2$'s to $\\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$; (2) $f'(x) > 0$ holds where $-${b}x > 0$, i.e., $x < 0$ on $]-${rBound}, 0[$, NOT $x > 0$].`,
-          statementAr: `لتكن $f(x) = \\sqrt{${a} - ${b}x^2}$ على $]-${rBound}, ${rBound}[$. أوجد $f'(x)$ وحدد أين يكون $f'(x) > 0$ [فخان: (1) مشتق الجذر التربيعي هو $\\frac{u'}{2\\sqrt{u}}$ مع اختصار الـ $2$؛ (2) إشارة المشتق موجبة على $]-${rBound}, 0[$ وليس على الموجب لأن مشتق $-${b}x^2$ سالب للـ $x$ الموجبة].`,
+          statement: `Let $f(x) = \\sqrt{${a} - ${b}x^2}$ on $]-${rBound}, ${rBound}[$. Find $f'(x)$ and state where $f'(x) > 0$.`,
+          statementAr: `لتكن $f(x) = \\sqrt{${a} - ${b}x^2}$ على $]-${rBound}, ${rBound}[$. أوجد $f'(x)$ وحدد أين يكون $f'(x) > 0$.`,
           steps: [
             `Here $u(x) = ${a} - ${b}x^2$ and $u'(x) = -${2 * b}x$, so $f'(x) = \\dfrac{-${2 * b}x}{2\\sqrt{${a} - ${b}x^2}} = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$.`,
             `Since $\\sqrt{${a} - ${b}x^2} > 0$ on $]-${rBound}, ${rBound}[$ and $${b} > 0$, $f'(x) > 0 \\iff -x > 0 \\iff x \\in ]-${rBound}, 0[$.`
@@ -1634,8 +1614,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Monotonicity of a Sequence", unitAr: "اطراد متتالية",
-          statement: `Consider $u_n = \\dfrac{(-1)^n}{n + ${k}}$ for $n \\ge 1$. Is $(u_n)_{n \\ge 1}$ monotonic? Justify using $u_1$, $u_2$, and $u_3$ (trap: assuming $\\lim u_n = 0$ means the sequence is monotonic).`,
-          statementAr: `لتكن $u_n = \\dfrac{(-1)^n}{n + ${k}}$ لـ $n \\ge 1$. هل المتتالية رتيبة (مطردة)؟ علل بحساب $u_1$ و $u_2$ و $u_3$ (انتبه: ميل النهاية نحو الصفر لا يعني الاطراد).`,
+          statement: `Consider $u_n = \\dfrac{(-1)^n}{n + ${k}}$ for $n \\ge 1$. Is $(u_n)_{n \\ge 1}$ monotonic? Justify using $u_1$, $u_2$, and $u_3$.`,
+          statementAr: `لتكن $u_n = \\dfrac{(-1)^n}{n + ${k}}$ لـ $n \\ge 1$. هل المتتالية رتيبة (مطردة)؟ علل بحساب $u_1$ و $u_2$ و $u_3$.`,
           steps: [
             `Compute $u_1 = -\\dfrac{1}{${1 + k}} < 0$, $u_2 = +\\dfrac{1}{${2 + k}} > 0$, and $u_3 = -\\dfrac{1}{${3 + k}} < 0$.`,
             `Since $u_2 - u_1 > 0$ while $u_3 - u_2 < 0$, the sign of $u_{n+1} - u_n$ alternates, so $(u_n)$ is not monotonic.`
@@ -1704,8 +1684,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
-          statement: `Solve in $\\mathbb{R}$: $\\ln(x + ${a}) + \\ln(x + ${b}) = \\ln(${prod})$ (always check domain $x > ${minDom}$ before accepting roots).`,
-          statementAr: `حل في $\\mathbb{R}$ المعادلة: $\\ln(x + ${a}) + \\ln(x + ${b}) = \\ln(${prod})$ (تحقق دائماً من مجموعة التعريف $x > ${minDom}$).`,
+          statement: `Solve in $\\mathbb{R}$: $\\ln(x + ${a}) + \\ln(x + ${b}) = \\ln(${prod})$.`,
+          statementAr: `حل في $\\mathbb{R}$ المعادلة: $\\ln(x + ${a}) + \\ln(x + ${b}) = \\ln(${prod})$.`,
           steps: [
             `Domain $D_f = ]${minDom}, +\\infty[$. Using $\\ln(AB) = \\ln A + \\ln B$, $(x + ${a})(x + ${b}) = ${prod}$.`,
             `Checking $x = ${r1}$ gives $(${r1 + a})(${r1 + b}) = ${prod}$ with $${r1} \\in D_f$.`
@@ -1725,8 +1705,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
-          statement: `Let $f(x) = \\ln\\big|${MathFmt.linear(a, b, "x")}\\big|$ on $\\mathbb{R} \\setminus \\left\\{${rootFrac}\\right\\}$. Find $f'(x)$ (trap: forgetting that $\\frac{d}{dx}\\ln|u(x)| = \\frac{u'(x)}{u(x)}$ holds for both $u > 0$ and $u < 0$).`,
-          statementAr: `لتكن $f(x) = \\ln\\big|${MathFmt.linear(a, b, "x")}\\big|$ على $\\mathbb{R} \\setminus \\left\\{${rootFrac}\\right\\}$. أوجد $f'(x)$ (مشتق $\\ln|u|$ هو $\\frac{u'}{u}$ في الحالتين).`,
+          statement: `Let $f(x) = \\ln\\big|${MathFmt.linear(a, b, "x")}\\big|$ on $\\mathbb{R} \\setminus \\left\\{${rootFrac}\\right\\}$. Find $f'(x)$.`,
+          statementAr: `لتكن $f(x) = \\ln\\big|${MathFmt.linear(a, b, "x")}\\big|$ على $\\mathbb{R} \\setminus \\left\\{${rootFrac}\\right\\}$. أوجد $f'(x)$.`,
           steps: [
             `For $u(x) > 0$, $\\ln u(x)$ has derivative $\\dfrac{${a}}{${MathFmt.linear(a, b, "x")}}$.`,
             `For $u(x) < 0$, $\\ln(-u(x))$ has derivative $\\dfrac{-${a}}{-(${MathFmt.linear(a, b, "x")})} = \\dfrac{${a}}{${MathFmt.linear(a, b, "x")}}$.`
@@ -1743,8 +1723,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
-          statement: `Evaluate $\\displaystyle\\lim_{x \\to 0^+} ${MathFmt.coeff(k, "x \\ln x", true)}$ using the classical limit $\\displaystyle\\lim_{x \\to 0^+} x \\ln x = 0$.`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0^+} ${MathFmt.coeff(k, "x \\ln x", true)}$ بالاعتماد على النهاية الشهيرة $\\displaystyle\\lim_{x \\to 0^+} x \\ln x = 0$.`,
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to 0^+} ${MathFmt.coeff(k, "x \\ln x", true)}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0^+} ${MathFmt.coeff(k, "x \\ln x", true)}$.`,
           steps: [
             `Direct substitution gives $0 \\cdot (-\\infty)$, an indeterminate form.`,
             `By $\\displaystyle\\lim_{x \\to 0^+} x \\ln x = 0$, multiplying by $${k}$ yields $0$.`
@@ -1764,8 +1744,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
-          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(b, "x", true)}}$ using $\\displaystyle\\lim_{t \\to 0} \\dfrac{\\ln(1 + t)}{t} = 1$.`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(b, "x", true)}}$ بالاعتماد على $\\displaystyle\\lim_{t \\to 0} \\dfrac{\\ln(1 + t)}{t} = 1$.`,
+          statement: `Compute $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(b, "x", true)}}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(b, "x", true)}}$.`,
           steps: [
             `Rewrite as $\\dfrac{\\ln(1${MathFmt.coeff(a, "x", false)})}{${MathFmt.coeff(a, "x", true)}} \\cdot \\dfrac{${a}}{${b}}$.`,
             `As $x \\to 0$, the fraction tends to $1$, giving $\\dfrac{${a}}{${b}} = ${MathFmt.texFrac(limFrac)}$.`
@@ -1786,8 +1766,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Logarithmic Function", unitAr: "التابع اللوغاريتمي",
-          statement: `Solve $\\ln(${k} - x) > \\ln(${m})$ on $]-\\infty, ${k}[$ (trap: $\\ln$ is increasing, so ${k} - x > ${m}$, which flips the inequality for $x$).`,
-          statementAr: `حل المتراجحة $\\ln(${k} - x) > \\ln(${m})$ على المجال $]-\\infty, ${k}[$ (انتبه لعكس إشارة المتراجحة عند عزل $x$).`,
+          statement: `Solve $\\ln(${k} - x) > \\ln(${m})$ on $]-\\infty, ${k}[$.`,
+          statementAr: `حل المتراجحة $\\ln(${k} - x) > \\ln(${m})$ على المجال $]-\\infty, ${k}[$.`,
           steps: [
             `Domain: $x < ${k}$. Since $\\ln$ is strictly increasing on $]0, +\\infty[$, ${k} - x > ${m}$.`,
             `Subtracting ${k} and multiplying by $-1$ gives $x < ${solBound}$, which lies inside $]-\\infty, ${k}[$.`
@@ -1835,8 +1815,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Exponential Function", unitAr: "التابع الأسي",
-          statement: `Evaluate $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(b, "x", true)}}$ using $\\displaystyle\\lim_{t \\to 0} \\dfrac{e^t - 1}{t} = 1$.`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(b, "x", true)}}$ بالاعتماد على $\\displaystyle\\lim_{t \\to 0} \\dfrac{e^t - 1}{t} = 1$.`,
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(b, "x", true)}}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(b, "x", true)}}$.`,
           steps: [
             `Rewrite as $\\dfrac{e^{${MathFmt.coeff(a, "x", true)}} - 1}{${MathFmt.coeff(a, "x", true)}} \\cdot \\dfrac{${a}}{${b}}$.`,
             `As $x \\to 0$, the limit equals $\\dfrac{${a}}{${b}} = ${MathFmt.texFrac(limFrac)}$.`
@@ -1855,8 +1835,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Exponential Function", unitAr: "التابع الأسي",
-          statement: `Solve in $\\mathbb{R}$: $e^{2x} - (e^{${a}} + e^{${b}})e^x + e^{${a + b}} = 0$ using the substitution $X = e^x > 0$.`,
-          statementAr: `حل في $\\mathbb{R}$ المعادلة: $e^{2x} - (e^{${a}} + e^{${b}})e^x + e^{${a + b}} = 0$ بوضع $X = e^x > 0$.`,
+          statement: `Solve in $\\mathbb{R}$: $e^{2x} - (e^{${a}} + e^{${b}})e^x + e^{${a + b}} = 0$.`,
+          statementAr: `حل في $\\mathbb{R}$ المعادلة: $e^{2x} - (e^{${a}} + e^{${b}})e^x + e^{${a + b}} = 0$.`,
           steps: [
             `Substitute $X = e^x > 0$: $X^2 - (e^{${a}} + e^{${b}})X + e^{${a + b}} = 0$, which factors as $(X - e^{${a}})(X - e^{${b}}) = 0$.`,
             `Since $e^x$ is strictly increasing, $X = e^{${a}} \\implies x = ${a}$ and $X = e^{${b}} \\implies x = ${b}$.`
@@ -1874,8 +1854,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Exponential Function", unitAr: "التابع الأسي",
-          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} ${MathFmt.coeff(k, "x e^{" + (a === 1 ? "" : a) + "x}", true)}$ (trap: when $a > 0$ and $x \\to -\\infty$, $e^{ax} \\to 0$ dominates $x$!).`,
-          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} ${MathFmt.coeff(k, "x e^{" + (a === 1 ? "" : a) + "x}", true)}$ (انتبه: عند $-\\infty$ و $a > 0$ يغلب الأس السالب فتكون النهاية $0$).`,
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to -\\infty} ${MathFmt.coeff(k, "x e^{" + (a === 1 ? "" : a) + "x}", true)}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to -\\infty} ${MathFmt.coeff(k, "x e^{" + (a === 1 ? "" : a) + "x}", true)}$.`,
           steps: [
             `Let $t = ${a}x \\to -\\infty$; then ${k}x e^{${a === 1 ? "" : a}x} = \\dfrac{${k}}{${a}} t e^t$.`,
             `By $\\displaystyle\\lim_{t \\to -\\infty} t e^t = 0$, the limit is $0$.`
@@ -1897,8 +1877,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Exponential Function", unitAr: "التابع الأسي",
-          statement: `Differentiate $f(x) = e^{${uTex}}$ on $\\mathbb{R}$ (trap: forgetting that $(e^u)' = u' e^u$, not $e^u$ alone).`,
-          statementAr: `اشتق التابع $f(x) = e^{${uTex}}$ على $\\mathbb{R}$ (انتبه لضرب مشتق الأس $u'(x)$).`,
+          statement: `Differentiate $f(x) = e^{${uTex}}$ on $\\mathbb{R}$.`,
+          statementAr: `اشتق التابع $f(x) = e^{${uTex}}$ على $\\mathbb{R}$.`,
           steps: [
             `Here $u(x) = ${uTex}$ and $u'(x) = ${uPrimeTex}$.`,
             `Thus $f'(x) = (${uPrimeTex})e^{${uTex}}$.`
@@ -1946,8 +1926,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Integration", unitAr: "التكامل",
-          statement: `Compute $J = \\displaystyle\\int_{-${a}}^{${a}} ${MathFmt.coeff(k, "x^3 e^{x^2}", true)}\\, dx$ (trap: expanding or integrating by parts instead of checking parity on $[-${a}, ${a}]$).`,
-          statementAr: `احسب $J = \\displaystyle\\int_{-${a}}^{${a}} ${MathFmt.coeff(k, "x^3 e^{x^2}", true)}\\, dx$ (انتبه لزوجية التابع على مجال متناظر $[-${a}, ${a}]$).`,
+          statement: `Compute $J = \\displaystyle\\int_{-${a}}^{${a}} ${MathFmt.coeff(k, "x^3 e^{x^2}", true)}\\, dx$.`,
+          statementAr: `احسب $J = \\displaystyle\\int_{-${a}}^{${a}} ${MathFmt.coeff(k, "x^3 e^{x^2}", true)}\\, dx$.`,
           steps: [
             `Let $g(x) = ${MathFmt.coeff(k, "x^3 e^{x^2}", true)}$; then $g(-x) = -g(x)$, so $g$ is odd on $[-${a}, ${a}]$.`,
             `The integral of an odd function over a symmetric interval $[-a, a]$ is $0$.`
@@ -1985,8 +1965,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Integration", unitAr: "التكامل",
-          statement: `Find the geometric area between the curves $y = ${k}x^2$ and $y = ${k}x$ on $[0, 2]$ (trap: computing $\\int_0^2 (${k}x - ${k}x^2)\\,dx$ without splitting at the crossing point $x = 1$, where $|${k}x - ${k}x^2|$ changes sign!).`,
-          statementAr: `احسب المساحة الهندسية المحصورة بين المنحنيين $y = ${k}x^2$ و $y = ${k}x$ على $[0, 2]$ (انتبه لتقاطعهما عند $x = 1$ وتغير إشارة الفرق $|${k}x - ${k}x^2|$).`,
+          statement: `Find the geometric area between the curves $y = ${k}x^2$ and $y = ${k}x$ on $[0, 2]$.`,
+          statementAr: `احسب المساحة الهندسية المحصورة بين المنحنيين $y = ${k}x^2$ و $y = ${k}x$ على $[0, 2]$.`,
           steps: [
             `Curves cross at $x = 0$ and $x = 1$; on $[0, 1]$, ${k}x \\ge ${k}x^2$, and on $[1, 2]$, ${k}x^2 \\ge ${k}x$.`,
             `Area $= \\displaystyle\\int_0^1 ${k}(x - x^2)\\,dx + \\displaystyle\\int_1^2 ${k}(x^2 - x)\\,dx = \\dfrac{${k}}{6} + \\dfrac{5${k}}{6} = ${k}$.`
@@ -2006,8 +1986,8 @@
         return {
           book: "Analysis", bookAr: "التحليل",
           unit: "Integration", unitAr: "التكامل",
-          statement: `Evaluate $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$ (trap: forgetting to divide by the coefficient $${k}$ of $x$ in the exponent).`,
-          statementAr: `احسب التكامل $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$ (انتبه للقسمة على أمثال $x$ وهو $${k}$).`,
+          statement: `Evaluate $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$.`,
+          statementAr: `احسب التكامل $I = \\displaystyle\\int_{0}^{${a}} e^{${MathFmt.coeff(k, "x", true)}}\\, dx$.`,
           steps: [
             `An antiderivative of $e^{${MathFmt.coeff(k, "x", true)}}$ is $\\dfrac{1}{${k}} e^{${MathFmt.coeff(k, "x", true)}}$.`,
             `Evaluating from $0$ to $${a}$ gives $I = \\dfrac{e^{${ka === 1 ? "" : (ka === -1 ? "-" : ka)}} - 1}{${k}}$.`
@@ -2063,8 +2043,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Vector", unitAr: "الأشعة",
-          statement: `Let $\\vec{u}(${ux}, 0, ${uz})$ and $\\vec{v}(${vx}, 0, ${vz})$. Compute $\\vec{u} \\times \\vec{v}$ (trap: reversing the $y$-component to $u_x v_z - u_z v_x$ instead of $u_z v_x - u_x v_z$).`,
-          statementAr: `ليكن $\\vec{u}(${ux}, 0, ${uz})$ و $\\vec{v}(${vx}, 0, ${vz})$. احسب $\\vec{u} \\times \\vec{v}$ (انتبه لإشارة المركبة الثانية في الجداء الشعاعي).`,
+          statement: `Let $\\vec{u}(${ux}, 0, ${uz})$ and $\\vec{v}(${vx}, 0, ${vz})$. Compute $\\vec{u} \\times \\vec{v}$.`,
+          statementAr: `ليكن $\\vec{u}(${ux}, 0, ${uz})$ و $\\vec{v}(${vx}, 0, ${vz})$. احسب $\\vec{u} \\times \\vec{v}$.`,
           steps: [
             `$x$-component: $0 \\cdot ${vz} - ${uz} \\cdot 0 = 0$; $z$-component: ${ux} \\cdot 0 - 0 \\cdot ${vx} = 0$.`,
             `$y$-component: $u_z v_x - u_x v_z = (${uz})(${vx}) - (${ux})(${vz}) = ${cy}$, so $\\vec{u} \\times \\vec{v} = (0, ${cy}, 0)$.`
@@ -2108,8 +2088,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Vector", unitAr: "الأشعة",
-          statement: `Compute the distance $d(A, \\mathcal{P})$ from $A(${x0}, ${y0}, ${z0})$ to the plane $(\\mathcal{P}): 2x - 2y + z${MathFmt.signedNum(d)} = 0$ (trap: forgetting absolute value in the numerator or squaring/forgetting the norm of $\\vec{n}(2, -2, 1)$).`,
-          statementAr: `احسب بعد النقطة $A(${x0}, ${y0}, ${z0})$ عن المستوي $(\\mathcal{P}): 2x - 2y + z${MathFmt.signedNum(d)} = 0$ (انتبه للقيمة المطلقة في البسط وطويلة الناظم).`,
+          statement: `Compute the distance $d(A, \\mathcal{P})$ from $A(${x0}, ${y0}, ${z0})$ to the plane $(\\mathcal{P}): 2x - 2y + z${MathFmt.signedNum(d)} = 0$.`,
+          statementAr: `احسب بعد النقطة $A(${x0}, ${y0}, ${z0})$ عن المستوي $(\\mathcal{P}): 2x - 2y + z${MathFmt.signedNum(d)} = 0$.`,
           steps: [
             `Normal vector $\\vec{n}(2, -2, 1)$ has norm $\\|\\vec{n}\\| = \\sqrt{2^2 + (-2)^2 + 1^2} = 3$.`,
             `$d(A, \\mathcal{P}) = \\dfrac{|2(${x0}) - 2(${y0}) + (${z0})${MathFmt.signedNum(d)}|}{3} = \\dfrac{${absNum}}{3} = ${MathFmt.texFrac(distFrac)}$.`
@@ -2130,7 +2110,7 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Vector", unitAr: "الأشعة",
-          statement: `Let $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ and $\\vec{v} = ${k}\\vec{u}$. Compute $\\vec{u} \\cdot \\vec{v}$ in terms of $\\|\\vec{u}\\|^2$.`,
+          statement: `Let $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ and $\\vec{v} = ${k}\\vec{u}$. Compute $\\vec{u} \\cdot \\vec{v}$.`,
           statementAr: `ليكن $\\vec{u}(${u[0]}, ${u[1]}, ${u[2]})$ و $\\vec{v} = ${k}\\vec{u}$. احسب الجداء السلمي $\\vec{u} \\cdot \\vec{v}$.`,
           steps: [
             `Here $\\|\\vec{u}\\|^2 = ${u[0]}^2 + ${u[1]}^2 + ${u[2]}^2 = ${normSq}$.`,
@@ -2193,8 +2173,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Write $z = -${a} - ${a}i$ in exponential form $r e^{i\\theta}$ with $\\theta \\in ]-\\pi, \\pi]$ (trap: placing $\\theta = \\frac{\\pi}{4}$ instead of the third quadrant $-\\frac{3\\pi}{4}$).`,
-          statementAr: `اكتب العدد العقدي $z = -${a} - ${a}i$ بالشكل الأسي $r e^{i\\theta}$ بحيث $\\theta \\in ]-\\pi, \\pi]$ (انتبه للربع الثالث).`,
+          statement: `Write $z = -${a} - ${a}i$ in exponential form $r e^{i\\theta}$ with $\\theta \\in ]-\\pi, \\pi]$.`,
+          statementAr: `اكتب العدد العقدي $z = -${a} - ${a}i$ بالشكل الأسي $r e^{i\\theta}$ بحيث $\\theta \\in ]-\\pi, \\pi]$.`,
           steps: [
             `Modulus: $|z| = \\sqrt{(-${a})^2 + (-${a})^2} = ${a}\\sqrt{2}$.`,
             `Since $\\cos\\theta = -\\frac{\\sqrt{2}}{2}$ and $\\sin\\theta = -\\frac{\\sqrt{2}}{2}$, $\\theta = -\\dfrac{3\\pi}{4}$.`
@@ -2216,8 +2196,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `For $z = ${zTex}$, compute $\\overline{z}$ and $z \\cdot \\overline{z}$ (trap: thinking $z \\cdot \\overline{z} = x^2 - y^2$ instead of $x^2 + y^2$).`,
-          statementAr: `من أجل $z = ${zTex}$، احسب المرافق $\\overline{z}$ والجداء $z \\cdot \\overline{z}$ (انتبه أن الجداء يساوي $x^2 + y^2$).`,
+          statement: `For $z = ${zTex}$, compute $\\overline{z}$ and $z \\cdot \\overline{z}$.`,
+          statementAr: `من أجل $z = ${zTex}$، احسب المرافق $\\overline{z}$ والجداء $z \\cdot \\overline{z}$.`,
           steps: [
             `Conjugate flips the sign of the imaginary part: $\\overline{z} = ${zBarTex}$.`,
             `Product: $z \\cdot \\overline{z} = |z|^2 = (${x})^2 + (${y})^2 = ${normSq}$.`
@@ -2238,8 +2218,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Let $z = ${r} e^{i\\frac{\\pi}{6}}$. Compute $z^{${n}}$ in exponential form (trap: forgetting to raise the modulus to the ${n}-th power: $${r}^{${n}} = ${rPowN}$).`,
-          statementAr: `ليكن $z = ${r} e^{i\\frac{\\pi}{6}}$. احسب $z^{${n}}$ بالشكل الأسي (انتبه لرفع الطويلة إلى الأس ${n}$).`,
+          statement: `Let $z = ${r} e^{i\\frac{\\pi}{6}}$. Compute $z^{${n}}$ in exponential form.`,
+          statementAr: `ليكن $z = ${r} e^{i\\frac{\\pi}{6}}$. احسب $z^{${n}}$ بالشكل الأسي.`,
           steps: [
             `By De Moivre's formula, $(r e^{i\\theta})^n = r^n e^{in\\theta}$.`,
             `Here $r^{${n}} = ${rPowN}$ and ${n} \\cdot \\frac{\\pi}{6} = ${MathFmt.texPi(nTheta)}$, so $z^{${n}} = ${rPowN} e^{i${MathFmt.texPi(nTheta)}}$.`
@@ -2262,8 +2242,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Solve in $\\mathbb{C}$: $z^2${MathFmt.coeff(s2, "z", false)} + ${pConst} = 0$ (trap: $\\Delta = ${s2 * s2 - 4 * pConst} < 0$, so roots are non-real conjugates).`,
-          statementAr: `حل في $\\mathbb{C}$ المعادلة: $z^2${MathFmt.coeff(s2, "z", false)} + ${pConst} = 0$ (المميز سالب لذا الجذران عقديان مترافقان).`,
+          statement: `Solve in $\\mathbb{C}$: $z^2${MathFmt.coeff(s2, "z", false)} + ${pConst} = 0$.`,
+          statementAr: `حل في $\\mathbb{C}$ المعادلة: $z^2${MathFmt.coeff(s2, "z", false)} + ${pConst} = 0$.`,
           steps: [
             `Discriminant $\\Delta = (${s2})^2 - 4(1)(${pConst}) = ${s2 * s2 - 4 * pConst} < 0$.`,
             `Roots are $z_1 = ${k}${bSign}$ and $z_2 = ${k}${bConjSign}$.`
@@ -2276,40 +2256,34 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 5) {
-        // Two-Trap Hard 1: Z = (1 + i)^6 / (1 - i sqrt(3))^3
-        // (1 + i)^6 = (sqrt(2) e^(i pi/4))^6 = 8 e^(i 3pi/2) = -8i
-        // (1 - i sqrt(3))^3 = (2 e^(-i pi/3))^3 = 8 e^(-i pi) = -8
-        // Z = (-8i)/(-8) = i = e^(i pi/2)
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Compute $Z = \\dfrac{(1 + i)^6}{(1 - i\\sqrt{3})^3}$ in algebraic and exponential form [Two traps: (1) $1 - i\\sqrt{3}$ lies in quadrant IV with argument $-\\frac{\\pi}{3}$, NOT $+\\frac{\\pi}{3}$; (2) $(1+i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$ and $(1-i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$, so dividing gives $i = e^{i\\frac{\\pi}{2}}$].`,
-          statementAr: `احسب $Z = \\dfrac{(1 + i)^6}{(1 - i\\sqrt{3})^3}$ بالشكلين الجبري والأسي [فخان: (1) زاوية $1 - i\\sqrt{3}$ هي $-\\frac{\\pi}{3}$ لأنها في الربع الرابع؛ (2) دقة حساب قوى الطويلة والزوايا قبل القسمة].`,
+          statement: `Compute $Z = \\dfrac{(1 + i)^6}{(1 - i\\sqrt{3})^3}$ in algebraic and exponential form.`,
+          statementAr: `احسب $Z = \\dfrac{(1 + i)^6}{(1 - i\\sqrt{3})^3}$ بالشكلين الجبري والأسي.`,
           steps: [
-            `Trap 1: $1 - i\\sqrt{3} = 2e^{-i\\frac{\\pi}{3}} \\implies (1 - i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$.`,
-            `Trap 2: $1 + i = \\sqrt{2}e^{i\\frac{\\pi}{4}} \\implies (1 + i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$; hence $Z = \\dfrac{-8i}{-8} = i = e^{i\\frac{\\pi}{2}}$.`
+            `$1 - i\\sqrt{3} = 2e^{-i\\frac{\\pi}{3}} \\implies (1 - i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$.`,
+            `$1 + i = \\sqrt{2}e^{i\\frac{\\pi}{4}} \\implies (1 + i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$; hence $Z = \\dfrac{-8i}{-8} = i = e^{i\\frac{\\pi}{2}}$.`
           ],
           stepsAr: [
-            `الفخ الأول: نحسب $(1 - i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$ بزاوية سالبة.`,
-            `الفخ الثاني: $(1 + i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$، وبالقسمة نجد $Z = i = e^{i\\frac{\\pi}{2}}$.`
+            `نحسب $(1 - i\\sqrt{3})^3 = 8e^{-i\\pi} = -8$ بزاوية سالبة.`,
+            `(1 + i)^6 = 8e^{i\\frac{3\\pi}{2}} = -8i$، وبالقسمة نجد $Z = i = e^{i\\frac{\\pi}{2}}$.`
           ],
           answer: `Z = i = e^{i\\frac{\\pi}{2}}`,
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 6) {
-        // Two-Trap Hard 2: Purely imaginary condition for z = (x - a) + i(x^2 - b) with x real
         const a = Rand.nonZeroInt(-3, 3);
-        // Choose b != a^2 so z is genuinely purely imaginary at x = a
         const b = a * a + Rand.nonZeroInt(-3, 3);
         const imAtA = a * a - b;
 
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `For $x \\in \\mathbb{R}$, let $z = (x - (${a})) + i(x^2 - (${b}))$. Find all $x \\in \\mathbb{R}$ for which $z$ is purely imaginary [Two traps: (1) purely imaginary requires $\\operatorname{Re}(z) = 0$ AND $\\operatorname{Im}(z) \\neq 0$ ($z \\neq 0$); (2) at $x = ${a}$, $\\operatorname{Im}(z) = (${a})^2 - (${b}) = ${imAtA} \\neq 0$, whereas if $\\operatorname{Im}(z) = 0$ that gives real $z$, not purely imaginary].`,
-          statementAr: `من أجل $x \\in \\mathbb{R}$، ليكن $z = (x - (${a})) + i(x^2 - (${b}))$. أوجد قيم $x$ التي تجعل $z$ تخيلياً صرفاً [فخان: (1) التخيلي الصرف يقتضي انعدام الحقيقي وعدم انعدام التخيلي؛ (2) التحقق من $\\operatorname{Im}(z) \\neq 0$ وعدم الخلط مع الحالة الحقيقية].`,
+          statement: `For $x \\in \\mathbb{R}$, let $z = (x - (${a})) + i(x^2 - (${b}))$. Find all $x \\in \\mathbb{R}$ for which $z$ is purely imaginary.`,
+          statementAr: `من أجل $x \\in \\mathbb{R}$، ليكن $z = (x - (${a})) + i(x^2 - (${b}))$. أوجد قيم $x$ التي تجعل $z$ تخيلياً صرفاً.`,
           steps: [
-            `Trap 1 & 2: $\\operatorname{Re}(z) = 0 \\iff x = ${a}$. At $x = ${a}$, $\\operatorname{Im}(z) = ${a * a} - (${b}) = ${imAtA} \\neq 0$.`,
+            `Purely imaginary requires $\\operatorname{Re}(z) = 0$ and $\\operatorname{Im}(z) \\neq 0$: $\\operatorname{Re}(z) = 0 \\iff x = ${a}$, where $\\operatorname{Im}(z) = ${a * a} - (${b}) = ${imAtA} \\neq 0$.`,
             `Since $\\operatorname{Im}(z) \\neq 0$ at $x = ${a}$, $z = ${imAtA}i$ is purely imaginary for $x = ${a}$.`
           ],
           stepsAr: [
@@ -2320,12 +2294,11 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 7) {
-        // Two-Trap Hard 3: Solving z^2 = -i in exponential form (all roots!)
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Solve in $\\mathbb{C}$ the equation $z^2 = -i$, giving the solutions in exponential form [Two traps: (1) $-i = e^{-i\\frac{\\pi}{2}}$ has argument $-\\frac{\\pi}{2}$, so halving gives $-\\frac{\\pi}{4}$ (not $+\\frac{\\pi}{4}$); (2) a quadratic in $\\mathbb{C}$ has TWO roots separated by $\\pi$: $z_0 = e^{-i\\frac{\\pi}{4}}$ and $z_1 = e^{i\\frac{3\\pi}{4}}$].`,
-          statementAr: `حل في $\\mathbb{C}$ المعادلة $z^2 = -i$ واكتب الحلول بالشكل الأسي [فخان: (1) $-i = e^{-i\\frac{\\pi}{2}}$ فتصبح الزاوية بعد القسمة على $2$ هي $-\\frac{\\pi}{4}$؛ (2) وجود حلين متعاكسين بالاتجاه بفرق $\\pi$].`,
+          statement: `Solve in $\\mathbb{C}$ the equation $z^2 = -i$, giving the solutions in exponential form.`,
+          statementAr: `حل في $\\mathbb{C}$ المعادلة $z^2 = -i$ واكتب الحلول بالشكل الأسي.`,
           steps: [
             `Write $-i = e^{-i\\frac{\\pi}{2}}$; taking square roots gives $z_k = e^{i\\left(-\\frac{\\pi}{4} + k\\pi\\right)}$ for $k \\in \\{0, 1\\}$.`,
             `For $k = 0$: $z_0 = e^{-i\\frac{\\pi}{4}}$; for $k = 1$: $z_1 = e^{i\\frac{3\\pi}{4}}$ (in $]-\\pi, \\pi]$).`
@@ -2338,12 +2311,10 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else if (idx === 8) {
-        // Two-Trap Hard 4: Modulus of z_1 + z_2_bar
         const a = Rand.nonZeroInt(-3, 3);
         const b = Rand.nonZeroInt(-3, 3);
         const c = Rand.nonZeroInt(-3, 3);
         const d = Rand.nonZeroInt(-3, 3);
-        // z1 = a + bi, z2_bar = c - di => sum = (a + c) + i(b - d)
         const reSum = a + c;
         const imSum = b - d;
         const modSq = reSum * reSum + imSum * imSum;
@@ -2351,8 +2322,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Let $z_1 = ${a}${b >= 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`}$ and $z_2 = ${c}${d >= 0 ? ` + ${d}i` : ` - ${Math.abs(d)}i`}$. Compute $|z_1 + \\overline{z_2}|$ [Two traps: (1) $\\overline{z_2} = ${c}$${-d >= 0 ? ` + ${-d}i` : ` - ${Math.abs(-d)}i`}$ flips the sign of the imaginary part of $z_2$; (2) compute modulus AFTER summing ($|z_1 + \\overline{z_2}|$), NOT $|z_1| + |z_2|$].`,
-          statementAr: `لتكن $z_1 = ${a}${b >= 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`}$ و $z_2 = ${c}${d >= 0 ? ` + ${d}i` : ` - ${Math.abs(d)}i`}$. احسب $|z_1 + \\overline{z_2}|$ [فخان: (1) أخذ مرافق $z_2$ بعكس إشارة جزئه التخيلي؛ (2) الجمع أولاً ثم حساب الطويلة وليس جمع الطويلتين].`,
+          statement: `Let $z_1 = ${a}${b >= 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`}$ and $z_2 = ${c}${d >= 0 ? ` + ${d}i` : ` - ${Math.abs(d)}i`}$. Compute $|z_1 + \\overline{z_2}|$.`,
+          statementAr: `لتكن $z_1 = ${a}${b >= 0 ? ` + ${b}i` : ` - ${Math.abs(b)}i`}$ و $z_2 = ${c}${d >= 0 ? ` + ${d}i` : ` - ${Math.abs(d)}i`}$. احسب $|z_1 + \\overline{z_2}|$.`,
           steps: [
             `Here $\\overline{z_2} = ${c}$${-d >= 0 ? ` + ${-d}i` : ` - ${Math.abs(-d)}i`}$, so $z_1 + \\overline{z_2} = ${reSum}${imSum >= 0 ? ` + ${imSum}i` : ` - ${Math.abs(imSum)}i`}$.`,
             `Modulus: $|z_1 + \\overline{z_2}| = \\sqrt{(${reSum})^2 + (${imSum})^2} = ${MathFmt.texSqrt(modSq)}$.`
@@ -2365,12 +2336,11 @@
           answerLabelAr: "الجواب النهائي"
         };
       } else {
-        // Two-Trap Hard 5: Linearization of cos^2(theta) via Euler's formula
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Complex Numbers", unitAr: "الأعداد العقدية",
-          statement: `Using Euler's formulas, linearize $\\cos^2\\theta$ in terms of $\\cos(2\\theta)$ [Two traps: (1) $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$, so squaring gives $\\dfrac{(e^{i\\theta} + e^{-i\\theta})^2}{4}$ — dividing by $4$, NOT $2$; (2) expanding $(e^{i\\theta} + e^{-i\\theta})^2$ includes the middle term $2e^{i\\theta}e^{-i\\theta} = 2$].`,
-          statementAr: `باستعمال دستوري أويلر، أخطِط العبارة $\\cos^2\\theta$ بدلالة $\\cos(2\\theta)$ [فخان: (1) قسمة مربع البسط على $4$ وليس $2$؛ (2) عدم إغفال الحد الأوسط $2e^{i\\theta}e^{-i\\theta} = 2$ عند النشر].`,
+          statement: `Using Euler's formulas, linearize $\\cos^2\\theta$ in terms of $\\cos(2\\theta)$.`,
+          statementAr: `باستعمال دستوري أويلر، أخطِط العبارة $\\cos^2\\theta$ بدلالة $\\cos(2\\theta)$.`,
           steps: [
             `Square $\\cos\\theta = \\dfrac{e^{i\\theta} + e^{-i\\theta}}{2}$: $\\cos^2\\theta = \\dfrac{e^{2i\\theta} + 2 + e^{-2i\\theta}}{4}$.`,
             `Group $e^{2i\\theta} + e^{-2i\\theta} = 2\\cos(2\\theta)$: $\\cos^2\\theta = \\dfrac{2\\cos(2\\theta) + 2}{4} = \\dfrac{1 + \\cos(2\\theta)}{2}$.`
@@ -2444,8 +2414,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Applications of Complex Numbers in Geometry", unitAr: "تطبيقات الأعداد العقدية في الهندسة",
-          statement: `Identify the geometric locus of points $M(z)$ in the Argand plane satisfying $|z - (${a})| = |z - (${b}i)|$ (trap: confusing $|z - z_A| = |z - z_B|$ with a circle instead of a line).`,
-          statementAr: `حدد المحل الهندسي للنقاط $M(z)$ التي تحقق $|z - (${a})| = |z - (${b}i)|$ (انتبه: تساوي البعدين يعطي محور قطعة مستقيمة لا دائرة).`,
+          statement: `Identify the geometric locus of points $M(z)$ in the Argand plane satisfying $|z - (${a})| = |z - (${b}i)|$.`,
+          statementAr: `حدد المحل الهندسي للنقاط $M(z)$ التي تحقق $|z - (${a})| = |z - (${b}i)|$.`,
           steps: [
             `Let $A(${a}, 0)$ and $B(0, ${b})$; the equality $MA = MB$ characterizes points equidistant from $A$ and $B$.`,
             `Thus the locus is the perpendicular bisector of segment $[AB]$.`
@@ -2569,8 +2539,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Counting Techniques", unitAr: "طرائق العد",
-          statement: `From $${total}$ items ($${special}$ are defective), $${pick}$ are chosen at random. How many choices include at least $1$ defective item (trap: multiplying $\\binom{${special}}{1}$ by $\\binom{${total-1}}{${pick-1}}$ double-counts multiple defectives!)?`,
-          statementAr: `من بين $${total}$ قطعة (منها $${special}$ تالفة) نختار $${pick}$ قطع. بكم طريقة نحوي على قطعة تالفة واحدة على الأقل (انتبه لعدم التكرار باستخدام المتمم).`,
+          statement: `From $${total}$ items ($${special}$ are defective), $${pick}$ are chosen at random. How many choices include at least $1$ defective item?`,
+          statementAr: `من بين $${total}$ قطعة (منها $${special}$ تالفة) نختار $${pick}$ قطع. بكم طريقة نحوي على قطعة تالفة واحدة على الأقل؟`,
           steps: [
             `Total subsets of size $${pick}$: $\\binom{${total}}{${pick}} = ${allWays}$.`,
             `Subsets with $0$ defectives: $\\binom{${total - special}}{${pick}} = ${noneWays}$, so at least one defective $= ${allWays} - ${noneWays} = ${atLeastOne}$.`
@@ -2656,8 +2626,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Probability", unitAr: "الاحتمالات",
-          statement: `Given $P(A \\cap B) = \\dfrac{1}{6}$ and $P(B) = \\dfrac{1}{2}$, compute $P(A \\mid B)$ (trap: dividing by $P(A)$ rather than the conditioning event $P(B)$).`,
-          statementAr: `إذا كان $P(A \\cap B) = \\dfrac{1}{6}$ و $P(B) = \\dfrac{1}{2}$، احسب الاحتمال الشرطي $P(A \\mid B)$ (انتبه للقسمة على احتمال الحدث الشرطي $P(B)$).`,
+          statement: `Given $P(A \\cap B) = \\dfrac{1}{6}$ and $P(B) = \\dfrac{1}{2}$, compute $P(A \\mid B)$.`,
+          statementAr: `إذا كان $P(A \\cap B) = \\dfrac{1}{6}$ و $P(B) = \\dfrac{1}{2}$، احسب الاحتمال الشرطي $P(A \\mid B)$.`,
           steps: [
             `By definition, $P(A \\mid B) = \\dfrac{P(A \\cap B)}{P(B)} = \\dfrac{1/6}{1/2} = ${MathFmt.texFrac(condFrac)}$.`
           ],
@@ -2676,8 +2646,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Probability", unitAr: "الاحتمالات",
-          statement: `If $P(A) = \\dfrac{1}{2}$, $P(B) = \\dfrac{1}{3}$, and $P(A \\cap B) = \\dfrac{1}{6}$, find $P(A \\cup B)$ (trap: adding $P(A) + P(B)$ without subtracting $P(A \\cap B)$).`,
-          statementAr: `إذا كان $P(A) = \\dfrac{1}{2}$ و $P(B) = \\dfrac{1}{3}$ و $P(A \\cap B) = \\dfrac{1}{6}$، احسب $P(A \\cup B)$ (انتبه لطرح التقاطع).`,
+          statement: `If $P(A) = \\dfrac{1}{2}$, $P(B) = \\dfrac{1}{3}$, and $P(A \\cap B) = \\dfrac{1}{6}$, find $P(A \\cup B)$.`,
+          statementAr: `إذا كان $P(A) = \\dfrac{1}{2}$ و $P(B) = \\dfrac{1}{3}$ و $P(A \\cap B) = \\dfrac{1}{6}$، احسب $P(A \\cup B)$.`,
           steps: [
             `$P(A \\cup B) = P(A) + P(B) - P(A \\cap B) = \\dfrac{1}{2} + \\dfrac{1}{3} - \\dfrac{1}{6} = ${MathFmt.texFrac(unionFrac)}$.`
           ],
@@ -2715,8 +2685,8 @@
         return {
           book: "Algebra and Vectors", bookAr: "الجبر والأشعة",
           unit: "Probability", unitAr: "الاحتمالات",
-          statement: `In $3$ independent Bernoulli trials with success probability $p = \\dfrac{1}{3}$, find the probability of getting exactly $1$ success (trap: forgetting the binomial coefficient $\\binom{3}{1} = 3$ for the positions of the success).`,
-          statementAr: `في $3$ تجارب برنولي مستقلة احتمال النجاح في كل منها $p = \\dfrac{1}{3}$، احسب احتمال الحصول على نجاح واحد بالضبط (انتبه لمعامل التوفيقة $\\binom{3}{1}$).`,
+          statement: `In $3$ independent Bernoulli trials with success probability $p = \\dfrac{1}{3}$, find the probability of getting exactly $1$ success.`,
+          statementAr: `في $3$ تجارب برنولي مستقلة احتمال النجاح في كل منها $p = \\dfrac{1}{3}$، احسب احتمال الحصول على نجاح واحد بالضبط.`,
           steps: [
             `$P(X = 1) = \\binom{3}{1} \\left(\\dfrac{1}{3}\\right)^1 \\left(\\dfrac{2}{3}\\right)^2 = 3 \\cdot \\dfrac{1}{3} \\cdot \\dfrac{4}{9} = ${MathFmt.texFrac(prob)}$.`
           ],
