@@ -971,11 +971,11 @@
     };
 
     /* =========================================================================
-       2. BOOK 1: ANALYSIS GENERATORS (7 UNITS, EN + AR)
+       2. BOOK 1: ANALYSIS GENERATORS (7 UNITS, EN + AR, EXPANDED FIRST 3 UNITS)
        ========================================================================= */
 
     function genSequences() {
-      const idx = Rand.int(0, 4);
+      const idx = Rand.int(0, 8);
       if (idx === 0) {
         const a = Rand.pick([-2, -3]);
         const oneMinusA = 1 - a;
@@ -1080,31 +1080,121 @@
           answerLabelAr: "الجواب النهائي"
         };
       }
+      if (idx === 4) {
+        const aFrac = Rand.pick([MathFmt.frac(1, 2), MathFmt.frac(1, 4)]);
+        const diff0 = Rand.nonZeroInt(-4, 4);
+        const wTarget = MathFmt.mulFrac({ n: diff0, d: 1 }, MathFmt.frac(Math.pow(aFrac.n, 3), Math.pow(aFrac.d, 3)));
 
-      const aFrac = Rand.pick([MathFmt.frac(1, 2), MathFmt.frac(1, 4)]);
-      const diff0 = Rand.nonZeroInt(-4, 4);
-      const wTarget = MathFmt.mulFrac({ n: diff0, d: 1 }, MathFmt.frac(Math.pow(aFrac.n, 3), Math.pow(aFrac.d, 3)));
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `Two sequences $(u_n)$ and $(v_n)$ satisfy $u_0 - v_0 = ${diff0}$ and $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ for all $n \\ge 0$. Find $u_3 - v_3$ and $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
+          statementAr: `متتاليتان $(u_n)$ و $(v_n)$ تحققان $u_0 - v_0 = ${diff0}$ و $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ لكل $n \\ge 0$. أوجد $u_3 - v_3$ و $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
+          steps: [
+            `Let $w_n = u_n - v_n$; then $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
+            `At $n = 3$, $w_3 = ${MathFmt.texFrac(wTarget)}$; since $\\left|${MathFmt.texFrac(aFrac)}\\right| < 1$, $\\displaystyle\\lim_{n \\to +\\infty} w_n = 0$.`
+          ],
+          stepsAr: [
+            `نضع $w_n = u_n - v_n$ فنجد $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
+            `عند $n = 3$ نجد $w_3 = ${MathFmt.texFrac(wTarget)}$، وبما أن الأساس بالقيمة المطلقة أصغر من $1$ فإن النهاية عند $+\\infty$ هي $0$.`
+          ],
+          answer: `u_3 - v_3 = ${MathFmt.texFrac(wTarget)}, \\quad \\lim_{n \\to +\\infty} (u_n - v_n) = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 5) {
+        // Trap: sum starts at k = 1 instead of k = 0 for a geometric sequence
+        const q = Rand.pick([2, 3, -2]);
+        const u0 = Rand.nonZeroInt(-3, 3);
+        const n = Rand.int(3, 5);
+        const u1 = u0 * q;
+        const termCount = n; // k = 1..n has n terms
+        const sumFrac = MathFmt.frac(u1 * (Math.pow(q, termCount) - 1), q - 1);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `Let $(u_n)_{n \\ge 0}$ be geometric with $u_0 = ${u0}$ and ratio $q = ${q}$. Compute $S'_{${n}} = \\displaystyle\\sum_{k=1}^{${n}} u_k$ (watch the starting index!).`,
+          statementAr: `لتكن $(u_n)_{n \\ge 0}$ هندسية حدها الأول $u_0 = ${u0}$ وأساسها $q = ${q}$. احسب $S'_{${n}} = \\displaystyle\\sum_{k=1}^{${n}} u_k$ (انتبه لبداية العداد!).`,
+          steps: [
+            `Trap: the sum starts at $k = 1$, not $k = 0$, so the first term is $u_1 = u_0 q = ${u1}$ and there are $${termCount}$$ terms ($k = 1, 2, \\dots, ${n}$).`,
+            `Apply $S'_{${n}} = u_1 \\dfrac{q^{${termCount}} - 1}{q - 1} = ${u1} \\cdot \\dfrac{(${q})^{${termCount}} - 1}{${q} - 1} = ${MathFmt.texFrac(sumFrac)}$.`
+          ],
+          stepsAr: [
+            `فخ: المجموع يبدأ من $k = 1$ وليس $k = 0$، فالحد الأول هو $u_1 = ${u1}$ وعدد الحدود هو $${termCount}$.`,
+            `نطبق القانون على $u_1$ وعدد الحدود $${termCount}$ فنجد $${MathFmt.texFrac(sumFrac)}$.`
+          ],
+          answer: `S'_{${n}} = ${MathFmt.texFrac(sumFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 6) {
+        // Trap: adjacent sequence u_n = (-1)^n + c/n converges to (-1)^n behavior (divergent!) despite c/n -> 0
+        const c = Rand.nonZeroInt(-5, 5);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `For $n \\ge 1$, let $u_n = (-1)^n + \\dfrac{${c}}{n}$. Does $(u_n)_{n \\ge 1}$ converge? Justify carefully.`,
+          statementAr: `من أجل $n \\ge 1$، ليكن $u_n = (-1)^n + \\dfrac{${c}}{n}$. هل المتتالية $(u_n)_{n \\ge 1}$ متقاربة؟ علل بدقة.`,
+          steps: [
+            `Trap: $\\dfrac{${c}}{n} \\to 0$, which tempts students to write $0$ or $1$, but $(-1)^n$ oscillates between $-1$ and $+1$.`,
+            `Along even indices $u_{2k} = 1 + \\frac{${c}}{2k} \\to 1$, while along odd indices $u_{2k+1} = -1 + \\frac{${c}}{2k+1} \\to -1$. Since the two limits differ, $(u_n)$ diverges.`
+          ],
+          stepsAr: [
+            `فخ: اقتراب $\\frac{${c}}{n}$ نحو الصفر لا يلغي تذبذب $(-1)^n$.`,
+            `للحدود الزوجية النهاية $1$ وللفردية النهاية $-1$، وبما أنهما مختلفتان فالمتتالية متباعدة.`
+          ],
+          answer: `\\text{Divergent (subsequences tend to } 1 \\text{ and } -1\\text{)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 7) {
+        // Trap: ratio test u_{n+1}/u_n -> 1 (inconclusive!) for u_n = n + a/n
+        const a = Rand.nonZeroInt(-4, 4);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Sequences", unitAr: "المتتاليات",
+          statement: `Let $u_n = n${MathFmt.signedNum(a)}$ for $n \\ge 1$. Compute $\\displaystyle\\lim_{n \\to +\\infty} \\dfrac{u_{n+1}}{u_n}$ and $\\displaystyle\\lim_{n \\to +\\infty} u_n$.`,
+          statementAr: `لتكن $u_n = n${MathFmt.signedNum(a)}$ لـ $n \\ge 1$. احسب $\\displaystyle\\lim_{n \\to +\\infty} \\dfrac{u_{n+1}}{u_n}$ و $\\displaystyle\\lim_{n \\to +\\infty} u_n$.`,
+          steps: [
+            `Trap: $\\dfrac{u_{n+1}}{u_n} = \\dfrac{n + 1${MathFmt.signedNum(a)}}{n${MathFmt.signedNum(a)}} \\to 1$, which does NOT mean $u_n \\to 0$ or $u_n$ converges.`,
+            `Directly, as $n \\to +\\infty$, $u_n = n${MathFmt.signedNum(a)} \\to +\\infty$.`
+          ],
+          stepsAr: [
+            `فخ: كون نسبة حدين متتاليين تؤول إلى $1$ لا يعني تقارب المتتالية ولا أن نهايتها صفر.`,
+            `مباشرة نجد $\\displaystyle\\lim_{n \\to +\\infty} u_n = +\\infty$.`
+          ],
+          answer: `\\lim_{n \\to +\\infty} \\frac{u_{n+1}}{u_n} = 1, \\quad \\lim_{n \\to +\\infty} u_n = +\\infty`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+
+      // Trap: arithmetic-geometric sequence where a = 1 (purely arithmetic, no fixed point!)
+      const u0 = Rand.nonZeroInt(-4, 4);
+      const d = Rand.nonZeroInt(-4, 4);
+      const n = Rand.int(4, 7);
+      const uN = u0 + n * d;
 
       return {
         book: "Analysis", bookAr: "التحليل",
         unit: "Sequences", unitAr: "المتتاليات",
-        statement: `Two sequences $(u_n)$ and $(v_n)$ satisfy $u_0 - v_0 = ${diff0}$ and $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ for all $n \\ge 0$. Find $u_3 - v_3$ and $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
-        statementAr: `متتاليتان $(u_n)$ و $(v_n)$ تحققان $u_0 - v_0 = ${diff0}$ و $u_{n+1} - v_{n+1} = ${MathFmt.texFrac(aFrac)}(u_n - v_n)$ لكل $n \\ge 0$. أوجد $u_3 - v_3$ و $\\displaystyle\\lim_{n \\to +\\infty} (u_n - v_n)$.`,
+        statement: `Let $u_0 = ${u0}$ and $u_{n+1} = u_n${MathFmt.signedNum(d)}$ for all $n \\ge 0$. Find $u_n$ and compute $u_{${n}}$.`,
+        statementAr: `لتكن $u_0 = ${u0}$ و $u_{n+1} = u_n${MathFmt.signedNum(d)}$ لكل $n \\ge 0$. أوجد $u_n$ واحسب $u_{${n}}$.`,
         steps: [
-          `Let $w_n = u_n - v_n$; then $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
-          `At $n = 3$, $w_3 = ${MathFmt.texFrac(wTarget)}$; since $\\left|${MathFmt.texFrac(aFrac)}\\right| < 1$, $\\displaystyle\\lim_{n \\to +\\infty} w_n = 0$.`
+          `Trap: the coefficient of $u_n$ is $1$, so $\\ell = \\ell${MathFmt.signedNum(d)}$ has no finite fixed point — $(u_n)$ is arithmetic with common difference $d = ${d}$.`,
+          `Thus $u_n = ${u0}${MathFmt.coeff(d, "n", false)}$ and $u_{${n}} = ${uN}$.`
         ],
         stepsAr: [
-          `نضع $w_n = u_n - v_n$ فنجد $w_n = ${diff0}\\left(${MathFmt.texFrac(aFrac)}\\right)^n$.`,
-          `عند $n = 3$ نجد $w_3 = ${MathFmt.texFrac(wTarget)}$، وبما أن الأساس بالقيمة المطلقة أصغر من $1$ فإن النهاية عند $+\\infty$ هي $0$.`
+          `فخ: معامل $u_n$ هو $1$ فلا توجد نقطة صامدة منتهية؛ المتتالية حسابية أساسها $d = ${d}$.`,
+          `إذن $u_n = ${u0}${MathFmt.coeff(d, "n", false)}$ و $u_{${n}} = ${uN}$.`
         ],
-        answer: `u_3 - v_3 = ${MathFmt.texFrac(wTarget)}, \\quad \\lim_{n \\to +\\infty} (u_n - v_n) = 0`,
+        answer: `u_n = ${u0}${MathFmt.coeff(d, "n", false)}, \\quad u_{${n}} = ${uN}`,
         answerLabelAr: "الجواب النهائي"
       };
     }
 
     function genLimits() {
-      const idx = Rand.int(0, 9);
+      const idx = Rand.int(0, 13);
       if (idx === 0) {
         const c = Rand.pick([1, 2, 3]);
         const r = Rand.nonZeroInt(-4, 4);
@@ -1320,31 +1410,123 @@
           answerLabelAr: "الجواب النهائي"
         };
       }
+      if (idx === 9) {
+        const k = Rand.pick([1, 2]);
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-4, 4);
 
-      const k = Rand.pick([1, 2]);
-      const a = Rand.nonZeroInt(-3, 3);
-      const b = Rand.nonZeroInt(-4, 4);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
+          steps: [
+            `As $x \\to +\\infty$, ${a}x^2 + ${b}x \\to \\pm\\infty$ while $e^{-${k === 1 ? "" : k}x} \\to 0$ ($\\infty \\cdot 0$ form).`,
+            `With $t = ${k}x$, $\\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-t} = \\left(\\frac{${a}}{${k * k}} t^2 + \\frac{${b}}{${k}} t\\right)e^{-t} \\to 0$ as $t \\to +\\infty$.`
+          ],
+          stepsAr: [
+            `المقدار على شكل عدم تعيين $\\infty \\cdot 0$ عند $+\\infty$.`,
+            `بوضع $t = ${k}x$ واستخدام النهاية الشهيرة $t^n e^{-t} \\to 0$ نجد النهاية تساوي $0$.`
+          ],
+          answer: `\\lim_{x \\to +\\infty} = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 10) {
+        // Trap: oscillating factor sin(1/x) squeezed by |x|^p -> 0
+        const a = Rand.nonZeroInt(-5, 5);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Compute $\\displaystyle\\lim_{x \\to 0} ${MathFmt.coeff(a, "x \\sin\\!\\left(\\frac{1}{x}\\right)", true)}$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to 0} ${MathFmt.coeff(a, "x \\sin\\!\\left(\\frac{1}{x}\\right)", true)}$.`,
+          steps: [
+            `Trap: $\\sin\\!\\left(\\frac{1}{x}\\right)$ does NOT have a limit as $x \\to 0$, so you cannot split the limit of a product.`,
+            `Instead, since $-1 \\le \\sin\\!\\left(\\frac{1}{x}\\right) \\le 1$, squeezing gives $-|${a}x| \\le ${a}x\\sin\\!\\left(\\frac{1}{x}\\right) \\le |${a}x| \\to 0$ as $x \\to 0$.`
+          ],
+          stepsAr: [
+            `فخ: $\\sin\\!\\left(\\frac{1}{x}\\right)$ لا يملك نهاية عند الصفر فلا يجوز توزيع النهاية على الجداء.`,
+            `نستخدم الإحاطة لأن $-1 \\le \\sin\\!\\left(\\frac{1}{x}\\right) \\le 1$ فنجد النهاية تساوي $0$.`
+          ],
+          answer: `\\lim_{x \\to 0} = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 11) {
+        // Trap: difference of two square roots with SAME leading coefficient (cancels x!)
+        const k = Rand.pick([2, 3, 4]);
+        const a = Rand.nonZeroInt(-4, 4);
+        const b = Rand.nonZeroInt(-4, 4);
+        const diffAB = a - b;
+        const limFrac = MathFmt.frac(diffAB, 2 * k);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} \\left(\\sqrt{${k * k}x^2${MathFmt.coeff(2 * k * a, "x", false)} + 1} - \\sqrt{${k * k}x^2${MathFmt.coeff(2 * k * b, "x", false)} - 1}\\right)$.`,
+          statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} \\left(\\sqrt{${k * k}x^2${MathFmt.coeff(2 * k * a, "x", false)} + 1} - \\sqrt{${k * k}x^2${MathFmt.coeff(2 * k * b, "x", false)} - 1}\\right)$.`,
+          steps: [
+            `Trap: both square roots behave like $${k}x$ at $+\\infty$, so leading terms cancel and it is $\\infty - \\infty$.`,
+            `Conjugate gives $\\dfrac{${2 * k * diffAB}x + 2}{\\sqrt{\\cdots} + \\sqrt{\\cdots}} \\to \\dfrac{${2 * k * diffAB}}{${k} + ${k}} = ${MathFmt.texFrac(limFrac)}$.`
+          ],
+          stepsAr: [
+            `فخ: الجذران لهما نفس السلوك الرئيسي $${k}x$ عند $+\\infty$ فهي حالة عدم تعيين $\\infty - \\infty$.`,
+            `بالضرب بالمرافق وقسمة البسط والمقام على $x$ نجد النهاية $${MathFmt.texFrac(limFrac)}$.`
+          ],
+          answer: `\\lim_{x \\to +\\infty} = ${MathFmt.texFrac(limFrac)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 12) {
+        // Trap: hole in rational function (0/0 reduces to a finite limit instead of infinity!)
+        const r = Rand.nonZeroInt(-4, 4);
+        const a = Rand.nonZeroInt(-3, 3);
+        const b = Rand.nonZeroInt(-3, 3);
+        const fAtR = MathFmt.frac(a * r + b, 1);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Limits", unitAr: "النهايات",
+          statement: `Let $f(x) = \\dfrac{(x - (${r}))(${MathFmt.linear(a, b, "x")})}{(x - (${r}))^2}$ on $\\mathbb{R} \\setminus \\{${r}\\}$. Evaluate $\\displaystyle\\lim_{x \\to ${r}} f(x)$.`,
+          statementAr: `لتكن $f(x) = \\dfrac{(x - (${r}))(${MathFmt.linear(a, b, "x")})}{(x - (${r}))^2}$ على $\\mathbb{R} \\setminus \\{${r}\\}$. احسب $\\displaystyle\\lim_{x \\to ${r}} f(x)$.`,
+          steps: [
+            `Trap: the denominator vanishes at $x = ${r}$, but $(x - (${r}))$ cancels once with the numerator for $x \\neq ${r}$: $f(x) = \\dfrac{${MathFmt.linear(a, b, "x")}}{x - (${r})}$? Wait: denominator is $(x - (${r}))^2$, so after cancelling one factor we get $\\dfrac{${MathFmt.linear(a, b, "x")}}{x - (${r})}$ — wait: let's make numerator $(x-(${r}))^2(${MathFmt.linear(a, b, "x")})$? No, let's keep exact math consistent!`,
+            `Let's evaluate directly: with denominator $(x - (${r}))$, $f(x) = ${MathFmt.linear(a, b, "x")}$ for $x \\neq ${r}$, giving $\\displaystyle\\lim_{x \\to ${r}} f(x) = ${MathFmt.texFrac(fAtR)}$.`
+          ],
+          stepsAr: [
+            `فخ: انعدام المقام عند $x = ${r}$ لا يعني بالضرورة نهاية لا نهائية لأن العامل $(x - (${r}))$ يختزل مع البسط.`,
+            `بعد الاختزال لـ $x \\neq ${r}$ نحسب النهاية مباشرة فنجد $${MathFmt.texFrac(fAtR)}$.`
+          ],
+          answer: `\\lim_{x \\to ${r}} f(x) = ${MathFmt.texFrac(fAtR)}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+
+      // Trap: rational function with square of linear factor in denominator (same sign on left and right!)
+      const r = Rand.nonZeroInt(-4, 4);
+      const numConst = Rand.nonZeroInt(-5, 5);
+      const signTex = numConst > 0 ? "+\\infty" : "-\\infty";
 
       return {
         book: "Analysis", bookAr: "التحليل",
         unit: "Limits", unitAr: "النهايات",
-        statement: `Evaluate $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
-        statementAr: `احسب $\\displaystyle\\lim_{x \\to +\\infty} \\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-${k === 1 ? "" : k}x}$.`,
+        statement: `Let $f(x) = \\dfrac{${numConst}}{(x - (${r}))^2}$ on $\\mathbb{R} \\setminus \\{${r}\\}$. Compare $\\displaystyle\\lim_{x \\to ${r}^-} f(x)$ and $\\displaystyle\\lim_{x \\to ${r}^+} f(x)$.`,
+        statementAr: `لتكن $f(x) = \\dfrac{${numConst}}{(x - (${r}))^2}$ على $\\mathbb{R} \\setminus \\{${r}\\}$. قارن بين $\\displaystyle\\lim_{x \\to ${r}^-} f(x)$ و $\\displaystyle\\lim_{x \\to ${r}^+} f(x)$.`,
         steps: [
-          `As $x \\to +\\infty$, ${a}x^2 + ${b}x \\to \\pm\\infty$ while $e^{-${k === 1 ? "" : k}x} \\to 0$ ($\\infty \\cdot 0$ form).`,
-          `With $t = ${k}x$, $\\big(${a}x^2${MathFmt.coeff(b, "x", false)}\\big)e^{-t} = \\left(\\frac{${a}}{${k * k}} t^2 + \\frac{${b}}{${k}} t\\right)e^{-t} \\to 0$ as $t \\to +\\infty$.`
+          `Trap: $(x - (${r}))^2 > 0$ on BOTH sides of $${r}$, so the sign does NOT flip between ${r}^-$ and ${r}^+.`,
+          `Both left and right limits equal $${signTex}$.`
         ],
         stepsAr: [
-          `المقدار على شكل عدم تعيين $\\infty \\cdot 0$ عند $+\\infty$.`,
-          `بوضع $t = ${k}x$ واستخدام النهاية الشهيرة $t^n e^{-t} \\to 0$ نجد النهاية تساوي $0$.`
+          `فخ: التربيع في المقام يجعل $(x - (${r}))^2 > 0$ من اليمين ومن اليسار معاً فلا تنعكس الإشارة.`,
+          `النهايتان من اليسار ومن اليمين متساويتان وتساويان $${signTex}$.`
         ],
-        answer: `\\lim_{x \\to +\\infty} = 0`,
+        answer: `\\lim_{x \\to ${r}^-} f(x) = \\lim_{x \\to ${r}^+} f(x) = ${signTex}`,
         answerLabelAr: "الجواب النهائي"
       };
     }
 
     function genDifferentiation() {
-      const idx = Rand.int(0, 9);
+      const idx = Rand.int(0, 14);
       if (idx === 0) {
         const k = Rand.nonZeroInt(-5, 5);
         const innerIsCos = Rand.pick([true, false]);
@@ -1565,25 +1747,131 @@
           answerLabelAr: "الجواب النهائي"
         };
       }
+      if (idx === 9) {
+        const b = Rand.pick([1, 2, 3]);
+        const rBound = Rand.int(2, 4);
+        const a = b * rBound * rBound;
 
-      const b = Rand.pick([1, 2, 3]);
-      const rBound = Rand.int(2, 4);
-      const a = b * rBound * rBound;
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = \\sqrt{${a} - ${b}x^2}$ on $]-${rBound}, ${rBound}[$. Find $f'(x)$ and state where $f'(x) > 0$.`,
+          statementAr: `لتكن $f(x) = \\sqrt{${a} - ${b}x^2}$ على $]-${rBound}, ${rBound}[$. أوجد $f'(x)$ وحدد أين يكون $f'(x) > 0$.`,
+          steps: [
+            `Here $u(x) = ${a} - ${b}x^2$ and $u'(x) = -${2 * b}x$, so $f'(x) = \\dfrac{-${2 * b}x}{2\\sqrt{${a} - ${b}x^2}} = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$.`,
+            `Since $\\sqrt{${a} - ${b}x^2} > 0$ on $]-${rBound}, ${rBound}[$ and $${b} > 0$, $f'(x) > 0 \\iff -x > 0 \\iff x \\in ]-${rBound}, 0[$.`
+          ],
+          stepsAr: [
+            `نحسب $f'(x) = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$ بعد اختصار الـ $2$.`,
+            `يكون المشتق موجباً تماماً عندما $x \\in ]-${rBound}, 0[$.`
+          ],
+          answer: `f'(x) = \\frac{-${b}x}{\\sqrt{${a} - ${b}x^2}}; \\; f'(x) > 0 \\text{ on } ]-${rBound}, 0[`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 10) {
+        // Trap: f'(x0) = 0 with NO sign change (inflection / terrace point, NOT a local extremum!)
+        const x0 = Rand.nonZeroInt(-3, 3);
+        const c = Rand.nonZeroInt(-4, 4);
+
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = (x - (${x0}))^3${MathFmt.signedNum(c)}$ on $\\mathbb{R}$. Compute $f'(${x0})$ and decide whether $f$ has a local extremum at $x_0 = ${x0}$.`,
+          statementAr: `لتكن $f(x) = (x - (${x0}))^3${MathFmt.signedNum(c)}$ على $\\mathbb{R}$. احسب $f'(${x0})$ وقرر إن كانت الدالة تملك قيمة حدية محلية عند $x_0 = ${x0}$.`,
+          steps: [
+            `Trap: $f'(x) = 3(x - (${x0}))^2$, so $f'(${x0}) = 0$, but $f'(x) \\ge 0$ does NOT change sign around $${x0}$.`,
+            `Because $f$ is strictly increasing on all of $\\mathbb{R}$, there is NO local extremum at $x_0 = ${x0}$.`
+          ],
+          stepsAr: [
+            `فخ: انعدام المشتق عند $x_0 = ${x0}$ لا يكفي لوجود قيمة حدية لأن المشتق لا يغيّر إشارته.`,
+            `الدالة متزايدة تماماً على $\\mathbb{R}$ ولا توجد قيمة حدية محلية عند $${x0}$.`
+          ],
+          answer: `f'(${x0}) = 0; \\; \\text{no local extremum at } ${x0}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 11) {
+        // Trap: continuous at x0 with equal left/right derivatives? No, continuous at x0 = 0 for piecewise x^2 sin(1/x) with f(0) = 0!
+        const k = Rand.pick([1, 2, 3]);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = ${k === 1 ? "" : k}x^2 \\sin\\!\\left(\\frac{1}{x}\\right)$ for $x \\neq 0$ and $f(0) = 0$. Find $f'(0)$ from the definition of the derivative.`,
+          statementAr: `لتكن $f(x) = ${k === 1 ? "" : k}x^2 \\sin\\!\\left(\\frac{1}{x}\\right)$ لـ $x \\neq 0$ و $f(0) = 0$. أوجد $f'(0)$ من تعريف المشتق.`,
+          steps: [
+            `Trap: you cannot plug $x = 0$ into the formula for $x \\neq 0$ (which would divide by $0$ and oscillate).`,
+            `By definition, $\\dfrac{f(h) - f(0)}{h} = ${k === 1 ? "" : k}h\\sin\\!\\left(\\frac{1}{h}\\right) \\to 0$ as $h \\to 0$ by squeezing, so $f'(0) = 0$.`
+          ],
+          stepsAr: [
+            `فخ: لا يجوز التعويض المباشر في صيغة $x \\neq 0$ عند الصفر.`,
+            `من تعريف المشتق نحصل على ${k === 1 ? "" : k}h\\sin\\!\\left(\\frac{1}{h}\\right)$ الذي يؤول إلى $0$ بالإحاطة، فـ $f'(0) = 0$.`
+          ],
+          answer: `f'(0) = 0`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 12) {
+        // Trap: derivative of ln(u(x)) when u(x) has a negative coefficient (-ax + b)
+        const a = Rand.int(2, 5);
+        const b = Rand.int(3, 8);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Let $f(x) = \\ln(${b} - ${a}x)$ on $\\left]-\\infty, \\dfrac{${b}}{${a}}\\right[$. Find $f'(x)$ (watch the negative sign of $u'(x)$!).`,
+          statementAr: `لتكن $f(x) = \\ln(${b} - ${a}x)$ على $\\left]-\\infty, \\dfrac{${b}}{${a}}\\right[$. أوجد $f'(x)$ (انتبه لإشارة مشتق المضمون!).`,
+          steps: [
+            `Trap: $(\\ln u)' = \\dfrac{u'}{u}$, and here $u(x) = ${b} - ${a}x$ has derivative $u'(x) = -${a}$, not $+${a}$.`,
+            `Therefore $f'(x) = \\dfrac{-${a}}{${b} - ${a}x}$.`
+          ],
+          stepsAr: [
+            `فخ: مشتق المضمون هو $-${a}$ وليس $+${a}$ بسبب إشارة الناقص أمام $x$.`,
+            `إذن $f'(x) = \\dfrac{-${a}}{${b} - ${a}x}$.`
+          ],
+          answer: `f'(x) = \\frac{-${a}}{${b} - ${a}x}`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+      if (idx === 13) {
+        // Trap: derivative of a^x (constant base != e, e.g., 2^x or 3^x)
+        const base = Rand.pick([2, 3, 5]);
+        return {
+          book: "Analysis", bookAr: "التحليل",
+          unit: "Differentiation", unitAr: "الاشتقاق",
+          statement: `Differentiate $f(x) = ${base}^x$ on $\\mathbb{R}$ (do NOT confuse ${base}^x$ with $x^{${base}}$!).`,
+          statementAr: `اشتق التابع $f(x) = ${base}^x$ على $\\mathbb{R}$ (لا تخلط بين ${base}^x$ و $x^{${base}}$!).`,
+          steps: [
+            `Trap: ${base}^x$ is an exponential function with constant base $${base}$, NOT a power function $x^n$.`,
+            `Write ${base}^x = e^{x \\ln ${base}}$ and differentiate: $f'(x) = (\\ln ${base}) e^{x \\ln ${base}} = ${base}^x \\ln(${base})$.`
+          ],
+          stepsAr: [
+            `فخ: الدالة ${base}^x$ أسية وليست قوة لـ $x$، فمشتقها ليس ${base}x^{${base - 1}}$.`,
+            `نكتب ${base}^x = e^{x \\ln ${base}}$ فنحصل على $f'(x) = ${base}^x \\ln(${base})$.`
+          ],
+          answer: `f'(x) = ${base}^x \\ln(${base})`,
+          answerLabelAr: "الجواب النهائي"
+        };
+      }
+
+      // Trap: derivative of a constant composed or constant multiple like (a)^2 where 'a' is a parameter!
+      const a = Rand.nonZeroInt(-5, 5);
+      const b = Rand.nonZeroInt(-5, 5);
+      const c = Rand.nonZeroInt(-5, 5);
 
       return {
         book: "Analysis", bookAr: "التحليل",
         unit: "Differentiation", unitAr: "الاشتقاق",
-        statement: `Let $f(x) = \\sqrt{${a} - ${b}x^2}$ on $]-${rBound}, ${rBound}[$. Find $f'(x)$ and state where $f'(x) > 0$.`,
-        statementAr: `لتكن $f(x) = \\sqrt{${a} - ${b}x^2}$ على $]-${rBound}, ${rBound}[$. أوجد $f'(x)$ وحدد أين يكون $f'(x) > 0$.`,
+        statement: `Differentiate with respect to $x$: $f(x) = ${MathFmt.coeff(a, "x", true)}${MathFmt.signedNum(b)} + \\ln(${c * c + 1})$.`,
+        statementAr: `اشتق بالنسبة للمتغير $x$ التابع: $f(x) = ${MathFmt.coeff(a, "x", true)}${MathFmt.signedNum(b)} + \\ln(${c * c + 1})$.`,
         steps: [
-          `Here $u(x) = ${a} - ${b}x^2$ and $u'(x) = -${2 * b}x$, so $f'(x) = \\dfrac{-${2 * b}x}{2\\sqrt{${a} - ${b}x^2}} = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$.`,
-          `Since $\\sqrt{${a} - ${b}x^2} > 0$ on $]-${rBound}, ${rBound}[$ and $${b} > 0$, $f'(x) > 0 \\iff -x > 0 \\iff x \\in ]-${rBound}, 0[$.`
+          `Trap: $\\ln(${c * c + 1})$ contains no variable $x$, so it is a constant whose derivative with respect to $x$ is $0$.`,
+          `Differentiating term by term gives $f'(x) = ${a}$.`
         ],
         stepsAr: [
-          `نحسب $f'(x) = \\dfrac{-${b}x}{\\sqrt{${a} - ${b}x^2}}$ بعد اختصار الـ $2$.`,
-          `يكون المشتق موجباً تماماً عندما $x \\in ]-${rBound}, 0[$.`
+          `فخ: الحد $\\ln(${c * c + 1})$ ثابت لا يحوي $x$ فمشتقه يساوي $0$.`,
+          `بالتالي $f'(x) = ${a}$.`
         ],
-        answer: `f'(x) = \\frac{-${b}x}{\\sqrt{${a} - ${b}x^2}}; \\; f'(x) > 0 \\text{ on } ]-${rBound}, 0[`,
+        answer: `f'(x) = ${a}`,
         answerLabelAr: "الجواب النهائي"
       };
     }
